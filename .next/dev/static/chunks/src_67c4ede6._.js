@@ -462,6 +462,28 @@ const steps = [
         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$check$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__CheckCircle2$3e$__["CheckCircle2"]
     }
 ];
+function generateSlots(config) {
+    const slots = [];
+    const [startH, startM] = config.start_time.split(":").map(Number);
+    const [endH, endM] = config.end_time.split(":").map(Number);
+    const startMinutes = startH * 60 + startM;
+    const endMinutes = endH * 60 + endM;
+    const totalSlotMinutes = config.slot_duration_min + config.break_duration_min;
+    let current = startMinutes;
+    while(current + config.slot_duration_min <= endMinutes){
+        const slotEnd = current + config.slot_duration_min;
+        const sh = Math.floor(current / 60);
+        const sm = current % 60;
+        const eh = Math.floor(slotEnd / 60);
+        const em = slotEnd % 60;
+        slots.push({
+            start_time: `${String(sh).padStart(2, "0")}:${String(sm).padStart(2, "0")}:00`,
+            end_time: `${String(eh).padStart(2, "0")}:${String(em).padStart(2, "0")}:00`
+        });
+        current += totalSlotMinutes;
+    }
+    return slots;
+}
 function SimpleCalendar({ selected, onSelect }) {
     _s();
     const [viewMonth, setViewMonth] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(new Date());
@@ -504,12 +526,12 @@ function SimpleCalendar({ selected, onSelect }) {
                             className: "w-4 h-4"
                         }, void 0, false, {
                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                            lineNumber: 68,
+                            lineNumber: 97,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 62,
+                        lineNumber: 91,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -521,7 +543,7 @@ function SimpleCalendar({ selected, onSelect }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 70,
+                        lineNumber: 99,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -533,18 +555,18 @@ function SimpleCalendar({ selected, onSelect }) {
                             className: "w-4 h-4"
                         }, void 0, false, {
                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                            lineNumber: 79,
+                            lineNumber: 108,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 73,
+                        lineNumber: 102,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                lineNumber: 61,
+                lineNumber: 90,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -562,12 +584,12 @@ function SimpleCalendar({ selected, onSelect }) {
                         children: d
                     }, d, false, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 84,
+                        lineNumber: 113,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                lineNumber: 82,
+                lineNumber: 111,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -575,7 +597,7 @@ function SimpleCalendar({ selected, onSelect }) {
                 children: cells.map((date, i)=>{
                     if (!date) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {}, `empty-${i}`, false, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 89,
+                        lineNumber: 118,
                         columnNumber: 29
                     }, this);
                     const disabled = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isBefore$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["isBefore"])(date, today) || date > (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["addDays"])(new Date(), 60) || date.getDay() === 0;
@@ -588,19 +610,19 @@ function SimpleCalendar({ selected, onSelect }) {
                         children: date.getDate()
                     }, date.toISOString(), false, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 101,
+                        lineNumber: 130,
                         columnNumber: 13
                     }, this);
                 })
             }, void 0, false, {
                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                lineNumber: 87,
+                lineNumber: 116,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-        lineNumber: 60,
+        lineNumber: 89,
         columnNumber: 5
     }, this);
 }
@@ -610,11 +632,12 @@ function BookingPage() {
     _s1();
     const [currentStep, setCurrentStep] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(1);
     const [services, setServices] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
-    const [timeSlots, setTimeSlots] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [scheduleConfigs, setScheduleConfigs] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [bookedSlots, setBookedSlots] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [blockedSlots, setBlockedSlots] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const [submitting, setSubmitting] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [selectedServiceId, setSelectedServiceId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [selectedServiceIndex, setSelectedServiceIndex] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(-1);
     const [selectedDate, setSelectedDate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])();
     const [selectedStartTime, setSelectedStartTime] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     const [selectedEndTime, setSelectedEndTime] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
@@ -627,10 +650,15 @@ function BookingPage() {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "BookingPage.useEffect": ()=>{
             async function load() {
-                const { data: svc } = await supabase.from("services").select("*").eq("is_active", true);
-                const { data: slots } = await supabase.from("time_slots").select("*").eq("is_active", true);
-                setServices(svc || []);
-                setTimeSlots(slots || []);
+                const [siteRes, schedRes] = await Promise.all([
+                    supabase.from("site_content").select("content").eq("section", "services").eq("is_active", true).single(),
+                    supabase.from("schedule_config").select("*").eq("is_active", true)
+                ]);
+                if (siteRes.data?.content) {
+                    const content = siteRes.data.content;
+                    setServices(content.items || []);
+                }
+                setScheduleConfigs(schedRes.data || []);
                 setLoading(false);
             }
             load();
@@ -641,21 +669,40 @@ function BookingPage() {
             if (!selectedDate) return;
             async function loadBooked() {
                 const dateStr = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(selectedDate, "yyyy-MM-dd");
-                const { data } = await supabase.from("appointments").select("start_time").eq("date", dateStr).in("status", [
-                    "pending",
-                    "confirmed"
+                const [apptRes, blockedRes] = await Promise.all([
+                    supabase.from("appointments").select("start_time").eq("date", dateStr).in("status", [
+                        "PENDING",
+                        "CONFIRMED"
+                    ]),
+                    supabase.from("blocked_slots").select("*").eq("date", dateStr)
                 ]);
-                setBookedSlots((data || []).map({
+                setBookedSlots((apptRes.data || []).map({
                     "BookingPage.useEffect.loadBooked": (d)=>d.start_time
                 }["BookingPage.useEffect.loadBooked"]));
+                setBlockedSlots(blockedRes.data || []);
             }
             loadBooked();
         }
     }["BookingPage.useEffect"], [
         selectedDate
     ]);
-    const selectedService = services.find((s)=>s.id === selectedServiceId);
-    const availableSlots = selectedDate && timeSlots ? timeSlots.filter((slot)=>slot.day_of_week === selectedDate.getDay()).filter((slot)=>!bookedSlots.includes(slot.start_time)).sort((a, b)=>a.start_time.localeCompare(b.start_time)) : [];
+    const selectedService = selectedServiceIndex >= 0 ? services[selectedServiceIndex] : null;
+    const availableSlots = (()=>{
+        if (!selectedDate) return [];
+        const dayConfig = scheduleConfigs.find((c)=>c.day_of_week === selectedDate.getDay());
+        if (!dayConfig) return [];
+        const generated = generateSlots(dayConfig);
+        return generated.filter((slot)=>{
+            if (bookedSlots.includes(slot.start_time)) return false;
+            for (const blocked of blockedSlots){
+                if (blocked.all_day) return false;
+                if (blocked.start_time && blocked.end_time) {
+                    if (slot.start_time >= blocked.start_time && slot.start_time < blocked.end_time) return false;
+                }
+            }
+            return true;
+        });
+    })();
     const handleSubmit = async (e)=>{
         e.preventDefault();
         setError("");
@@ -667,10 +714,10 @@ function BookingPage() {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    service_id: selectedServiceId,
                     date: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(selectedDate, "yyyy-MM-dd"),
                     start_time: selectedStartTime,
                     end_time: selectedEndTime,
+                    type: selectedService?.type || "FIRST_VISIT",
                     patient_name: patientName,
                     patient_email: patientEmail,
                     patient_phone: patientPhone,
@@ -709,12 +756,12 @@ function BookingPage() {
                                             className: "w-5 h-5 text-primary-foreground"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                            lineNumber: 227,
+                                            lineNumber: 281,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                        lineNumber: 226,
+                                        lineNumber: 280,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -723,13 +770,13 @@ function BookingPage() {
                                         children: "Renan Martins"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                        lineNumber: 229,
+                                        lineNumber: 283,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 225,
+                                lineNumber: 279,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -743,35 +790,35 @@ function BookingPage() {
                                             className: "w-4 h-4 mr-1"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                            lineNumber: 233,
+                                            lineNumber: 287,
                                             columnNumber: 17
                                         }, this),
                                         "Voltar"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                    lineNumber: 232,
+                                    lineNumber: 286,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 231,
+                                lineNumber: 285,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 224,
+                        lineNumber: 278,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                    lineNumber: 223,
+                    lineNumber: 277,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                lineNumber: 222,
+                lineNumber: 276,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -786,7 +833,7 @@ function BookingPage() {
                                 children: "Agende sua Consulta"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 243,
+                                lineNumber: 297,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -794,13 +841,13 @@ function BookingPage() {
                                 children: "Siga os passos abaixo para agendar sua consulta com o Dr. Renan Martins."
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 246,
+                                lineNumber: 300,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 242,
+                        lineNumber: 296,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -816,7 +863,7 @@ function BookingPage() {
                                         className: `w-8 h-px ${isComplete || isActive ? "bg-primary" : "bg-border"}`
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                        lineNumber: 259,
+                                        lineNumber: 313,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -827,7 +874,7 @@ function BookingPage() {
                                                 className: "w-4 h-4"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                lineNumber: 271,
+                                                lineNumber: 325,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -835,25 +882,25 @@ function BookingPage() {
                                                 children: step.title
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                lineNumber: 272,
+                                                lineNumber: 326,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                        lineNumber: 261,
+                                        lineNumber: 315,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, step.id, true, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 257,
+                                lineNumber: 311,
                                 columnNumber: 15
                             }, this);
                         })
                     }, void 0, false, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 251,
+                        lineNumber: 305,
                         columnNumber: 9
                     }, this),
                     currentStep === 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -864,7 +911,7 @@ function BookingPage() {
                                 children: "Escolha o tipo de consulta"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 281,
+                                lineNumber: 335,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -879,40 +926,40 @@ function BookingPage() {
                                                     className: "h-5 w-3/4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 289,
+                                                    lineNumber: 343,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
                                                     className: "h-4 w-full"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 290,
+                                                    lineNumber: 344,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
                                                     className: "h-4 w-1/2"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 291,
+                                                    lineNumber: 345,
                                                     columnNumber: 25
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                            lineNumber: 288,
+                                            lineNumber: 342,
                                             columnNumber: 23
                                         }, this)
                                     }, i, false, {
                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                        lineNumber: 287,
+                                        lineNumber: 341,
                                         columnNumber: 21
-                                    }, this)) : services.map((service)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
-                                        className: `cursor-pointer transition-colors ${selectedServiceId === service.id ? "border-primary bg-primary/5" : "hover:border-primary/30"}`,
+                                    }, this)) : services.map((service, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
+                                        className: `cursor-pointer transition-colors ${selectedServiceIndex === index ? "border-primary bg-primary/5" : "hover:border-primary/30"}`,
                                         onClick: ()=>{
-                                            setSelectedServiceId(service.id);
+                                            setSelectedServiceIndex(index);
                                             setCurrentStep(2);
                                         },
-                                        "data-testid": `card-select-service-${service.id}`,
+                                        "data-testid": `card-select-service-${index}`,
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
                                             className: "p-6",
                                             children: [
@@ -921,7 +968,7 @@ function BookingPage() {
                                                     children: service.name
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 310,
+                                                    lineNumber: 364,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -929,7 +976,7 @@ function BookingPage() {
                                                     children: service.description
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 311,
+                                                    lineNumber: 365,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -942,7 +989,7 @@ function BookingPage() {
                                                                     className: "w-4 h-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                                    lineNumber: 316,
+                                                                    lineNumber: 370,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -952,52 +999,52 @@ function BookingPage() {
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                                    lineNumber: 317,
+                                                                    lineNumber: 371,
                                                                     columnNumber: 29
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                            lineNumber: 315,
+                                                            lineNumber: 369,
                                                             columnNumber: 27
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
                                                             variant: "secondary",
                                                             children: [
                                                                 "R$ ",
-                                                                (service.price / 100).toFixed(2).replace(".", ",")
+                                                                (service.price_cents / 100).toFixed(2).replace(".", ",")
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                            lineNumber: 319,
+                                                            lineNumber: 373,
                                                             columnNumber: 27
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 314,
+                                                    lineNumber: 368,
                                                     columnNumber: 25
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                            lineNumber: 309,
+                                            lineNumber: 363,
                                             columnNumber: 23
                                         }, this)
-                                    }, service.id, false, {
+                                    }, index, false, {
                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                        lineNumber: 296,
+                                        lineNumber: 350,
                                         columnNumber: 21
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 284,
+                                lineNumber: 338,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 280,
+                        lineNumber: 334,
                         columnNumber: 11
                     }, this),
                     currentStep === 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1008,7 +1055,7 @@ function BookingPage() {
                                 children: "Escolha a data e horario"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 332,
+                                lineNumber: 386,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1022,17 +1069,17 @@ function BookingPage() {
                                                 onSelect: setSelectedDate
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                lineNumber: 338,
+                                                lineNumber: 392,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                            lineNumber: 337,
+                                            lineNumber: 391,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                        lineNumber: 336,
+                                        lineNumber: 390,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1044,7 +1091,7 @@ function BookingPage() {
                                                 })}` : "Selecione uma data para ver os horarios"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                lineNumber: 343,
+                                                lineNumber: 397,
                                                 columnNumber: 17
                                             }, this),
                                             selectedDate ? availableSlots.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1058,14 +1105,14 @@ function BookingPage() {
                                                         },
                                                         "data-testid": `button-time-${slot.start_time}`,
                                                         children: slot.start_time.slice(0, 5)
-                                                    }, slot.id, false, {
+                                                    }, slot.start_time, false, {
                                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                        lineNumber: 352,
+                                                        lineNumber: 406,
                                                         columnNumber: 25
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                lineNumber: 350,
+                                                lineNumber: 404,
                                                 columnNumber: 21
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 className: "text-sm text-muted-foreground",
@@ -1073,7 +1120,7 @@ function BookingPage() {
                                                 children: "Nenhum horario disponivel nesta data. Tente outra data."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                lineNumber: 367,
+                                                lineNumber: 421,
                                                 columnNumber: 21
                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: "flex items-center justify-center h-32 text-muted-foreground text-sm",
@@ -1082,26 +1129,26 @@ function BookingPage() {
                                                         className: "w-5 h-5 mr-2"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                        lineNumber: 373,
+                                                        lineNumber: 427,
                                                         columnNumber: 21
                                                     }, this),
                                                     "Selecione uma data"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                lineNumber: 372,
+                                                lineNumber: 426,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                        lineNumber: 342,
+                                        lineNumber: 396,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 335,
+                                lineNumber: 389,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1116,14 +1163,14 @@ function BookingPage() {
                                                 className: "w-4 h-4 mr-1"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                lineNumber: 382,
+                                                lineNumber: 436,
                                                 columnNumber: 17
                                             }, this),
                                             "Voltar"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                        lineNumber: 381,
+                                        lineNumber: 435,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1136,25 +1183,25 @@ function BookingPage() {
                                                 className: "w-4 h-4 ml-1"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                lineNumber: 391,
+                                                lineNumber: 445,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                        lineNumber: 385,
+                                        lineNumber: 439,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 380,
+                                lineNumber: 434,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 331,
+                        lineNumber: 385,
                         columnNumber: 11
                     }, this),
                     currentStep === 3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1165,7 +1212,7 @@ function BookingPage() {
                                 children: "Seus dados"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 399,
+                                lineNumber: 453,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1180,7 +1227,7 @@ function BookingPage() {
                                                     children: "Resumo do agendamento:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 404,
+                                                    lineNumber: 458,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1195,21 +1242,22 @@ function BookingPage() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 405,
+                                                    lineNumber: 459,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                            lineNumber: 403,
+                                            lineNumber: 457,
                                             columnNumber: 17
                                         }, this),
                                         error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "text-sm text-destructive bg-destructive/10 rounded-md p-3 mb-4",
+                                            "data-testid": "text-booking-error",
                                             children: error
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                            lineNumber: 412,
+                                            lineNumber: 466,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -1227,7 +1275,7 @@ function BookingPage() {
                                                                     children: "Nome completo"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                                    lineNumber: 420,
+                                                                    lineNumber: 474,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1239,13 +1287,13 @@ function BookingPage() {
                                                                     "data-testid": "input-name"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                                    lineNumber: 421,
+                                                                    lineNumber: 475,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                            lineNumber: 419,
+                                                            lineNumber: 473,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1256,7 +1304,7 @@ function BookingPage() {
                                                                     children: "Email"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                                    lineNumber: 431,
+                                                                    lineNumber: 485,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1269,19 +1317,19 @@ function BookingPage() {
                                                                     "data-testid": "input-email"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                                    lineNumber: 432,
+                                                                    lineNumber: 486,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                            lineNumber: 430,
+                                                            lineNumber: 484,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 418,
+                                                    lineNumber: 472,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1292,7 +1340,7 @@ function BookingPage() {
                                                             children: "Telefone / WhatsApp"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                            lineNumber: 445,
+                                                            lineNumber: 499,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1304,13 +1352,13 @@ function BookingPage() {
                                                             "data-testid": "input-phone"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                            lineNumber: 446,
+                                                            lineNumber: 500,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 444,
+                                                    lineNumber: 498,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1321,7 +1369,7 @@ function BookingPage() {
                                                             children: "Observacoes (opcional)"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                            lineNumber: 457,
+                                                            lineNumber: 511,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -1333,13 +1381,13 @@ function BookingPage() {
                                                             "data-testid": "input-notes"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                            lineNumber: 458,
+                                                            lineNumber: 512,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 456,
+                                                    lineNumber: 510,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1355,14 +1403,14 @@ function BookingPage() {
                                                                     className: "w-4 h-4 mr-1"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                                    lineNumber: 470,
+                                                                    lineNumber: 524,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 "Voltar"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                            lineNumber: 469,
+                                                            lineNumber: 523,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1375,42 +1423,42 @@ function BookingPage() {
                                                                     className: "w-4 h-4 ml-1"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                                    lineNumber: 475,
+                                                                    lineNumber: 529,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                            lineNumber: 473,
+                                                            lineNumber: 527,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                                    lineNumber: 468,
+                                                    lineNumber: 522,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                            lineNumber: 417,
+                                            lineNumber: 471,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                    lineNumber: 402,
+                                    lineNumber: 456,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 401,
+                                lineNumber: 455,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 398,
+                        lineNumber: 452,
                         columnNumber: 11
                     }, this),
                     currentStep === 4 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1422,12 +1470,12 @@ function BookingPage() {
                                     className: "w-10 h-10 text-primary"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                    lineNumber: 487,
+                                    lineNumber: 541,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 486,
+                                lineNumber: 540,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1436,7 +1484,7 @@ function BookingPage() {
                                 children: "Consulta Agendada!"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 489,
+                                lineNumber: 543,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1444,7 +1492,7 @@ function BookingPage() {
                                 children: "Sua consulta foi agendada com sucesso. Voce recebera uma confirmacao em breve."
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 492,
+                                lineNumber: 546,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1459,7 +1507,7 @@ function BookingPage() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 495,
+                                lineNumber: 549,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1471,41 +1519,41 @@ function BookingPage() {
                                             className: "w-4 h-4 mr-1"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                            lineNumber: 501,
+                                            lineNumber: 555,
                                             columnNumber: 17
                                         }, this),
                                         "Voltar ao inicio"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                    lineNumber: 500,
+                                    lineNumber: 554,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                                lineNumber: 499,
+                                lineNumber: 553,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                        lineNumber: 485,
+                        lineNumber: 539,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(public)/agendar/page.tsx",
-                lineNumber: 241,
+                lineNumber: 295,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/(public)/agendar/page.tsx",
-        lineNumber: 221,
+        lineNumber: 275,
         columnNumber: 5
     }, this);
 }
-_s1(BookingPage, "z/rt548mz6MBHjMNGE2KVZMDjZ8=");
+_s1(BookingPage, "SRaAjmp0aD8H4U+NyUCP9gvllJc=");
 _c1 = BookingPage;
 var _c, _c1;
 __turbopack_context__.k.register(_c, "SimpleCalendar");

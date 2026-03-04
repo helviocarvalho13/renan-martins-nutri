@@ -19,7 +19,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import type { Service, TimeSlot } from "@/lib/types";
+import type { ScheduleConfig, BlockedSlot, ServiceItem } from "@/lib/types";
 import { format, addDays, isBefore, startOfToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -29,6 +29,35 @@ const steps = [
   { id: 3, title: "Seus Dados", icon: User },
   { id: 4, title: "Confirmacao", icon: CheckCircle2 },
 ];
+
+interface GeneratedSlot {
+  start_time: string;
+  end_time: string;
+}
+
+function generateSlots(config: ScheduleConfig): GeneratedSlot[] {
+  const slots: GeneratedSlot[] = [];
+  const [startH, startM] = config.start_time.split(":").map(Number);
+  const [endH, endM] = config.end_time.split(":").map(Number);
+  const startMinutes = startH * 60 + startM;
+  const endMinutes = endH * 60 + endM;
+  const totalSlotMinutes = config.slot_duration_min + config.break_duration_min;
+
+  let current = startMinutes;
+  while (current + config.slot_duration_min <= endMinutes) {
+    const slotEnd = current + config.slot_duration_min;
+    const sh = Math.floor(current / 60);
+    const sm = current % 60;
+    const eh = Math.floor(slotEnd / 60);
+    const em = slotEnd % 60;
+    slots.push({
+      start_time: `${String(sh).padStart(2, "0")}:${String(sm).padStart(2, "0")}:00`,
+      end_time: `${String(eh).padStart(2, "0")}:${String(em).padStart(2, "0")}:00`,
+    });
+    current += totalSlotMinutes;
+  }
+  return slots;
+}
 
 function SimpleCalendar({
   selected,
@@ -122,13 +151,14 @@ function SimpleCalendar({
 
 export default function BookingPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [services, setServices] = useState<Service[]>([]);
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+  const [services, setServices] = useState<ServiceItem[]>([]);
+  const [scheduleConfigs, setScheduleConfigs] = useState<ScheduleConfig[]>([]);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [blockedSlots, setBlockedSlots] = useState<BlockedSlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  const [selectedServiceId, setSelectedServiceId] = useState("");
+  const [selectedServiceIndex, setSelectedServiceIndex] = useState(-1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedStartTime, setSelectedStartTime] = useState("");
   const [selectedEndTime, setSelectedEndTime] = useState("");
@@ -142,16 +172,24 @@ export default function BookingPage() {
 
   useEffect(() => {
     async function load() {
-      const { data: svc } = await supabase
-        .from("services")
-        .select("*")
-        .eq("is_active", true);
-      const { data: slots } = await supabase
-        .from("time_slots")
-        .select("*")
-        .eq("is_active", true);
-      setServices(svc || []);
-      setTimeSlots(slots || []);
+      const [siteRes, schedRes] = await Promise.all([
+        supabase
+          .from("site_content")
+          .select("content")
+          .eq("section", "services")
+          .eq("is_active", true)
+          .single(),
+        supabase
+          .from("schedule_config")
+          .select("*")
+          .eq("is_active", true),
+      ]);
+
+      if (siteRes.data?.content) {
+        const content = siteRes.data.content as { items?: ServiceItem[] };
+        setServices(content.items || []);
+      }
+      setScheduleConfigs((schedRes.data as ScheduleConfig[]) || []);
       setLoading(false);
     }
     load();
@@ -161,25 +199,41 @@ export default function BookingPage() {
     if (!selectedDate) return;
     async function loadBooked() {
       const dateStr = format(selectedDate!, "yyyy-MM-dd");
-      const { data } = await supabase
-        .from("appointments")
-        .select("start_time")
-        .eq("date", dateStr)
-        .in("status", ["pending", "confirmed"]);
-      setBookedSlots((data || []).map((d: any) => d.start_time));
+      const [apptRes, blockedRes] = await Promise.all([
+        supabase
+          .from("appointments")
+          .select("start_time")
+          .eq("date", dateStr)
+          .in("status", ["PENDING", "CONFIRMED"]),
+        supabase
+          .from("blocked_slots")
+          .select("*")
+          .eq("date", dateStr),
+      ]);
+      setBookedSlots((apptRes.data || []).map((d) => d.start_time));
+      setBlockedSlots((blockedRes.data as BlockedSlot[]) || []);
     }
     loadBooked();
   }, [selectedDate]);
 
-  const selectedService = services.find((s) => s.id === selectedServiceId);
+  const selectedService = selectedServiceIndex >= 0 ? services[selectedServiceIndex] : null;
 
-  const availableSlots =
-    selectedDate && timeSlots
-      ? timeSlots
-          .filter((slot) => slot.day_of_week === selectedDate.getDay())
-          .filter((slot) => !bookedSlots.includes(slot.start_time))
-          .sort((a, b) => a.start_time.localeCompare(b.start_time))
-      : [];
+  const availableSlots: GeneratedSlot[] = (() => {
+    if (!selectedDate) return [];
+    const dayConfig = scheduleConfigs.find((c) => c.day_of_week === selectedDate.getDay());
+    if (!dayConfig) return [];
+    const generated = generateSlots(dayConfig);
+    return generated.filter((slot) => {
+      if (bookedSlots.includes(slot.start_time)) return false;
+      for (const blocked of blockedSlots) {
+        if (blocked.all_day) return false;
+        if (blocked.start_time && blocked.end_time) {
+          if (slot.start_time >= blocked.start_time && slot.start_time < blocked.end_time) return false;
+        }
+      }
+      return true;
+    });
+  })();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,10 +245,10 @@ export default function BookingPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          service_id: selectedServiceId,
           date: format(selectedDate!, "yyyy-MM-dd"),
           start_time: selectedStartTime,
           end_time: selectedEndTime,
+          type: selectedService?.type || "FIRST_VISIT",
           patient_name: patientName,
           patient_email: patientEmail,
           patient_phone: patientPhone,
@@ -292,19 +346,19 @@ export default function BookingPage() {
                       </CardContent>
                     </Card>
                   ))
-                : services.map((service) => (
+                : services.map((service, index) => (
                     <Card
-                      key={service.id}
+                      key={index}
                       className={`cursor-pointer transition-colors ${
-                        selectedServiceId === service.id
+                        selectedServiceIndex === index
                           ? "border-primary bg-primary/5"
                           : "hover:border-primary/30"
                       }`}
                       onClick={() => {
-                        setSelectedServiceId(service.id);
+                        setSelectedServiceIndex(index);
                         setCurrentStep(2);
                       }}
-                      data-testid={`card-select-service-${service.id}`}
+                      data-testid={`card-select-service-${index}`}
                     >
                       <CardContent className="p-6">
                         <h3 className="font-semibold mb-1">{service.name}</h3>
@@ -317,7 +371,7 @@ export default function BookingPage() {
                             <span>{service.duration_minutes} min</span>
                           </div>
                           <Badge variant="secondary">
-                            R$ {(service.price / 100).toFixed(2).replace(".", ",")}
+                            R$ {(service.price_cents / 100).toFixed(2).replace(".", ",")}
                           </Badge>
                         </div>
                       </CardContent>
@@ -350,7 +404,7 @@ export default function BookingPage() {
                     <div className="grid grid-cols-2 gap-2">
                       {availableSlots.map((slot) => (
                         <Button
-                          key={slot.id}
+                          key={slot.start_time}
                           type="button"
                           variant={selectedStartTime === slot.start_time ? "default" : "outline"}
                           onClick={() => {
@@ -409,7 +463,7 @@ export default function BookingPage() {
                 </div>
 
                 {error && (
-                  <div className="text-sm text-destructive bg-destructive/10 rounded-md p-3 mb-4">
+                  <div className="text-sm text-destructive bg-destructive/10 rounded-md p-3 mb-4" data-testid="text-booking-error">
                     {error}
                   </div>
                 )}

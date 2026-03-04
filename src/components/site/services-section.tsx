@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Clock, ChevronRight, Apple, Heart, Target, Activity, Leaf } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import type { Service } from "@/lib/types";
+import type { SiteContent, ServiceItem } from "@/lib/types";
 
 const iconMap: Record<string, any> = {
   apple: Apple,
@@ -18,18 +18,22 @@ const iconMap: Record<string, any> = {
 };
 
 export function ServicesSection() {
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadServices() {
       const supabase = createClient();
       const { data } = await supabase
-        .from("services")
-        .select("*")
+        .from("site_content")
+        .select("content")
+        .eq("section", "services")
         .eq("is_active", true)
-        .order("created_at", { ascending: true });
-      setServices(data || []);
+        .single();
+      if (data?.content) {
+        const content = data.content as { items?: ServiceItem[] };
+        setServices(content.items || []);
+      }
       setLoading(false);
     }
     loadServices();
@@ -62,10 +66,10 @@ export function ServicesSection() {
                   </CardContent>
                 </Card>
               ))
-            : services.map((service) => {
+            : services.map((service, index) => {
                 const IconComponent = iconMap[service.icon || "leaf"] || Leaf;
                 return (
-                  <Card key={service.id} className="h-full" data-testid={`card-service-${service.id}`}>
+                  <Card key={index} className="h-full" data-testid={`card-service-${index}`}>
                     <CardContent className="p-6 space-y-4">
                       <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center">
                         <IconComponent className="w-6 h-6 text-primary" />
@@ -80,11 +84,11 @@ export function ServicesSection() {
                           <span>{service.duration_minutes} min</span>
                         </div>
                         <span className="font-semibold text-primary">
-                          R$ {(service.price / 100).toFixed(2).replace(".", ",")}
+                          R$ {(service.price_cents / 100).toFixed(2).replace(".", ",")}
                         </span>
                       </div>
                       <Link href="/agendar" className="block">
-                        <Button variant="outline" className="w-full" data-testid={`button-book-${service.id}`}>
+                        <Button variant="outline" className="w-full" data-testid={`button-book-${index}`}>
                           Agendar
                           <ChevronRight className="w-4 h-4 ml-1" />
                         </Button>

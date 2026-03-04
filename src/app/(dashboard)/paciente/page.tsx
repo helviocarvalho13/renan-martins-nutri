@@ -16,21 +16,20 @@ import {
   Plus,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import type { Appointment, Service } from "@/lib/types";
+import type { Appointment } from "@/lib/types";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  pending: { label: "Pendente", variant: "outline" },
-  confirmed: { label: "Confirmado", variant: "default" },
-  cancelled: { label: "Cancelado", variant: "destructive" },
-  completed: { label: "Concluido", variant: "secondary" },
+  PENDING: { label: "Pendente", variant: "outline" },
+  CONFIRMED: { label: "Confirmado", variant: "default" },
+  CANCELLED: { label: "Cancelado", variant: "destructive" },
+  COMPLETED: { label: "Concluido", variant: "secondary" },
+  NO_SHOW: { label: "Nao compareceu", variant: "destructive" },
 };
 
 export default function PatientDashboard() {
   const router = useRouter();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -48,12 +47,10 @@ export default function PatientDashboard() {
       const { data: appts } = await supabase
         .from("appointments")
         .select("*")
-        .eq("patient_email", user.email)
+        .eq("patient_id", user.id)
         .order("date", { ascending: false });
-      const { data: svcs } = await supabase.from("services").select("*");
 
-      setAppointments(appts || []);
-      setServices(svcs || []);
+      setAppointments((appts || []) as Appointment[]);
       setLoading(false);
     }
     loadData();
@@ -129,15 +126,14 @@ export default function PatientDashboard() {
         ) : (
           <div className="space-y-3">
             {appointments.map((a) => {
-              const service = services.find((s) => s.id === a.service_id);
-              const status = statusMap[a.status] || statusMap.pending;
+              const status = statusMap[a.status] || statusMap.PENDING;
               return (
                 <Card key={a.id} data-testid={`card-appointment-${a.id}`}>
                   <CardContent className="p-4">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-medium text-sm">{service?.name || "Consulta"}</span>
+                          <span className="font-medium text-sm">{a.type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno"}</span>
                           <Badge variant={status.variant}>{status.label}</Badge>
                         </div>
                         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createServiceRoleClient } from "@/lib/supabase/server";
+import type { AppointmentType } from "@/lib/types";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
-  const { service_id, date, start_time, end_time, patient_name, patient_email, patient_phone, notes } = body;
+  const { date, start_time, end_time, type, patient_name, patient_email, patient_phone, notes } = body;
 
-  if (!service_id || !date || !start_time || !end_time || !patient_name || !patient_email || !patient_phone) {
+  if (!date || !start_time || !end_time || !patient_name || !patient_email || !patient_phone) {
     return NextResponse.json(
       { error: "Todos os campos obrigatorios devem ser preenchidos" },
       { status: 400 }
@@ -39,48 +40,17 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const validTypes: AppointmentType[] = ["FIRST_VISIT", "RETURN"];
+  const appointmentType: AppointmentType = validTypes.includes(type) ? type : "FIRST_VISIT";
 
-  const { data: service } = await supabase
-    .from("services")
-    .select("id, is_active")
-    .eq("id", service_id)
-    .eq("is_active", true)
-    .single();
-
-  if (!service) {
-    return NextResponse.json(
-      { error: "Servico nao encontrado ou inativo" },
-      { status: 400 }
-    );
-  }
-
-  const dayOfWeek = appointmentDate.getDay();
-  const { data: validSlot } = await supabase
-    .from("time_slots")
-    .select("id")
-    .eq("day_of_week", dayOfWeek)
-    .eq("start_time", start_time)
-    .eq("end_time", end_time)
-    .eq("is_active", true)
-    .single();
-
-  if (!validSlot) {
-    return NextResponse.json(
-      { error: "Horario nao disponivel" },
-      { status: 400 }
-    );
-  }
+  const supabase = createServiceRoleClient();
 
   const { data: existing } = await supabase
     .from("appointments")
     .select("id")
     .eq("date", date)
     .eq("start_time", start_time)
-    .in("status", ["pending", "confirmed"])
+    .in("status", ["PENDING", "CONFIRMED"])
     .limit(1);
 
   if (existing && existing.length > 0) {
@@ -90,23 +60,64 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let patientId: string | null = null;
+
+  const { data: existingUser } = await supabase
+    .from("profiles")
+    .select("id")
+    .ilike("id", `%`)
+    .limit(1);
+
+  const { data: authUsers } = await supabase.auth.admin.listUsers();
+  const matchingUser = authUsers?.users?.find(
+    (u) => u.email?.toLowerCase() === patient_email.trim().toLowerCase()
+  );
+  if (matchingUser) {
+    patientId = matchingUser.id;
+  }
+
+  if (!patientId) {
+    const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+      email: patient_email.trim().toLowerCase(),
+      email_confirm: true,
+      user_metadata: {
+        name: patient_name.trim(),
+        full_name: patient_name.trim(),
+        phone: patient_phone.trim(),
+        role: "PATIENT",
+      },
+    });
+
+    if (createError || !newUser.user) {
+      return NextResponse.json(
+        { error: "Erro ao processar cadastro. Tente novamente." },
+        { status: 500 }
+      );
+    }
+    patientId = newUser.user.id;
+  }
+
   const { data: appointment, error } = await supabase
     .from("appointments")
     .insert({
-      service_id,
+      patient_id: patientId,
       date,
       start_time,
       end_time,
-      patient_name: patient_name.trim(),
-      patient_email: patient_email.trim().toLowerCase(),
-      patient_phone: patient_phone.trim(),
+      type: appointmentType,
+      status: "PENDING",
       notes: notes?.trim() || null,
-      status: "pending",
     })
     .select()
     .single();
 
   if (error) {
+    if (error.code === "23505") {
+      return NextResponse.json(
+        { error: "Este horario ja esta ocupado. Por favor, escolha outro horario." },
+        { status: 409 }
+      );
+    }
     return NextResponse.json(
       { error: "Erro ao criar agendamento. Tente novamente." },
       { status: 500 }

@@ -1,47 +1,61 @@
 # Renan Martins Nutricionista
 
 ## Overview
-Platform for nutritionist Renan Martins with appointment scheduling, institutional website, and admin dashboard.
+Platform for nutritionist Renan Martins with appointment scheduling, institutional website, admin dashboard, and future MageBot chatbot.
 
 ## Architecture
 - **Framework**: Next.js 14 (App Router) + TypeScript
 - **Styling**: Tailwind CSS + Shadcn/UI components
-- **Auth**: Supabase Auth (signInWithPassword, signUp)
-- **Database**: Supabase (PostgreSQL) - tables: services, time_slots, appointments, profiles
-- **Route Protection**: Middleware using @supabase/ssr
+- **Auth**: Supabase Auth (signInWithPassword, signUp) with role-based access (ADMIN/PATIENT)
+- **Database**: Supabase (PostgreSQL) with RLS policies
+- **Route Protection**: Middleware using @supabase/ssr with role-based routing
 
 ## Database (Supabase)
-Tables created via SQL in Supabase Dashboard (see /api/setup for SQL):
-- `services` - Consultation types (name, description, duration_minutes, price in cents, icon, is_active)
-- `time_slots` - Weekly available slots (day_of_week 0-6, start_time, end_time, is_active)
-- `appointments` - Booked appointments (service_id, date, start/end_time, status, patient info)
-- `profiles` - User profiles linked to Supabase Auth (id, email, name, phone, role)
+Migrations in `supabase/migrations/` (10 files). Seed data in `supabase/seed.sql`.
+Run SQL via Supabase Dashboard SQL Editor (or use `/setup` page to copy SQL).
 
-RLS policies: services/time_slots readable by all, appointments insertable by all, viewable/updatable by authenticated users.
+### Tables
+- `profiles` - Extends auth.users: role (ENUM: ADMIN/PATIENT), full_name, phone, cpf (UNIQUE), date_of_birth, avatar_url, is_active. Auto-created via `handle_new_user()` trigger.
+- `appointments` - patient_id (FK profiles), date, start_time, end_time, type (ENUM: FIRST_VISIT/RETURN), status (ENUM: PENDING/CONFIRMED/CANCELLED/COMPLETED/NO_SHOW), notes, return_suggested_date. UNIQUE(date, start_time).
+- `schedule_config` - admin_id, day_of_week (0-6), start_time, end_time, slot_duration_min (default 50), break_duration_min (default 10), is_active. UNIQUE(admin_id, day_of_week).
+- `blocked_slots` - admin_id, date, start_time, end_time, all_day, reason.
+- `testimonials` - patient_id, content, rating (1-5), is_approved.
+- `site_content` - section, title, content (JSONB), is_active, sort_order. Stores service definitions, hero content, about, contact info.
+- `notifications` - user_id, type (ENUM), title, message, is_read, appointment_id.
+- `chatbot_sessions` - user_id, session_token, current_state, context (JSONB), messages (JSONB[]).
+
+### RLS Policies
+- Patients see only their own data (profiles, appointments, notifications)
+- Admin (is_admin() helper function) sees everything
+- site_content (active) and testimonials (approved) are public
+- schedule_config and blocked_slots visible to authenticated users
+- Chatbot sessions: public create, owner read/update
+
+### Enums
+user_role, appointment_type, appointment_status, notification_type
 
 ## Pages (Next.js App Router)
-- `/` - Landing page (hero, about, services, testimonials, contact)
-- `/agendar` - Multi-step booking flow (service > date/time > patient info > confirmation)
+- `/` - Landing page (hero, about, services from site_content, testimonials, contact)
+- `/agendar` - Multi-step booking (service > date/time from schedule_config > patient info > confirmation)
 - `/login` - Login page (Supabase Auth)
-- `/cadastro` - Patient registration page
-- `/admin` - Admin dashboard (stats, appointment management with tabs: today/upcoming/all)
-- `/paciente` - Patient dashboard (view own appointments)
-- `/setup` - Database setup helper page
+- `/cadastro` - Patient registration
+- `/admin` - Admin dashboard (stats, appointment management, role-gated)
+- `/paciente` - Patient dashboard (own appointments, role-gated)
+- `/setup` - Database setup helper (copy SQL for Supabase)
+
+## API Routes
+- `GET /api/setup` - Returns combined migration + seed SQL
+- `POST /api/appointments` - Server-side booking with validation, double-booking prevention, auto-creates patient profile
+- `PATCH /api/appointments/[id]` - Admin-only status update with role verification
 
 ## Key Files
-- `src/app/page.tsx` - Landing page
-- `src/app/(auth)/login/page.tsx` - Login
-- `src/app/(auth)/cadastro/page.tsx` - Registration
-- `src/app/(public)/agendar/page.tsx` - Booking flow
-- `src/app/(dashboard)/admin/page.tsx` - Admin dashboard
-- `src/app/(dashboard)/paciente/page.tsx` - Patient dashboard
-- `src/app/api/setup/route.ts` - Database setup API (GET for SQL, POST to attempt auto-setup)
-- `src/app/api/seed/route.ts` - Seed data API
-- `src/lib/supabase/client.ts` - Browser Supabase client
-- `src/lib/supabase/server.ts` - Server Supabase client
-- `src/lib/supabase/middleware.ts` - Auth middleware helper
-- `src/middleware.ts` - Next.js middleware (route protection)
-- `src/lib/types/index.ts` - TypeScript types
+- `supabase/migrations/` - 10 migration files (enums, tables, RLS)
+- `supabase/seed.sql` - Initial site_content and testimonials
+- `src/lib/types/database.ts` - Full TypeScript types for all tables, inserts, updates, and Database interface
+- `src/lib/types/index.ts` - Re-exports from database.ts
+- `src/lib/supabase/client.ts` - Typed browser Supabase client
+- `src/lib/supabase/server.ts` - Typed server Supabase client + service role client
+- `src/lib/supabase/middleware.ts` - Auth + role-based routing middleware
 - `src/components/ui/` - Shadcn UI components
 - `src/components/site/` - Landing page sections
 

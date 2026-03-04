@@ -607,6 +607,10 @@ body {
   width: 1px;
 }
 
+.w-\[160px\] {
+  width: 160px;
+}
+
 .min-w-0 {
   min-width: 0;
 }
@@ -684,6 +688,14 @@ body {
 
 .resize-none {
   resize: none;
+}
+
+.list-inside {
+  list-style-position: inside;
+}
+
+.list-decimal {
+  list-style-type: decimal;
 }
 
 .grid-cols-2 {
@@ -1057,6 +1069,10 @@ body {
 
 .text-center {
   text-align: center;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
 }
 
 .text-2xl {

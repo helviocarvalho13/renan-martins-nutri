@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { createClient } from "@supabase/supabase-js";
+import { createServerSupabaseClient, createServiceRoleClient } from "@/lib/supabase/server";
+import type { AppointmentStatus } from "@/lib/types";
 
 export async function PATCH(
   request: NextRequest,
@@ -17,14 +17,14 @@ export async function PATCH(
     return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
   }
 
-  if (user.user_metadata?.role !== "admin") {
+  if (user.user_metadata?.role !== "ADMIN" && user.user_metadata?.role !== "admin") {
     return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
   }
 
   const body = await request.json();
   const { status } = body;
 
-  const validStatuses = ["pending", "confirmed", "cancelled", "completed"];
+  const validStatuses: AppointmentStatus[] = ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED", "NO_SHOW"];
   if (!status || !validStatuses.includes(status)) {
     return NextResponse.json(
       { error: "Status invalido" },
@@ -32,10 +32,7 @@ export async function PATCH(
     );
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createServiceRoleClient();
 
   const { data, error } = await supabase
     .from("appointments")

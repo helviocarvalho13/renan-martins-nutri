@@ -26,29 +26,29 @@ import {
   Calendar,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import type { Appointment, Service } from "@/lib/types";
+import type { Appointment, AppointmentWithProfile, Profile } from "@/lib/types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  pending: { label: "Pendente", variant: "outline" },
-  confirmed: { label: "Confirmado", variant: "default" },
-  cancelled: { label: "Cancelado", variant: "destructive" },
-  completed: { label: "Concluido", variant: "secondary" },
+  PENDING: { label: "Pendente", variant: "outline" },
+  CONFIRMED: { label: "Confirmado", variant: "default" },
+  CANCELLED: { label: "Cancelado", variant: "destructive" },
+  COMPLETED: { label: "Concluido", variant: "secondary" },
+  NO_SHOW: { label: "Nao compareceu", variant: "destructive" },
 };
 
 function AppointmentRow({
   appointment,
-  services,
+  profile,
   onStatusChange,
 }: {
   appointment: Appointment;
-  services: Service[];
+  profile?: Profile;
   onStatusChange: () => void;
 }) {
   const [updating, setUpdating] = useState(false);
-  const service = services.find((s) => s.id === appointment.service_id);
-  const status = statusMap[appointment.status] || statusMap.pending;
+  const status = statusMap[appointment.status] || statusMap.PENDING;
 
   const handleStatusChange = async (newStatus: string) => {
     setUpdating(true);
@@ -68,6 +68,8 @@ function AppointmentRow({
     onStatusChange();
   };
 
+  const patientName = profile?.full_name || "Paciente";
+
   return (
     <div
       className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border rounded-md"
@@ -75,8 +77,9 @@ function AppointmentRow({
     >
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-medium text-sm truncate">{appointment.patient_name}</span>
+          <span className="font-medium text-sm truncate">{patientName}</span>
           <Badge variant={status.variant}>{status.label}</Badge>
+          <Badge variant="secondary" className="text-xs">{appointment.type === "FIRST_VISIT" ? "1a Consulta" : "Retorno"}</Badge>
         </div>
         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
@@ -87,14 +90,10 @@ function AppointmentRow({
             <Clock className="w-3 h-3" />
             {appointment.start_time.slice(0, 5)} - {appointment.end_time.slice(0, 5)}
           </span>
-          {service && (
-            <span className="flex items-center gap-1">
-              <Leaf className="w-3 h-3" />
-              {service.name}
-            </span>
-          )}
         </div>
-        <p className="text-xs text-muted-foreground">{appointment.patient_email} | {appointment.patient_phone}</p>
+        {profile?.phone && (
+          <p className="text-xs text-muted-foreground">{profile.phone}</p>
+        )}
         {appointment.notes && (
           <p className="text-xs text-muted-foreground italic">Obs: {appointment.notes}</p>
         )}
@@ -105,14 +104,15 @@ function AppointmentRow({
         onValueChange={handleStatusChange}
         disabled={updating}
       >
-        <SelectTrigger className="w-[140px]" data-testid={`select-status-${appointment.id}`}>
+        <SelectTrigger className="w-[160px]" data-testid={`select-status-${appointment.id}`}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="pending">Pendente</SelectItem>
-          <SelectItem value="confirmed">Confirmado</SelectItem>
-          <SelectItem value="completed">Concluido</SelectItem>
-          <SelectItem value="cancelled">Cancelado</SelectItem>
+          <SelectItem value="PENDING">Pendente</SelectItem>
+          <SelectItem value="CONFIRMED">Confirmado</SelectItem>
+          <SelectItem value="COMPLETED">Concluido</SelectItem>
+          <SelectItem value="CANCELLED">Cancelado</SelectItem>
+          <SelectItem value="NO_SHOW">Nao compareceu</SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -122,7 +122,7 @@ function AppointmentRow({
 export default function AdminDashboard() {
   const router = useRouter();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
+  const [profiles, setProfiles] = useState<Record<string, Profile>>({});
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -140,12 +140,23 @@ export default function AdminDashboard() {
       .from("appointments")
       .select("*")
       .order("created_at", { ascending: false });
-    const { data: svcs } = await supabase
-      .from("services")
-      .select("*");
 
-    setAppointments(appts || []);
-    setServices(svcs || []);
+    const appointmentsList = (appts || []) as Appointment[];
+    setAppointments(appointmentsList);
+
+    const patientIds = [...new Set(appointmentsList.map((a) => a.patient_id))];
+    if (patientIds.length > 0) {
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("*")
+        .in("id", patientIds);
+      const profileMap: Record<string, Profile> = {};
+      (profs || []).forEach((p) => {
+        profileMap[(p as Profile).id] = p as Profile;
+      });
+      setProfiles(profileMap);
+    }
+
     setLoading(false);
   };
 
@@ -161,10 +172,10 @@ export default function AdminDashboard() {
 
   const todayStr = format(new Date(), "yyyy-MM-dd");
   const todayAppointments = appointments.filter((a) => a.date === todayStr);
-  const pendingCount = appointments.filter((a) => a.status === "pending").length;
-  const confirmedCount = appointments.filter((a) => a.status === "confirmed").length;
+  const pendingCount = appointments.filter((a) => a.status === "PENDING").length;
+  const confirmedCount = appointments.filter((a) => a.status === "CONFIRMED").length;
   const upcomingAppointments = appointments.filter(
-    (a) => a.date >= todayStr && (a.status === "pending" || a.status === "confirmed")
+    (a) => a.date >= todayStr && (a.status === "PENDING" || a.status === "CONFIRMED")
   );
 
   const stats = [
@@ -261,7 +272,7 @@ export default function AdminDashboard() {
             ) : (
               <div className="space-y-3">
                 {todayAppointments.map((a) => (
-                  <AppointmentRow key={a.id} appointment={a} services={services} onStatusChange={loadData} />
+                  <AppointmentRow key={a.id} appointment={a} profile={profiles[a.patient_id]} onStatusChange={loadData} />
                 ))}
               </div>
             )}
@@ -278,7 +289,7 @@ export default function AdminDashboard() {
             ) : (
               <div className="space-y-3">
                 {upcomingAppointments.map((a) => (
-                  <AppointmentRow key={a.id} appointment={a} services={services} onStatusChange={loadData} />
+                  <AppointmentRow key={a.id} appointment={a} profile={profiles[a.patient_id]} onStatusChange={loadData} />
                 ))}
               </div>
             )}
@@ -295,7 +306,7 @@ export default function AdminDashboard() {
             ) : (
               <div className="space-y-3">
                 {appointments.map((a) => (
-                  <AppointmentRow key={a.id} appointment={a} services={services} onStatusChange={loadData} />
+                  <AppointmentRow key={a.id} appointment={a} profile={profiles[a.patient_id]} onStatusChange={loadData} />
                 ))}
               </div>
             )}
