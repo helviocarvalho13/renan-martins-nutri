@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ import { Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -37,8 +35,7 @@ export default function LoginPage() {
 
     const role = data.user?.user_metadata?.role;
     const destination = role === "ADMIN" || role === "admin" ? "/admin" : "/paciente";
-    router.push(destination);
-    router.refresh();
+    window.location.href = destination;
   };
 
   return (
