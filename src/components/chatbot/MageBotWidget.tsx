@@ -1,7 +1,6 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useMageBot } from "@/hooks/useMageBot";
 import ChatWindow from "./ChatWindow";
 
@@ -12,6 +11,7 @@ export default function MageBotWidget() {
     isTyping,
     isOpen,
     unreadCount,
+    isPasswordMode,
     sendMessage,
     toggleOpen,
     setOpen,
@@ -24,6 +24,7 @@ export default function MageBotWidget() {
           messages={messages}
           quickReplies={quickReplies}
           isTyping={isTyping}
+          isPasswordMode={isPasswordMode}
           onSend={sendMessage}
           onClose={() => setOpen(false)}
         />
@@ -31,14 +32,14 @@ export default function MageBotWidget() {
 
       <button
         onClick={toggleOpen}
-        className="fixed bottom-4 right-4 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+        className="fixed bottom-12 right-4 z-50 w-14 h-14 rounded-full bg-neutral-900 text-white shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
         data-testid="button-magebot-widget"
         aria-label="Abrir chat"
       >
         <MessageCircle className="w-6 h-6" />
         {unreadCount > 0 && (
           <span
-            className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold flex items-center justify-center"
+            className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center"
             data-testid="badge-unread-count"
           >
             {unreadCount > 9 ? "9+" : unreadCount}

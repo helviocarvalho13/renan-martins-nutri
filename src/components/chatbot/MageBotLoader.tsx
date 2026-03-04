@@ -7,6 +7,16 @@ const MageBotWidget = dynamic(
   { ssr: false }
 );
 
+const PoweredByBanner = dynamic(
+  () => import("@/components/site/PoweredByBanner"),
+  { ssr: false }
+);
+
 export default function MageBotLoader() {
-  return <MageBotWidget />;
+  return (
+    <>
+      <MageBotWidget />
+      <PoweredByBanner />
+    </>
+  );
 }

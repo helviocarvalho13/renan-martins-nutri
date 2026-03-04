@@ -18,7 +18,6 @@ export function Navbar() {
   const navLinks = [
     { label: "Sobre", href: "#sobre" },
     { label: "Servicos", href: "#servicos" },
-    { label: "Depoimentos", href: "#depoimentos" },
     { label: "Contato", href: "#contato" },
   ];
 
@@ -60,15 +59,6 @@ export function Navbar() {
                 data-testid="button-admin-login"
               >
                 Login
-              </Button>
-            </Link>
-            <Link href="/agendar">
-              <Button
-                size="sm"
-                className="bg-neutral-900 text-white hover:bg-neutral-800 rounded-full px-5"
-                data-testid="button-schedule-cta"
-              >
-                Agendar
               </Button>
             </Link>
             <Button

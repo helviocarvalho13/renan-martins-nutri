@@ -9,6 +9,7 @@ interface ChatWindowProps {
   messages: ChatMessage[];
   quickReplies: QuickReply[];
   isTyping: boolean;
+  isPasswordMode?: boolean;
   onSend: (text: string) => void;
   onClose: () => void;
 }
@@ -60,6 +61,7 @@ export default function ChatWindow({
   messages,
   quickReplies,
   isTyping,
+  isPasswordMode,
   onSend,
   onClose,
 }: ChatWindowProps) {
@@ -84,23 +86,23 @@ export default function ChatWindow({
 
   return (
     <div
-      className="fixed bottom-20 right-4 z-50 flex flex-col bg-background border border-border rounded-md shadow-lg w-[calc(100vw-2rem)] sm:w-[380px] h-[520px] max-h-[80vh]"
+      className="fixed bottom-28 right-4 z-50 flex flex-col bg-background border border-border rounded-md shadow-lg w-[calc(100vw-2rem)] sm:w-[380px] h-[520px] max-h-[70vh]"
       data-testid="chat-window"
     >
-      <div className="flex items-center justify-between gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-t-md">
+      <div className="flex items-center justify-between gap-2 px-4 py-3 bg-neutral-900 text-white rounded-t-md">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-primary-foreground/20 flex items-center justify-center text-sm font-bold">
+          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">
             M
           </div>
           <div>
             <h3 className="text-sm font-semibold" data-testid="text-chatbot-name">MageBot</h3>
-            <p className="text-[11px] text-primary-foreground/70">Assistente Virtual</p>
+            <p className="text-[11px] text-white/70">Assistente Virtual</p>
           </div>
         </div>
         <Button
           size="icon"
           variant="ghost"
-          className="text-primary-foreground hover:bg-primary-foreground/10"
+          className="text-white hover:bg-white/10"
           onClick={onClose}
           data-testid="button-close-chat"
         >
@@ -139,10 +141,10 @@ export default function ChatWindow({
       >
         <input
           ref={inputRef}
-          type="text"
+          type={isPasswordMode ? "password" : "text"}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Digite sua mensagem..."
+          placeholder={isPasswordMode ? "Digite sua senha..." : "Digite sua mensagem..."}
           className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none h-9 px-3 border border-input rounded-md"
           data-testid="input-chat-message"
         />

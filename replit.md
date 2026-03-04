@@ -44,7 +44,7 @@ Admin user: admin@admin.com / 123456 (created via `/api/seed-admin` POST endpoin
 user_role, appointment_type, appointment_status, notification_type
 
 ## Pages (Next.js App Router)
-- `/` - Clean landing page (hero with bg image, about, services grid, testimonials, contact, footer)
+- `/` - Clean landing page (hero with bg image, about, services grid, contact, footer — no testimonials)
 - `/agendar` - 3-step booking: Data e Horário → Seus Dados → Confirmação (no service selection step)
 - `/agenda` - Public calendar showing availability per day (available/limited/unavailable) without patient data
 - `/login` - Login with email/password, role-based redirect (ADMIN→/admin, PATIENT→/paciente)
@@ -83,12 +83,18 @@ user_role, appointment_type, appointment_status, notification_type
 
 ## MageBot Chatbot
 - Floating widget (bottom-right) on ALL pages via root layout dynamic import
-- State machine engine: GREETING → MENU → AUTH_CHECK → SELECT_TYPE → SELECT_DATE → VALIDATE_DATE → SHOW_SLOTS → CONFIRM → BOOKING → ANYTHING_ELSE → FAREWELL
+- State machine engine: GREETING → MENU → AUTH_CHECK → LOGIN_EMAIL → LOGIN_PASSWORD → SELECT_TYPE → SELECT_DATE → VALIDATE_DATE → SHOW_SLOTS → CONFIRM → BOOKING → ANYTHING_ELSE → FAREWELL
+- In-chat login flow: collects email → password (masked input) → authenticates via Supabase → continues to booking
 - PT-BR date parser: handles "amanha", "proxima segunda", "dia 15", "15/03", "15 de marco", etc.
-- Conversational booking flow: checks auth → selects type → parses date → fetches slots → confirms → books via /api/patient/book
+- Conversational booking flow: checks auth → in-chat login if needed → selects type → parses date → fetches slots → confirms → books via /api/patient/book
 - Menu options: Agendar consulta, Ver agendamentos, Servicos, Contato
 - Session persistence: sessionStorage for guests
 - Files: src/lib/chatbot/ (engine.ts, dateParser.ts, types.ts), src/hooks/useMageBot.ts, src/components/chatbot/ (MageBotWidget.tsx, ChatWindow.tsx, MageBotLoader.tsx)
+
+## Luna Tecnologia Badge
+- PoweredByBanner component: fixed bottom-right on desktop, fixed mid-left vertical on mobile
+- Loaded via MageBotLoader (dynamic import, ssr: false)
+- Image: public/assets/luna-powered-by.png
 
 ## Auth Pages Design
 All auth pages (login, register, forgot-password, update-password) use split-screen layout:

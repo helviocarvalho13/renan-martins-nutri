@@ -1,3 +1,4 @@
 {
-  "/(dashboard)/paciente/page": "app/(dashboard)/paciente/page.js"
+  "/(public)/agendar/page": "app/(public)/agendar/page.js",
+  "/page": "app/page.js"
 }

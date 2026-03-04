@@ -3,6 +3,7 @@ export interface ChatMessage {
   role: "bot" | "user";
   text: string;
   timestamp: Date;
+  isPassword?: boolean;
 }
 
 export interface QuickReply {
@@ -19,6 +20,8 @@ export type ChatStateKey =
   | "GREETING"
   | "MENU"
   | "AUTH_CHECK"
+  | "LOGIN_EMAIL"
+  | "LOGIN_PASSWORD"
   | "SELECT_TYPE"
   | "SELECT_DATE"
   | "VALIDATE_DATE"
@@ -36,6 +39,7 @@ export interface ChatContext {
   isAuthenticated: boolean;
   userId: string | null;
   userName: string | null;
+  loginEmail: string | null;
   appointmentType: "FIRST_VISIT" | "RETURN" | null;
   selectedDate: string | null;
   selectedSlot: Slot | null;
@@ -54,6 +58,7 @@ export function createInitialContext(): ChatContext {
     isAuthenticated: false,
     userId: null,
     userName: null,
+    loginEmail: null,
     appointmentType: null,
     selectedDate: null,
     selectedSlot: null,

@@ -4,7 +4,14 @@
     "files": [
       "static/chunks/node_modules_37dc2712._.js",
       "static/chunks/src_6bef4f0e._.js",
-      "static/chunks/src_components_chatbot_MageBotWidget_tsx_224519f3._.js"
+      "static/chunks/src_components_chatbot_MageBotWidget_tsx_5ac7b6ae._.js"
+    ]
+  },
+  "[project]/src/components/site/PoweredByBanner.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/src/components/site/PoweredByBanner.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/src_components_site_PoweredByBanner_tsx_f810de1e._.js",
+      "static/chunks/src_components_site_PoweredByBanner_tsx_5ac7b6ae._.js"
     ]
   }
 }

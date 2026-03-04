@@ -1,7 +1,6 @@
-import type { ChatContext, EngineResponse, QuickReply, Slot, ChatStateKey } from "./types";
-import { createInitialContext } from "./types";
+import type { ChatContext, EngineResponse, QuickReply, Slot } from "./types";
 import { parseDatePtBr, formatDatePtBr, formatDateISO } from "./dateParser";
-import { startOfDay, addDays, format } from "date-fns";
+import { startOfDay, addDays } from "date-fns";
 
 async function fetchAvailableSlots(date: string): Promise<Slot[]> {
   try {
@@ -65,7 +64,7 @@ export async function processMessage(
   if (trimmed === "menu" || trimmed === "voltar" || trimmed === "inicio") {
     return {
       messages: ["Como posso te ajudar?"],
-      context: { ...context, state: "MENU" },
+      context: { ...context, state: "MENU", loginEmail: null },
       quickReplies: MENU_REPLIES,
     };
   }
@@ -79,6 +78,12 @@ export async function processMessage(
 
     case "AUTH_CHECK":
       return handleAuthCheck(context);
+
+    case "LOGIN_EMAIL":
+      return handleLoginEmail(input.trim(), context);
+
+    case "LOGIN_PASSWORD":
+      return handleLoginPassword(context);
 
     case "SELECT_TYPE":
       return handleSelectType(trimmed, context);
@@ -163,11 +168,11 @@ function handleAuthCheck(context: ChatContext): EngineResponse {
     return {
       messages: [
         "Para agendar uma consulta, voce precisa estar logado.",
-        "Por favor, faca login ou crie uma conta e depois volte aqui para agendar.",
+        "Deseja fazer login agora pelo chat?",
       ],
-      context: { ...context, state: "ANYTHING_ELSE" },
+      context: { ...context, state: "LOGIN_EMAIL" },
       quickReplies: [
-        { label: "Fazer login", value: "login" },
+        { label: "Sim, fazer login", value: "sim_login" },
         { label: "Voltar ao menu", value: "menu" },
       ],
     };
@@ -177,6 +182,60 @@ function handleAuthCheck(context: ChatContext): EngineResponse {
     messages: ["Qual tipo de consulta voce deseja agendar?"],
     context: { ...context, state: "SELECT_TYPE" },
     quickReplies: TYPE_REPLIES,
+  };
+}
+
+function handleLoginEmail(input: string, context: ChatContext): EngineResponse {
+  if (input.toLowerCase() === "sim_login" || input.toLowerCase() === "sim" || input.toLowerCase().includes("login")) {
+    return {
+      messages: ["Por favor, digite seu email:"],
+      context: { ...context, state: "LOGIN_EMAIL", loginEmail: null },
+      quickReplies: [],
+    };
+  }
+
+  if (input.includes("@") && input.includes(".")) {
+    return {
+      messages: ["Agora digite sua senha:"],
+      context: { ...context, state: "LOGIN_PASSWORD", loginEmail: input },
+      quickReplies: [],
+    };
+  }
+
+  return {
+    messages: ["Por favor, digite um email valido:"],
+    context: { ...context, state: "LOGIN_EMAIL" },
+    quickReplies: [{ label: "Voltar ao menu", value: "menu" }],
+  };
+}
+
+function handleLoginPassword(_context: ChatContext): EngineResponse {
+  return {
+    messages: ["Verificando suas credenciais..."],
+    context: _context,
+    quickReplies: [],
+  };
+}
+
+export function getLoginSuccessResponse(context: ChatContext): EngineResponse {
+  return {
+    messages: [
+      `Login realizado com sucesso! Bem-vindo(a), ${context.userName || ""}!`,
+      "Qual tipo de consulta voce deseja agendar?",
+    ],
+    context: { ...context, state: "SELECT_TYPE", loginEmail: null },
+    quickReplies: TYPE_REPLIES,
+  };
+}
+
+export function getLoginFailureResponse(context: ChatContext, error?: string): EngineResponse {
+  return {
+    messages: [
+      error || "Email ou senha incorretos. Tente novamente.",
+      "Digite seu email:",
+    ],
+    context: { ...context, state: "LOGIN_EMAIL", loginEmail: null },
+    quickReplies: [{ label: "Voltar ao menu", value: "menu" }],
   };
 }
 
@@ -455,15 +514,14 @@ function handleAnythingElse(input: string, context: ChatContext): EngineResponse
     };
   }
 
-  if (input === "login") {
+  if (input === "login" || input.includes("fazer login")) {
     return {
       messages: [
-        "Para fazer login, acesse a pagina de login clicando no botao 'Entrar' no topo do site.",
-        "Apos o login, volte aqui e eu poderei te ajudar a agendar sua consulta!",
-        "Posso ajudar com mais alguma coisa?",
+        "Vamos fazer seu login!",
+        "Por favor, digite seu email:",
       ],
-      context: { ...context, state: "ANYTHING_ELSE" },
-      quickReplies: ANYTHING_ELSE_REPLIES,
+      context: { ...context, state: "LOGIN_EMAIL", loginEmail: null },
+      quickReplies: [],
     };
   }
 
@@ -485,11 +543,11 @@ function handleViewAppointments(context: ChatContext): EngineResponse {
     return {
       messages: [
         "Para ver seus agendamentos, voce precisa estar logado.",
-        "Acesse a area do paciente para ver suas consultas.",
+        "Deseja fazer login agora?",
       ],
-      context: { ...context, state: "ANYTHING_ELSE" },
+      context: { ...context, state: "LOGIN_EMAIL" },
       quickReplies: [
-        { label: "Fazer login", value: "login" },
+        { label: "Sim, fazer login", value: "sim_login" },
         { label: "Voltar ao menu", value: "menu" },
       ],
     };

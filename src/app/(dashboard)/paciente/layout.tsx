@@ -30,7 +30,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
     <div className="min-h-screen bg-neutral-50">
       <header className="sticky top-0 z-40 bg-white border-b border-neutral-200">
         <div className="flex items-center justify-between gap-3 h-16 px-4 lg:px-6 max-w-5xl mx-auto w-full">
-          <Link href="/paciente" className="flex items-center gap-3" data-testid="link-patient-home">
+          <Link href="/" className="flex items-center gap-3" data-testid="link-patient-home">
             <Image
               src="/images/team-mago.jpg"
               alt="Team Mago"

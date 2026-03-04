@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { ChatMessage, ChatContext, QuickReply } from "@/lib/chatbot/types";
 import { createInitialContext } from "@/lib/chatbot/types";
-import { processMessage, getGreetingResponse } from "@/lib/chatbot/engine";
+import { processMessage, getGreetingResponse, getLoginSuccessResponse, getLoginFailureResponse } from "@/lib/chatbot/engine";
 import { createClient } from "@/lib/supabase/client";
 
 function generateId(): string {
@@ -19,6 +19,7 @@ interface UseMageBotReturn {
   isTyping: boolean;
   isOpen: boolean;
   unreadCount: number;
+  isPasswordMode: boolean;
   sendMessage: (text: string) => void;
   toggleOpen: () => void;
   setOpen: (open: boolean) => void;
@@ -170,16 +171,59 @@ export function useMageBot(): UseMageBotReturn {
       const trimmed = text.trim();
       if (!trimmed) return;
 
+      const isPasswordInput = context.state === "LOGIN_PASSWORD";
+
       const userMsg: ChatMessage = {
         id: generateId(),
         role: "user",
-        text: trimmed,
+        text: isPasswordInput ? "••••••••" : trimmed,
         timestamp: new Date(),
+        isPassword: isPasswordInput,
       };
 
       setMessages((prev) => [...prev, userMsg]);
       setQuickReplies([]);
       setIsTyping(true);
+
+      if (isPasswordInput && context.loginEmail) {
+        try {
+          const supabase = createClient();
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: context.loginEmail,
+            password: trimmed,
+          });
+
+          if (error || !data.user) {
+            const failResponse = getLoginFailureResponse(context, error?.message);
+            addBotMessages(failResponse.messages, failResponse.context, failResponse.quickReplies);
+            return;
+          }
+
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("full_name")
+            .eq("id", data.user.id)
+            .single();
+
+          const profileName = (profile as { full_name: string } | null)?.full_name;
+
+          const updatedContext: ChatContext = {
+            ...context,
+            isAuthenticated: true,
+            userId: data.user.id,
+            userName: profileName || data.user.email?.split("@")[0] || null,
+            loginEmail: null,
+          };
+
+          const successResponse = getLoginSuccessResponse(updatedContext);
+          addBotMessages(successResponse.messages, successResponse.context, successResponse.quickReplies);
+          return;
+        } catch {
+          const failResponse = getLoginFailureResponse(context, "Erro de conexao. Tente novamente.");
+          addBotMessages(failResponse.messages, failResponse.context, failResponse.quickReplies);
+          return;
+        }
+      }
 
       try {
         const response = await processMessage(trimmed, context);
@@ -201,6 +245,7 @@ export function useMageBot(): UseMageBotReturn {
     isTyping,
     isOpen,
     unreadCount,
+    isPasswordMode: context.state === "LOGIN_PASSWORD",
     sendMessage,
     toggleOpen,
     setOpen,
