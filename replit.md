@@ -58,7 +58,10 @@ user_role, appointment_type, appointment_status, notification_type
 - `/admin/pacientes/[id]` - Individual patient profile + appointment history
 - `/admin/disponibilidade` - Schedule config per weekday + blocked slots management
 - `/admin/site` - Site content editor + testimonials management (approve/reject)
-- `/paciente` - Patient dashboard (role-gated)
+- `/paciente` - Patient dashboard with next appointment, return suggestions, quick actions
+- `/paciente/agendar` - 4-step booking wizard: Tipo → Data → Horário → Confirmação
+- `/paciente/consultas` - Upcoming appointments (with cancel) + history + return suggestions
+- `/paciente/perfil` - Profile editing (name, phone, CPF, date of birth)
 - `/setup` - Database setup helper (copy SQL for Supabase)
 
 ## Admin Dashboard
@@ -67,6 +70,17 @@ user_role, appointment_type, appointment_status, notification_type
 - Sidebar items: Dashboard, Agenda, Pacientes, Disponibilidade
 - Uses Supabase Realtime for live appointment and notification updates
 - Color coding: blue=confirmed, yellow=pending, red=cancelled, green=completed, gray=no-show
+
+## Patient Area
+- Layout: fixed sidebar (desktop) / sheet drawer (mobile) matching admin style with Team Mago logo
+- Sidebar items: Painel, Agendar, Consultas, Perfil
+- Business rules:
+  - 24h minimum advance for booking
+  - 12h minimum advance for cancellation
+  - Max 1 first visit + 1 return with PENDING/CONFIRMED status per patient
+  - Returns only available after a COMPLETED appointment with return_suggested_date set
+- Booking wizard: 4-step flow (Tipo → Data → Horário → Confirmação)
+- APIs use service role client for database operations, server client for auth
 
 ## Auth Pages Design
 All auth pages (login, register, forgot-password, update-password) use split-screen layout:
@@ -81,6 +95,8 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 - `GET /api/available-slots?date=YYYY-MM-DD` - Public API returning available time slots (bypasses RLS via service role)
 - `POST /api/appointments` - Server-side booking with validation, double-booking prevention
 - `PATCH /api/appointments/[id]` - Admin-only status update
+- `POST /api/patient/book` - Authenticated patient booking (24h advance, max 1+1, return requires completed)
+- `POST /api/patient/cancel` - Authenticated patient cancellation (12h advance)
 
 ## Key Files
 - `db/` - Versioned SQL scripts (00001-00011 + seed.sql + README.md)
@@ -91,6 +107,7 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 - `src/lib/supabase/server.ts` - Typed server Supabase client
 - `src/lib/supabase/middleware.ts` - Auth + role-based routing middleware
 - `src/hooks/useAuth.ts` - Client-side auth hook
+- `src/hooks/useAvailableSlots.ts` - Hook to fetch available time slots for a date
 - `src/components/site/` - Landing page sections (clean/minimal design)
 
 ## Environment Variables

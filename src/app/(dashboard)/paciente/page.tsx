@@ -3,28 +3,28 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Leaf,
-  LogOut,
   CalendarDays,
+  CalendarPlus,
   Clock,
-  Calendar,
-  Plus,
+  CalendarCheck,
+  ArrowRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Appointment } from "@/lib/types";
 import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  PENDING: { label: "Pendente", variant: "outline" },
-  CONFIRMED: { label: "Confirmado", variant: "default" },
-  CANCELLED: { label: "Cancelado", variant: "destructive" },
-  COMPLETED: { label: "Concluido", variant: "secondary" },
-  NO_SHOW: { label: "Nao compareceu", variant: "destructive" },
+const statusMap: Record<string, { label: string; class: string }> = {
+  CONFIRMED: { label: "Confirmada", class: "bg-blue-100 text-blue-700" },
+  PENDING: { label: "Pendente", class: "bg-yellow-100 text-yellow-700" },
+  CANCELLED: { label: "Cancelada", class: "bg-red-100 text-red-700" },
+  COMPLETED: { label: "Concluida", class: "bg-green-100 text-green-700" },
+  NO_SHOW: { label: "Nao compareceu", class: "bg-neutral-200 text-neutral-600" },
 };
 
 export default function PatientDashboard() {
@@ -32,6 +32,7 @@ export default function PatientDashboard() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [returnSuggestion, setReturnSuggestion] = useState<string | null>(null);
 
   const supabase = createClient();
 
@@ -42,101 +43,199 @@ export default function PatientDashboard() {
         router.push("/login");
         return;
       }
-      setUserName(user.user_metadata?.name || user.email || "Paciente");
+      setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Paciente");
 
       const { data: appts } = await supabase
         .from("appointments")
         .select("*")
         .eq("patient_id", user.id)
-        .order("date", { ascending: false });
+        .order("date", { ascending: true });
 
-      setAppointments((appts || []) as Appointment[]);
+      const allAppts = (appts || []) as Appointment[];
+      setAppointments(allAppts);
+
+      const today = new Date().toISOString().split("T")[0];
+      const hasPendingReturn = allAppts.some(
+        (a) =>
+          a.type === "RETURN" &&
+          (a.status === "PENDING" || a.status === "CONFIRMED") &&
+          a.date >= today
+      );
+
+      if (!hasPendingReturn) {
+        const completedWithReturn = allAppts.find(
+          (a) =>
+            a.status === "COMPLETED" &&
+            a.return_suggested_date
+        );
+        if (completedWithReturn) {
+          setReturnSuggestion(completedWithReturn.return_suggested_date);
+        }
+      }
+
       setLoading(false);
     }
     loadData();
   }, []);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
-  };
+  const today = new Date().toISOString().split("T")[0];
+
+  const upcoming = appointments
+    .filter(
+      (a) =>
+        a.date >= today &&
+        (a.status === "PENDING" || a.status === "CONFIRMED")
+    )
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const past = appointments
+    .filter(
+      (a) =>
+        !(a.date >= today && (a.status === "PENDING" || a.status === "CONFIRMED"))
+    )
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 3);
+
+  const nextAppointment = upcoming[0] || null;
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="space-y-3 w-full max-w-md p-4">
-          <Skeleton className="h-8 w-1/2" />
-          <Skeleton className="h-32 w-full" />
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-40 w-full" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Skeleton className="h-28 w-full" />
+          <Skeleton className="h-28 w-full" />
+        </div>
+        <Skeleton className="h-6 w-32" />
+        <div className="space-y-3">
+          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-20 w-full" />
         </div>
       </div>
     );
   }
 
+  const formatTypeLabel = (type: string) =>
+    type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4 h-16">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-md bg-primary flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-primary-foreground" />
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold tracking-tight text-neutral-900" data-testid="text-dashboard-title">
+        Ola, {userName.split(" ")[0]}
+      </h1>
+
+      {nextAppointment && (
+        <Card data-testid="card-next-appointment">
+          <CardContent className="p-6">
+            <p className="text-xs font-medium text-neutral-400 uppercase tracking-wider mb-3">
+              Proxima Consulta
+            </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-lg font-semibold text-neutral-900" data-testid="text-next-type">
+                    {formatTypeLabel(nextAppointment.type)}
+                  </span>
+                  <Badge
+                    className={`${statusMap[nextAppointment.status]?.class || ""} border-0`}
+                    data-testid="badge-next-status"
+                  >
+                    {statusMap[nextAppointment.status]?.label || nextAppointment.status}
+                  </Badge>
+                </div>
+                <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-600">
+                  <span className="flex items-center gap-1.5" data-testid="text-next-date">
+                    <CalendarDays className="w-4 h-4 text-neutral-400" />
+                    {format(new Date(nextAppointment.date + "T00:00:00"), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  </span>
+                  <span className="flex items-center gap-1.5" data-testid="text-next-time">
+                    <Clock className="w-4 h-4 text-neutral-400" />
+                    {nextAppointment.start_time.slice(0, 5)} - {nextAppointment.end_time.slice(0, 5)}
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-sm leading-tight">Minha Area</span>
-                <span className="text-[10px] text-muted-foreground leading-tight">{userName}</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link href="/agendar">
-                <Button size="sm" data-testid="button-new-appointment">
-                  <Plus className="w-4 h-4 mr-1" />
-                  Nova Consulta
+              <Link href="/paciente/consultas" data-testid="link-view-details">
+                <Button variant="outline" size="sm">
+                  Ver detalhes
+                  <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" onClick={handleLogout} data-testid="button-logout">
-                <LogOut className="w-4 h-4 mr-1" />
-                Sair
-              </Button>
             </div>
-          </div>
-        </div>
-      </nav>
+          </CardContent>
+        </Card>
+      )}
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-2xl font-bold tracking-tight mb-6" data-testid="text-patient-title">
-          Minhas Consultas
-        </h1>
-
-        {appointments.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <Calendar className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-              <p className="text-muted-foreground mb-4" data-testid="text-no-appointments">
-                Voce ainda nao tem consultas agendadas.
+      {returnSuggestion && (
+        <Card className="border-blue-200 bg-blue-50" data-testid="card-return-suggestion">
+          <CardContent className="p-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <CalendarCheck className="w-5 h-5 text-blue-600 shrink-0" />
+              <p className="text-sm text-blue-800" data-testid="text-return-suggestion">
+                Retorno sugerido para{" "}
+                {format(new Date(returnSuggestion + "T00:00:00"), "dd/MM/yyyy")}
               </p>
-              <Link href="/agendar">
-                <Button data-testid="button-schedule-first">
-                  <Plus className="w-4 h-4 mr-1" />
-                  Agendar primeira consulta
-                </Button>
-              </Link>
+            </div>
+            <Link href="/paciente/agendar" data-testid="link-schedule-return">
+              <Button size="sm">
+                Agendar retorno
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Link href="/paciente/agendar" data-testid="link-quick-schedule">
+          <Card className="hover-elevate cursor-pointer h-full">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg bg-neutral-900 flex items-center justify-center shrink-0">
+                <CalendarPlus className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-neutral-900">Agendar Consulta</p>
+                <p className="text-xs text-neutral-500 mt-0.5">Marque uma nova consulta</p>
+              </div>
             </CardContent>
           </Card>
-        ) : (
+        </Link>
+        <Link href="/paciente/consultas" data-testid="link-quick-appointments">
+          <Card className="hover-elevate cursor-pointer h-full">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="w-10 h-10 rounded-lg bg-neutral-100 flex items-center justify-center shrink-0">
+                <CalendarDays className="w-5 h-5 text-neutral-700" />
+              </div>
+              <div>
+                <p className="font-semibold text-sm text-neutral-900">Ver Consultas</p>
+                <p className="text-xs text-neutral-500 mt-0.5">Historico e proximas consultas</p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
+
+      {past.length > 0 && (
+        <div>
+          <h2 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3" data-testid="text-history-title">
+            Historico Recente
+          </h2>
           <div className="space-y-3">
-            {appointments.map((a) => {
+            {past.map((a) => {
               const status = statusMap[a.status] || statusMap.PENDING;
               return (
-                <Card key={a.id} data-testid={`card-appointment-${a.id}`}>
+                <Card key={a.id} data-testid={`card-history-${a.id}`}>
                   <CardContent className="p-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-medium text-sm">{a.type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno"}</span>
-                          <Badge variant={status.variant}>{status.label}</Badge>
+                          <span className="font-medium text-sm text-neutral-900">
+                            {formatTypeLabel(a.type)}
+                          </span>
+                          <Badge className={`${status.class} border-0 text-xs`}>
+                            {status.label}
+                          </Badge>
                         </div>
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-500">
                           <span className="flex items-center gap-1">
                             <CalendarDays className="w-3 h-3" />
                             {format(new Date(a.date + "T00:00:00"), "dd/MM/yyyy")}
@@ -153,8 +252,28 @@ export default function PatientDashboard() {
               );
             })}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {upcoming.length === 0 && past.length === 0 && (
+        <Card data-testid="card-empty-state">
+          <CardContent className="p-8 text-center">
+            <CalendarDays className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
+            <p className="text-neutral-600 font-medium mb-1" data-testid="text-empty-title">
+              Nenhuma consulta ainda
+            </p>
+            <p className="text-sm text-neutral-400 mb-4" data-testid="text-empty-description">
+              Agende sua primeira consulta com o nutricionista.
+            </p>
+            <Link href="/paciente/agendar" data-testid="link-schedule-first">
+              <Button>
+                <CalendarPlus className="w-4 h-4 mr-1" />
+                Agendar primeira consulta
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
