@@ -32,6 +32,26 @@ export async function POST(request: Request) {
   }
 
   const supabase = createServiceRoleClient();
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile) {
+    const { error: profileError } = await supabase.from("profiles").insert({
+      id: user.id,
+      role: "PATIENT",
+      full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || null,
+      is_active: true,
+    });
+    if (profileError) {
+      console.error("[patient/book] Profile creation error:", profileError.message);
+      return NextResponse.json({ error: "Erro ao preparar perfil do paciente." }, { status: 500 });
+    }
+  }
+
   const today = new Date().toISOString().split("T")[0];
 
   const { data: futureAppts } = await supabase
