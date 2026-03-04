@@ -149,7 +149,8 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 - **Error Handling**: All Supabase operations wrapped in try/catch with toast feedback. Success/error toasts on all admin and patient operations.
 - **Loading States**: Skeleton screens on all data-loading pages.
 - **HTML Validity**: All Button+Link combinations use `asChild` pattern (Button asChild > Link) to avoid invalid `<a><button>` nesting.
-- **Hydration**: Landing page framer-motion sections dynamically imported with `ssr: false` to prevent SSR/client mismatch. `useMounted` hook removed from all sections.
+- **Fonts**: Loaded via `next/font/google` (Plus Jakarta Sans + Playfair Display) — no external `<link>` tags in `<head>`, eliminating hydration mismatches.
+- **Hydration**: ClientProviders wrapper renders Toaster + MageBot client-only (mounted guard). No framer-motion on landing page — uses CSS animations + `useAnimateIn` hook. No SSR bailouts.
 
 ## Key Files
 - `db/` - Versioned SQL scripts (00001-00011 + seed.sql + README.md)
