@@ -22,7 +22,7 @@ Scripts SQL versionados para controle de mudancas estruturais no Supabase.
 | V008 | `00008_create_notifications.sql` | Tabela notifications |
 | V009 | `00009_create_chatbot_sessions.sql` | Tabela chatbot_sessions |
 | V010 | `00010_create_rls_policies.sql` | Politicas RLS (Row Level Security) |
-| V011 | `00011_create_admin_user.sql` | Cria usuario admin (admin@admin.com / 123456) |
+| V011 | `00011_create_admin_user.sql` | Cria usuario admin (renanmartinsnutri@gmail.com / 123456) |
 | SEED | `seed.sql` | Dados iniciais (servicos, depoimentos) |
 
 ## Ordem de execucao

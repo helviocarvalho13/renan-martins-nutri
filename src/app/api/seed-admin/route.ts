@@ -22,12 +22,12 @@ export async function POST(request: Request) {
 
   const { data: existingUsers } = await supabase.auth.admin.listUsers();
   const adminExists = existingUsers?.users?.some(
-    (u) => u.email === "admin@admin.com"
+    (u) => u.email === "renanmartinsnutri@gmail.com"
   );
 
   if (adminExists) {
     const adminUser = existingUsers?.users?.find(
-      (u) => u.email === "admin@admin.com"
+      (u) => u.email === "renanmartinsnutri@gmail.com"
     );
     if (adminUser) {
       await supabase
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   }
 
   const { data, error } = await supabase.auth.admin.createUser({
-    email: "admin@admin.com",
+    email: "renanmartinsnutri@gmail.com",
     password: "123456",
     email_confirm: true,
     user_metadata: {

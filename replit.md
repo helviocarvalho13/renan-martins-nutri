@@ -21,7 +21,7 @@ Platform for nutritionist Renan Martins with appointment scheduling, institution
 ## Database (Supabase)
 Versioned SQL scripts in `/db` folder (11 migration files + seed). Also mirrored in `supabase/migrations/`.
 Run SQL via Supabase Dashboard SQL Editor (or use `/api/setup` to get combined SQL).
-Admin user: admin@admin.com / 123456 (created via `/api/seed-admin` POST endpoint).
+Admin user: renanmartinsnutri@gmail.com / 123456 (created via `/api/seed-admin` POST endpoint).
 
 ### Tables
 - `profiles` - Extends auth.users: role (ENUM: ADMIN/PATIENT), full_name, phone, cpf (UNIQUE), date_of_birth, avatar_url, is_active. Auto-created via `handle_new_user()` trigger.
@@ -132,7 +132,7 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 
 ## API Routes
 - `GET /api/setup` - Returns combined SQL from /db folder
-- `POST /api/seed-admin` - Creates admin user (admin@admin.com / 123456) + seeds schedule_config defaults
+- `POST /api/seed-admin` - Creates admin user (renanmartinsnutri@gmail.com / 123456) + seeds schedule_config defaults
 - `GET /api/available-slots?date=YYYY-MM-DD` - Public API returning available time slots (bypasses RLS via service role)
 - `POST /api/appointments` - Server-side booking with validation, double-booking prevention
 - `PATCH /api/appointments/[id]` - Admin-only: status update, notes, return_suggested_date + triggers notifications/email/calendar

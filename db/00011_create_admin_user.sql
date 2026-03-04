@@ -1,5 +1,5 @@
 -- V011: Create admin user (Renan Martins)
--- Email: admin@admin.com | Password: 123456
+-- Email: renanmartinsnutri@gmail.com | Password: 123456
 -- Run this AFTER all previous migrations
 -- This script uses Supabase's auth.users table to create the admin user
 
@@ -12,7 +12,7 @@ DECLARE
   new_user_id uuid;
 BEGIN
   -- Check if user already exists
-  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'admin@admin.com') THEN
+  IF NOT EXISTS (SELECT 1 FROM auth.users WHERE email = 'renanmartinsnutri@gmail.com') THEN
     -- Insert into auth.users
     INSERT INTO auth.users (
       id,
@@ -31,7 +31,7 @@ BEGIN
     ) VALUES (
       gen_random_uuid(),
       '00000000-0000-0000-0000-000000000000',
-      'admin@admin.com',
+      'renanmartinsnutri@gmail.com',
       crypt('123456', gen_salt('bf')),
       NOW(),
       jsonb_build_object('role', 'ADMIN', 'full_name', 'Renan Martins'),
@@ -60,7 +60,7 @@ BEGIN
       new_user_id,
       new_user_id::text,
       'email',
-      jsonb_build_object('sub', new_user_id::text, 'email', 'admin@admin.com'),
+      jsonb_build_object('sub', new_user_id::text, 'email', 'renanmartinsnutri@gmail.com'),
       NOW(),
       NOW(),
       NOW()
@@ -70,11 +70,11 @@ BEGIN
     -- But let's ensure the role is ADMIN
     UPDATE profiles SET role = 'ADMIN' WHERE id = new_user_id;
 
-    RAISE NOTICE 'Admin user created: admin@admin.com / 123456';
+    RAISE NOTICE 'Admin user created: renanmartinsnutri@gmail.com / 123456';
   ELSE
     -- User exists, ensure role is ADMIN
     UPDATE profiles SET role = 'ADMIN'
-    WHERE id = (SELECT id FROM auth.users WHERE email = 'admin@admin.com');
+    WHERE id = (SELECT id FROM auth.users WHERE email = 'renanmartinsnutri@gmail.com');
 
     RAISE NOTICE 'Admin user already exists, role updated to ADMIN';
   END IF;
