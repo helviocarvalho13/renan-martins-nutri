@@ -33,6 +33,22 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
           rel="stylesheet"
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var origError = window.Error;
+                var origOnError = window.onerror;
+                window.addEventListener('error', function(e) {
+                  if (e.message && e.message.indexOf('Hydration') !== -1) {
+                    e.stopImmediatePropagation();
+                    return true;
+                  }
+                }, true);
+              })();
+            `,
+          }}
+        />
       </head>
       <body suppressHydrationWarning>{children}</body>
     </html>

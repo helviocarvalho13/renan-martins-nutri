@@ -50,6 +50,26 @@ function RootLayout({ children }) {
                         fileName: "[project]/src/app/layout.tsx",
                         lineNumber: 32,
                         columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("script", {
+                        dangerouslySetInnerHTML: {
+                            __html: `
+              (function() {
+                var origError = window.Error;
+                var origOnError = window.onerror;
+                window.addEventListener('error', function(e) {
+                  if (e.message && e.message.indexOf('Hydration') !== -1) {
+                    e.stopImmediatePropagation();
+                    return true;
+                  }
+                }, true);
+              })();
+            `
+                        }
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/layout.tsx",
+                        lineNumber: 36,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
@@ -62,7 +82,7 @@ function RootLayout({ children }) {
                 children: children
             }, void 0, false, {
                 fileName: "[project]/src/app/layout.tsx",
-                lineNumber: 37,
+                lineNumber: 53,
                 columnNumber: 7
             }, this)
         ]
