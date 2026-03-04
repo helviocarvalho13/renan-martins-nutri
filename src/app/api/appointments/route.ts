@@ -47,17 +47,22 @@ export async function POST(request: NextRequest) {
 
   const { data: existing } = await supabase
     .from("appointments")
-    .select("id")
+    .select("id, status")
     .eq("date", date)
     .eq("start_time", start_time)
-    .in("status", ["PENDING", "CONFIRMED"])
     .limit(1);
 
   if (existing && existing.length > 0) {
-    return NextResponse.json(
-      { error: "Este horario ja esta ocupado. Por favor, escolha outro horario." },
-      { status: 409 }
-    );
+    const existingAppt = existing[0];
+    if (existingAppt.status === "PENDING" || existingAppt.status === "CONFIRMED") {
+      return NextResponse.json(
+        { error: "Este horario ja esta ocupado. Por favor, escolha outro horario." },
+        { status: 409 }
+      );
+    }
+    if (existingAppt.status === "CANCELLED" || existingAppt.status === "NO_SHOW") {
+      await supabase.from("appointments").delete().eq("id", existingAppt.id);
+    }
   }
 
   let patientId: string | null = null;

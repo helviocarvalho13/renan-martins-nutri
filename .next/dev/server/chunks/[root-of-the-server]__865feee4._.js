@@ -159,16 +159,19 @@ async function POST(request) {
             });
         }
     }
-    const { data: existing } = await supabase.from("appointments").select("id").eq("date", date).eq("start_time", start_time).in("status", [
-        "PENDING",
-        "CONFIRMED"
-    ]).limit(1);
+    const { data: existing } = await supabase.from("appointments").select("id, status").eq("date", date).eq("start_time", start_time).limit(1);
     if (existing && existing.length > 0) {
-        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Este horario ja esta ocupado. Escolha outro horario."
-        }, {
-            status: 409
-        });
+        const existingAppt = existing[0];
+        if (existingAppt.status === "PENDING" || existingAppt.status === "CONFIRMED") {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                error: "Este horario ja esta ocupado. Escolha outro horario."
+            }, {
+                status: 409
+            });
+        }
+        if (existingAppt.status === "CANCELLED" || existingAppt.status === "NO_SHOW") {
+            await supabase.from("appointments").delete().eq("id", existingAppt.id);
+        }
     }
     const { data: appointment, error } = await supabase.from("appointments").insert({
         patient_id: user.id,
@@ -179,6 +182,7 @@ async function POST(request) {
         status: "PENDING"
     }).select().single();
     if (error) {
+        console.error("[patient/book] Insert error:", error.code, error.message, error.details);
         if (error.code === "23505") {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
                 error: "Este horario ja esta ocupado. Escolha outro horario."
