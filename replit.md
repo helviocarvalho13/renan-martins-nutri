@@ -37,9 +37,12 @@ user_role, appointment_type, appointment_status, notification_type
 ## Pages (Next.js App Router)
 - `/` - Landing page (hero, about, services from site_content, testimonials, contact)
 - `/agendar` - Multi-step booking (service > date/time from schedule_config > patient info > confirmation)
-- `/login` - Login page (Supabase Auth)
-- `/cadastro` - Patient registration
-- `/admin` - Admin dashboard (stats, appointment management, role-gated)
+- `/login` - Login with email/password, role-based redirect (ADMIN→/admin, PATIENT→/paciente), "Esqueci minha senha" link
+- `/register` - Registration with full_name, email, phone, CPF (formatted/validated), date_of_birth, password + confirmation
+- `/cadastro` - Redirects to /register (backward compat)
+- `/forgot-password` - Password recovery email via Supabase Auth
+- `/update-password` - Set new password after reset link (requires valid session/token)
+- `/admin` - Admin dashboard (stats, appointment management, role-gated via profiles table)
 - `/paciente` - Patient dashboard (own appointments, role-gated)
 - `/setup` - Database setup helper (copy SQL for Supabase)
 
@@ -55,7 +58,8 @@ user_role, appointment_type, appointment_status, notification_type
 - `src/lib/types/index.ts` - Re-exports from database.ts
 - `src/lib/supabase/client.ts` - Typed browser Supabase client
 - `src/lib/supabase/server.ts` - Typed server Supabase client + service role client
-- `src/lib/supabase/middleware.ts` - Auth + role-based routing middleware
+- `src/lib/supabase/middleware.ts` - Auth + role-based routing middleware (checks profiles table for role)
+- `src/hooks/useAuth.ts` - Client-side auth hook (user, profile, role, loading, signOut)
 - `src/components/ui/` - Shadcn UI components
 - `src/components/site/` - Landing page sections
 

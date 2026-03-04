@@ -24,6 +24,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$exports$2f$index$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/esm/server/web/exports/index.js [middleware-edge] (ecmascript)");
 ;
 ;
+async function getUserRole(supabase, userId) {
+    const { data } = await supabase.from("profiles").select("role").eq("id", userId).single();
+    return data?.role ?? null;
+}
 async function updateSession(request) {
     let supabaseResponse = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$exports$2f$index$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].next({
         request
@@ -44,28 +48,44 @@ async function updateSession(request) {
     });
     const { data: { user } } = await supabase.auth.getUser();
     const pathname = request.nextUrl.pathname;
-    if (pathname.startsWith("/admin") && !user) {
-        const url = request.nextUrl.clone();
-        url.pathname = "/login";
-        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$exports$2f$index$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(url);
+    const authPages = [
+        "/login",
+        "/register",
+        "/cadastro",
+        "/forgot-password"
+    ];
+    const publicPages = [
+        "/update-password"
+    ];
+    if (publicPages.some((page)=>pathname === page)) {
+        return supabaseResponse;
     }
-    if (pathname.startsWith("/admin") && user) {
-        const role = user.user_metadata?.role;
-        if (role !== "admin") {
+    if (pathname.startsWith("/admin")) {
+        if (!user) {
+            const url = request.nextUrl.clone();
+            url.pathname = "/login";
+            url.searchParams.set("redirect", pathname);
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$exports$2f$index$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(url);
+        }
+        const role = await getUserRole(supabase, user.id);
+        if (role !== "ADMIN") {
             const url = request.nextUrl.clone();
             url.pathname = "/paciente";
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$exports$2f$index$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(url);
         }
     }
-    if (pathname.startsWith("/paciente") && !user) {
-        const url = request.nextUrl.clone();
-        url.pathname = "/login";
-        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$exports$2f$index$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(url);
+    if (pathname.startsWith("/paciente")) {
+        if (!user) {
+            const url = request.nextUrl.clone();
+            url.pathname = "/login";
+            url.searchParams.set("redirect", pathname);
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$exports$2f$index$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(url);
+        }
     }
-    if ((pathname === "/login" || pathname === "/cadastro") && user) {
+    if (authPages.some((page)=>pathname === page) && user) {
         const url = request.nextUrl.clone();
-        const role = user.user_metadata?.role;
-        url.pathname = role === "admin" ? "/admin" : "/paciente";
+        const role = await getUserRole(supabase, user.id);
+        url.pathname = role === "ADMIN" ? "/admin" : "/paciente";
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$exports$2f$index$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(url);
     }
     return supabaseResponse;
