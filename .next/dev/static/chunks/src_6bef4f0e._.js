@@ -12,6 +12,7 @@ function createInitialContext() {
         isAuthenticated: false,
         userId: null,
         userName: null,
+        accessToken: null,
         loginEmail: null,
         appointmentType: null,
         selectedDate: null,
@@ -992,33 +993,7 @@ var _s = __turbopack_context__.k.signature();
 function generateId() {
     return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
 }
-const SESSION_KEY = "magebot_session";
 const TYPING_DELAY = 600;
-function loadGuestSession() {
-    try {
-        const raw = sessionStorage.getItem(SESSION_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (parsed.messages && parsed.context) {
-            parsed.messages = parsed.messages.map((m)=>({
-                    ...m,
-                    timestamp: new Date(m.timestamp)
-                }));
-            return parsed;
-        }
-        return null;
-    } catch  {
-        return null;
-    }
-}
-function saveGuestSession(messages, context) {
-    try {
-        sessionStorage.setItem(SESSION_KEY, JSON.stringify({
-            messages,
-            context
-        }));
-    } catch  {}
-}
 function useMageBot() {
     _s();
     const [messages, setMessages] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
@@ -1037,35 +1012,19 @@ function useMageBot() {
                     authChecked.current = true;
                     const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createClient"])();
                     const { data: { user } } = await supabase.auth.getUser();
-                    let newContext = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$types$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createInitialContext"])();
                     if (user) {
+                        const { data: { session } } = await supabase.auth.getSession();
                         const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", user.id).single();
                         const profileName = profile?.full_name;
-                        newContext = {
-                            ...newContext,
-                            isAuthenticated: true,
-                            userId: user.id,
-                            userName: profileName || user.email?.split("@")[0] || null
-                        };
-                    }
-                    const saved = loadGuestSession();
-                    if (saved && saved.messages.length > 0) {
-                        const authChanged = newContext.isAuthenticated && !saved.context.isAuthenticated;
-                        if (authChanged) {
-                            sessionStorage.removeItem(SESSION_KEY);
-                            setContext(newContext);
-                        } else {
-                            setMessages(saved.messages);
-                            setContext({
-                                ...saved.context,
-                                isAuthenticated: newContext.isAuthenticated,
-                                userId: newContext.userId,
-                                userName: newContext.userName
-                            });
-                            hasGreeted.current = true;
-                        }
-                    } else {
-                        setContext(newContext);
+                        setContext({
+                            "useMageBot.useEffect.checkAuth": (prev)=>({
+                                    ...prev,
+                                    isAuthenticated: true,
+                                    userId: user.id,
+                                    userName: profileName || user.email?.split("@")[0] || null,
+                                    accessToken: session?.access_token || null
+                                })
+                        }["useMageBot.useEffect.checkAuth"]);
                     }
                 }
             }["useMageBot.useEffect.checkAuth"];
@@ -1087,14 +1046,10 @@ function useMageBot() {
                 "useMageBot.useCallback[addBotMessages]": ()=>{
                     setIsTyping(false);
                     setMessages({
-                        "useMageBot.useCallback[addBotMessages]": (prev)=>{
-                            const updated = [
+                        "useMageBot.useCallback[addBotMessages]": (prev)=>[
                                 ...prev,
                                 ...botMessages
-                            ];
-                            saveGuestSession(updated, newContext);
-                            return updated;
-                        }
+                            ]
                     }["useMageBot.useCallback[addBotMessages]"]);
                     setContext(newContext);
                     setQuickReplies(newReplies);
@@ -1116,19 +1071,25 @@ function useMageBot() {
                 addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
                 return;
             }
+            let token = ctx.accessToken;
+            if (!token) {
+                try {
+                    const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createClient"])();
+                    const { data: { session } } = await supabase.auth.getSession();
+                    token = session?.access_token || null;
+                } catch  {}
+            }
+            if (!token) {
+                const errorResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getBookingErrorResponse"])(ctx, "Sua sessão expirou. Faça login novamente.");
+                addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+                return;
+            }
             try {
-                const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createClient"])();
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session?.access_token) {
-                    const errorResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getBookingErrorResponse"])(ctx, "Sua sessão expirou. Faça login novamente.");
-                    addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
-                    return;
-                }
                 const res = await fetch("/api/patient/book", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "Authorization": `Bearer ${session.access_token}`
+                        "Authorization": `Bearer ${token}`
                     },
                     body: JSON.stringify({
                         date: ctx.selectedDate,
@@ -1230,7 +1191,7 @@ function useMageBot() {
                         email: context.loginEmail,
                         password: trimmed
                     });
-                    if (error || !data.user) {
+                    if (error || !data.user || !data.session) {
                         const failResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getLoginFailureResponse"])(context, error?.message);
                         addBotMessages(failResponse.messages, failResponse.context, failResponse.quickReplies);
                         return;
@@ -1242,6 +1203,7 @@ function useMageBot() {
                         isAuthenticated: true,
                         userId: data.user.id,
                         userName: profileName || data.user.email?.split("@")[0] || null,
+                        accessToken: data.session.access_token,
                         loginEmail: null
                     };
                     const successResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getLoginSuccessResponse"])(updatedContext);

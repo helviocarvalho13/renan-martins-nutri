@@ -34,6 +34,7 @@ export interface ChatContext {
   isAuthenticated: boolean;
   userId: string | null;
   userName: string | null;
+  accessToken: string | null;
   loginEmail: string | null;
   appointmentType: "FIRST_VISIT" | "RETURN" | null;
   selectedDate: string | null;
@@ -54,6 +55,7 @@ export function createInitialContext(): ChatContext {
     isAuthenticated: false,
     userId: null,
     userName: null,
+    accessToken: null,
     loginEmail: null,
     appointmentType: null,
     selectedDate: null,

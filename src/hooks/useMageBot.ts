@@ -17,7 +17,6 @@ function generateId(): string {
   return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
 }
 
-const SESSION_KEY = "magebot_session";
 const TYPING_DELAY = 600;
 
 interface UseMageBotReturn {
@@ -30,30 +29,6 @@ interface UseMageBotReturn {
   sendMessage: (text: string) => void;
   toggleOpen: () => void;
   setOpen: (open: boolean) => void;
-}
-
-function loadGuestSession(): { messages: ChatMessage[]; context: ChatContext } | null {
-  try {
-    const raw = sessionStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (parsed.messages && parsed.context) {
-      parsed.messages = parsed.messages.map((m: ChatMessage) => ({
-        ...m,
-        timestamp: new Date(m.timestamp),
-      }));
-      return parsed;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function saveGuestSession(messages: ChatMessage[], context: ChatContext) {
-  try {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ messages, context }));
-  } catch {}
 }
 
 export function useMageBot(): UseMageBotReturn {
@@ -74,9 +49,8 @@ export function useMageBot(): UseMageBotReturn {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
 
-      let newContext = createInitialContext();
-
       if (user) {
+        const { data: { session } } = await supabase.auth.getSession();
         const { data: profile } = await supabase
           .from("profiles")
           .select("full_name")
@@ -85,32 +59,13 @@ export function useMageBot(): UseMageBotReturn {
 
         const profileName = (profile as { full_name: string } | null)?.full_name;
 
-        newContext = {
-          ...newContext,
+        setContext((prev) => ({
+          ...prev,
           isAuthenticated: true,
           userId: user.id,
           userName: profileName || user.email?.split("@")[0] || null,
-        };
-      }
-
-      const saved = loadGuestSession();
-      if (saved && saved.messages.length > 0) {
-        const authChanged = newContext.isAuthenticated && !saved.context.isAuthenticated;
-        if (authChanged) {
-          sessionStorage.removeItem(SESSION_KEY);
-          setContext(newContext);
-        } else {
-          setMessages(saved.messages);
-          setContext({
-            ...saved.context,
-            isAuthenticated: newContext.isAuthenticated,
-            userId: newContext.userId,
-            userName: newContext.userName,
-          });
-          hasGreeted.current = true;
-        }
-      } else {
-        setContext(newContext);
+          accessToken: session?.access_token || null,
+        }));
       }
     };
 
@@ -130,11 +85,7 @@ export function useMageBot(): UseMageBotReturn {
 
       setTimeout(() => {
         setIsTyping(false);
-        setMessages((prev) => {
-          const updated = [...prev, ...botMessages];
-          saveGuestSession(updated, newContext);
-          return updated;
-        });
+        setMessages((prev) => [...prev, ...botMessages]);
         setContext(newContext);
         setQuickReplies(newReplies);
         if (!isOpen) {
@@ -153,21 +104,28 @@ export function useMageBot(): UseMageBotReturn {
         return;
       }
 
+      let token = ctx.accessToken;
+
+      if (!token) {
+        try {
+          const supabase = createClient();
+          const { data: { session } } = await supabase.auth.getSession();
+          token = session?.access_token || null;
+        } catch {}
+      }
+
+      if (!token) {
+        const errorResponse = getBookingErrorResponse(ctx, "Sua sessão expirou. Faça login novamente.");
+        addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+        return;
+      }
+
       try {
-        const supabase = createClient();
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (!session?.access_token) {
-          const errorResponse = getBookingErrorResponse(ctx, "Sua sessão expirou. Faça login novamente.");
-          addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
-          return;
-        }
-
         const res = await fetch("/api/patient/book", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${session.access_token}`,
+            "Authorization": `Bearer ${token}`,
           },
           body: JSON.stringify({
             date: ctx.selectedDate,
@@ -258,7 +216,7 @@ export function useMageBot(): UseMageBotReturn {
             password: trimmed,
           });
 
-          if (error || !data.user) {
+          if (error || !data.user || !data.session) {
             const failResponse = getLoginFailureResponse(context, error?.message);
             addBotMessages(failResponse.messages, failResponse.context, failResponse.quickReplies);
             return;
@@ -277,6 +235,7 @@ export function useMageBot(): UseMageBotReturn {
             isAuthenticated: true,
             userId: data.user.id,
             userName: profileName || data.user.email?.split("@")[0] || null,
+            accessToken: data.session.access_token,
             loginEmail: null,
           };
 
