@@ -37,6 +37,7 @@ user_role, appointment_type, appointment_status, notification_type
 ## Pages (Next.js App Router)
 - `/` - Landing page (hero, about, services from site_content, testimonials, contact)
 - `/agendar` - Multi-step booking (service > date/time from schedule_config > patient info > confirmation)
+- `/agenda` - Public calendar showing availability per day (available/limited/unavailable) without patient data
 - `/login` - Login with email/password, role-based redirect (ADMIN→/admin, PATIENT→/paciente), "Esqueci minha senha" link
 - `/register` - Registration with full_name, email, phone, CPF (formatted/validated), date_of_birth, password + confirmation
 - `/cadastro` - Redirects to /register (backward compat)

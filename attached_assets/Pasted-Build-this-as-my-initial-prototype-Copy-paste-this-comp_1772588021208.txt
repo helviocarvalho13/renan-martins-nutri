@@ -1,0 +1,212 @@
+Build this as my initial prototype
+
+Copy-paste this component to /components/ui folder:
+```tsx
+hero-section-4.tsx
+// components/ui/hero-section.tsx
+
+import * as React from "react";
+import { motion, Variants } from "framer-motion";
+import { cn } from "@/lib/utils"; // Assuming you have a `cn` utility
+import { Button } from "@/components/ui/button"; // Assuming shadcn Button component
+
+// Props interface for type safety
+interface HeroSectionProps extends React.HTMLAttributes<HTMLDivElement> {
+  title: string;
+  subtitle: string;
+  primaryButtonText: string;
+  primaryButtonHref: string;
+  secondaryButtonText: string;
+  secondaryButtonHref: string;
+  imageUrl: string;
+}
+
+// Animation variants for the container to orchestrate staggered animations
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+// Animation variants for child elements (text and buttons)
+const itemVariants: Variants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeInOut",
+    },
+  },
+};
+
+const HeroSection = React.forwardRef<HTMLDivElement, HeroSectionProps>(
+  (
+    {
+      className,
+      title,
+      subtitle,
+      primaryButtonText,
+      primaryButtonHref,
+      secondaryButtonText,
+      secondaryButtonHref,
+      imageUrl,
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <section
+        ref={ref}
+        className={cn(
+          "relative flex h-screen min-h-[700px] w-full items-center justify-center overflow-hidden",
+          className
+        )}
+        {...props}
+      >
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${imageUrl})` }}
+          aria-hidden="true"
+        />
+
+        {/* Optional: Add a subtle overlay for better text readability */}
+        <div className="absolute inset-0 z-0 bg-black/20" aria-hidden="true" />
+
+        {/* Content Container */}
+        <motion.div
+          className="z-10 flex max-w-4xl flex-col items-center justify-center text-center text-primary-foreground"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Animated Title */}
+          <motion.h1
+            className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+            variants={itemVariants}
+          >
+            {title}
+          </motion.h1>
+
+          {/* Animated Subtitle */}
+          <motion.p
+            className="mt-6 max-w-2xl text-lg leading-8 md:text-xl"
+            variants={itemVariants}
+          >
+            {subtitle}
+          </motion.p>
+
+          {/* Animated Button Group */}
+          <motion.div className="mt-10 flex items-center gap-x-6" variants={itemVariants}>
+            <Button asChild size="lg">
+              <a href={primaryButtonHref}>{primaryButtonText}</a>
+            </Button>
+            <Button asChild variant="secondary" size="lg">
+              <a href={secondaryButtonHref}>{secondaryButtonText}</a>
+            </Button>
+          </motion.div>
+        </motion.div>
+      </section>
+    );
+  }
+);
+
+HeroSection.displayName = "HeroSection";
+
+export { HeroSection };
+
+demo.tsx
+// demo.tsx
+
+import { HeroSection } from "@/components/ui/hero-section-4"; // Adjust the import path
+
+const HeroDemo = () => {
+  return (
+    <HeroSection
+      title="Let's connect and collaborate"
+      subtitle="Reach out today to discuss how we can elevate your online presence and drive results."
+      primaryButtonText="Learn More"
+      primaryButtonHref="#learn-more"
+      secondaryButtonText="Sign Up"
+      secondaryButtonHref="#signup"
+      imageUrl="https://plus.unsplash.com/premium_photo-1707761862412-defd8b0b6d12?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHx2aXN1YWwtc2VhcmNofDgzfHx8ZW58MHx8fHx8?q=80&w=2574&auto=format&fit=crop"
+    />
+  );
+};
+
+export default HeroDemo;
+```
+
+Copy-paste these files for dependencies:
+```tsx
+shadcn/button
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  },
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  },
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
+
+```
+
+Install these NPM dependencies:
+```bash
+framer-motion, @radix-ui/react-slot, class-variance-authority
+```

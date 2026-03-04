@@ -1,52 +1,79 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Clock, ChevronRight, Apple, Heart, Target, Activity, Leaf } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import type { SiteContent, ServiceItem } from "@/lib/types";
+import { motion, useInView } from "framer-motion";
+import {
+  Clock,
+  ChevronRight,
+  Stethoscope,
+  Dumbbell,
+  Salad,
+  Sparkles,
+} from "lucide-react";
 
-const iconMap: Record<string, any> = {
-  apple: Apple,
-  heart: Heart,
-  target: Target,
-  activity: Activity,
-  leaf: Leaf,
+const services = [
+  {
+    name: "Nutricao Clinica",
+    description:
+      "Avaliacao completa do estado nutricional, anamnese detalhada, definicao de objetivos e elaboracao do plano alimentar personalizado para suas necessidades.",
+    icon: Stethoscope,
+    duration: 60,
+    color: "from-emerald-500/10 to-emerald-500/5",
+  },
+  {
+    name: "Nutricao Esportiva",
+    description:
+      "Plano alimentar focado em performance esportiva, com estrategias de periodizacao nutricional e orientacao sobre suplementacao adequada.",
+    icon: Dumbbell,
+    duration: 60,
+    color: "from-blue-500/10 to-blue-500/5",
+  },
+  {
+    name: "Reeducacao Alimentar",
+    description:
+      "Programa completo para transformar sua relacao com a comida, com acompanhamento personalizado e suporte continuo para resultados duradouros.",
+    icon: Salad,
+    duration: 50,
+    color: "from-orange-500/10 to-orange-500/5",
+  },
+  {
+    name: "Nutricao Funcional",
+    description:
+      "Abordagem integrativa que busca tratar a causa raiz dos desequilibrios nutricionais, utilizando alimentos como ferramenta terapeutica.",
+    icon: Sparkles,
+    duration: 60,
+    color: "from-purple-500/10 to-purple-500/5",
+  },
+];
+
+const cardVariants = {
+  hidden: { y: 40, opacity: 0 },
+  visible: (i: number) => ({
+    y: 0,
+    opacity: 1,
+    transition: { duration: 0.5, ease: "easeOut", delay: i * 0.1 },
+  }),
 };
 
 export function ServicesSection() {
-  const [services, setServices] = useState<ServiceItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadServices() {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("site_content")
-        .select("content")
-        .eq("section", "services")
-        .eq("is_active", true)
-        .single();
-      if (data?.content) {
-        const content = data.content as { items?: ServiceItem[] };
-        setServices(content.items || []);
-      }
-      setLoading(false);
-    }
-    loadServices();
-  }, []);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="servicos" className="py-20">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <p className="text-sm font-medium text-primary uppercase tracking-wider mb-2">
-            Servicos
+    <section id="servicos" className="py-20 md:py-28">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" ref={ref}>
+        <div className="text-center mb-14">
+          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-2">
+            Areas de Atuacao
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4" data-testid="text-services-title">
+          <h2
+            className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
+            style={{ fontFamily: "var(--font-serif)" }}
+            data-testid="text-services-title"
+          >
             Como posso te ajudar
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
@@ -54,49 +81,41 @@ export function ServicesSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {loading
-            ? Array.from({ length: 3 }).map((_, i) => (
-                <Card key={i}>
-                  <CardContent className="p-6 space-y-4">
-                    <Skeleton className="w-12 h-12 rounded-md" />
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-2/3" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((service, index) => {
+            const IconComponent = service.icon;
+            return (
+              <motion.div
+                key={index}
+                custom={index}
+                variants={cardVariants}
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
+              >
+                <Card className="h-full group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50" data-testid={`card-service-${index}`}>
+                  <CardContent className="p-6 flex flex-col h-full">
+                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
+                      <IconComponent className="w-7 h-7 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-2">{service.name}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed flex-grow mb-4">
+                      {service.description}
+                    </p>
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground mb-4">
+                      <Clock className="w-4 h-4" />
+                      <span>{service.duration} min</span>
+                    </div>
+                    <Link href="/agendar" className="block mt-auto">
+                      <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors" data-testid={`button-book-${index}`}>
+                        Agendar
+                        <ChevronRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </Link>
                   </CardContent>
                 </Card>
-              ))
-            : services.map((service, index) => {
-                const IconComponent = iconMap[service.icon || "leaf"] || Leaf;
-                return (
-                  <Card key={index} className="h-full" data-testid={`card-service-${index}`}>
-                    <CardContent className="p-6 space-y-4">
-                      <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center">
-                        <IconComponent className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-2">{service.name}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{service.description}</p>
-                      </div>
-                      <div className="flex items-center justify-between gap-2 pt-2">
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Clock className="w-4 h-4" />
-                          <span>{service.duration_minutes} min</span>
-                        </div>
-                        <span className="font-semibold text-primary">
-                          R$ {(service.price_cents / 100).toFixed(2).replace(".", ",")}
-                        </span>
-                      </div>
-                      <Link href="/agendar" className="block">
-                        <Button variant="outline" className="w-full" data-testid={`button-book-${index}`}>
-                          Agendar
-                          <ChevronRight className="w-4 h-4 ml-1" />
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
