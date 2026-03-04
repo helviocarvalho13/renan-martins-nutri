@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Leaf, Calendar, Menu, X, LogIn } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function Navbar() {
@@ -16,10 +16,9 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: "Quem Sou Eu", href: "#sobre" },
+    { label: "Sobre", href: "#sobre" },
     { label: "Servicos", href: "#servicos" },
     { label: "Depoimentos", href: "#depoimentos" },
-    { label: "Agenda", href: "/agenda" },
     { label: "Contato", href: "#contato" },
   ];
 
@@ -27,67 +26,55 @@ export function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-background/95 backdrop-blur-md border-b shadow-sm"
+          ? "bg-white/90 backdrop-blur-md border-b border-neutral-200"
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-4 h-16 md:h-20">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
-              <Leaf className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-sm leading-tight" data-testid="text-brand-name">
-                Renan Martins
-              </span>
-              <span className="text-[10px] text-muted-foreground uppercase tracking-widest leading-tight">
-                Nutricionista
-              </span>
-            </div>
+      <div className="max-w-6xl mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <Link href="/" className="flex items-center gap-2" data-testid="link-brand">
+            <span className="font-semibold text-base tracking-tight text-neutral-900">
+              Renan Martins
+            </span>
           </Link>
 
-          <div className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) =>
-              link.href.startsWith("/") ? (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary font-medium"
-                  data-testid={`link-nav-${link.label.toLowerCase().replace(/\s/g, "-")}`}
-                >
-                  {link.label}
-                </Link>
-              ) : (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary font-medium"
-                  data-testid={`link-nav-${link.label.toLowerCase().replace(/\s/g, "-")}`}
-                >
-                  {link.label}
-                </a>
-              )
-            )}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
+                data-testid={`link-nav-${link.label.toLowerCase().replace(/\s/g, "-")}`}
+              >
+                {link.label}
+              </a>
+            ))}
           </div>
 
-          <div className="flex items-center gap-2">
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="hidden sm:inline-flex" data-testid="button-admin-login">
-                <LogIn className="w-4 h-4 mr-1.5" />
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="hidden sm:block">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-neutral-500 hover:text-neutral-900"
+                data-testid="button-admin-login"
+              >
                 Login
               </Button>
             </Link>
             <Link href="/agendar">
-              <Button size="sm" data-testid="button-schedule-cta">
-                <Calendar className="w-4 h-4 mr-1.5" />
+              <Button
+                size="sm"
+                className="bg-neutral-900 text-white hover:bg-neutral-800 rounded-full px-5"
+                data-testid="button-schedule-cta"
+              >
                 Agendar
               </Button>
             </Link>
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="md:hidden"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
               aria-expanded={mobileOpen}
@@ -99,32 +86,21 @@ export function Navbar() {
         </div>
 
         {mobileOpen && (
-          <div className="lg:hidden pb-4 space-y-1 bg-background/95 backdrop-blur-md rounded-b-lg">
-            {navLinks.map((link) =>
-              link.href.startsWith("/") ? (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="block px-4 py-2.5 text-sm text-muted-foreground rounded-md hover:bg-accent hover:text-foreground transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ) : (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="block px-4 py-2.5 text-sm text-muted-foreground rounded-md hover:bg-accent hover:text-foreground transition-colors"
-                >
-                  {link.label}
-                </a>
-              )
-            )}
+          <div className="md:hidden pb-4 space-y-1">
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="block px-3 py-2.5 text-sm text-neutral-600 hover:text-neutral-900 rounded-md hover:bg-neutral-50 transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
             <Link
               href="/login"
               onClick={() => setMobileOpen(false)}
-              className="block px-4 py-2.5 text-sm text-muted-foreground rounded-md hover:bg-accent hover:text-foreground transition-colors"
+              className="block px-3 py-2.5 text-sm text-neutral-600 hover:text-neutral-900 rounded-md hover:bg-neutral-50 transition-colors"
             >
               Login
             </Link>

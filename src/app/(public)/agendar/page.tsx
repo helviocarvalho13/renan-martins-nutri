@@ -3,31 +3,25 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Leaf,
   ArrowLeft,
   ArrowRight,
-  Clock,
   CalendarDays,
   User,
   CheckCircle2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import type { ScheduleConfig, BlockedSlot, ServiceItem } from "@/lib/types";
+import type { ScheduleConfig, BlockedSlot } from "@/lib/types";
 import { format, addDays, isBefore, startOfToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const steps = [
-  { id: 1, title: "Servico", icon: Leaf },
-  { id: 2, title: "Data e Horario", icon: CalendarDays },
-  { id: 3, title: "Seus Dados", icon: User },
-  { id: 4, title: "Confirmacao", icon: CheckCircle2 },
+  { id: 1, title: "Data e Horario", icon: CalendarDays },
+  { id: 2, title: "Seus Dados", icon: User },
+  { id: 3, title: "Confirmacao", icon: CheckCircle2 },
 ];
 
 interface GeneratedSlot {
@@ -92,23 +86,25 @@ function SimpleCalendar({
           variant="ghost"
           size="sm"
           onClick={() => setViewMonth(new Date(year, month - 1))}
+          className="text-neutral-500"
           data-testid="button-prev-month"
         >
           <ArrowLeft className="w-4 h-4" />
         </Button>
-        <span className="text-sm font-medium">
+        <span className="text-sm font-medium text-neutral-700">
           {monthNames[month]} {year}
         </span>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setViewMonth(new Date(year, month + 1))}
+          className="text-neutral-500"
           data-testid="button-next-month"
         >
           <ArrowRight className="w-4 h-4" />
         </Button>
       </div>
-      <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted-foreground mb-2">
+      <div className="grid grid-cols-7 gap-1 text-center text-xs text-neutral-400 mb-2">
         {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map((d) => (
           <div key={d} className="py-1">{d}</div>
         ))}
@@ -131,12 +127,12 @@ function SimpleCalendar({
               key={date.toISOString()}
               disabled={disabled}
               onClick={() => onSelect(date)}
-              className={`p-2 text-sm rounded-md transition-colors ${
+              className={`p-2 text-sm rounded-lg transition-colors ${
                 disabled
-                  ? "text-muted-foreground/30 cursor-not-allowed"
+                  ? "text-neutral-300 cursor-not-allowed"
                   : isSelected
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-accent cursor-pointer"
+                    ? "bg-neutral-900 text-white"
+                    : "hover:bg-neutral-100 cursor-pointer text-neutral-700"
               }`}
               data-testid={`calendar-day-${date.getDate()}`}
             >
@@ -151,14 +147,12 @@ function SimpleCalendar({
 
 export default function BookingPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [services, setServices] = useState<ServiceItem[]>([]);
   const [scheduleConfigs, setScheduleConfigs] = useState<ScheduleConfig[]>([]);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
   const [blockedSlots, setBlockedSlots] = useState<BlockedSlot[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  const [selectedServiceIndex, setSelectedServiceIndex] = useState(-1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedStartTime, setSelectedStartTime] = useState("");
   const [selectedEndTime, setSelectedEndTime] = useState("");
@@ -172,23 +166,11 @@ export default function BookingPage() {
 
   useEffect(() => {
     async function load() {
-      const [siteRes, schedRes] = await Promise.all([
-        supabase
-          .from("site_content")
-          .select("content")
-          .eq("section", "services")
-          .eq("is_active", true)
-          .single(),
-        supabase
-          .from("schedule_config")
-          .select("*")
-          .eq("is_active", true),
-      ]);
+      const schedRes = await supabase
+        .from("schedule_config")
+        .select("*")
+        .eq("is_active", true);
 
-      if (siteRes.data?.content) {
-        const content = siteRes.data.content as { items?: ServiceItem[] };
-        setServices(content.items || []);
-      }
       setScheduleConfigs((schedRes.data as ScheduleConfig[]) || []);
       setLoading(false);
     }
@@ -215,8 +197,6 @@ export default function BookingPage() {
     }
     loadBooked();
   }, [selectedDate]);
-
-  const selectedService = selectedServiceIndex >= 0 ? services[selectedServiceIndex] : null;
 
   const availableSlots: GeneratedSlot[] = (() => {
     if (!selectedDate) return [];
@@ -248,7 +228,7 @@ export default function BookingPage() {
           date: format(selectedDate!, "yyyy-MM-dd"),
           start_time: selectedStartTime,
           end_time: selectedEndTime,
-          type: selectedService?.type || "FIRST_VISIT",
+          type: "FIRST_VISIT",
           patient_name: patientName,
           patient_email: patientEmail,
           patient_phone: patientPhone,
@@ -264,7 +244,7 @@ export default function BookingPage() {
         return;
       }
 
-      setCurrentStep(4);
+      setCurrentStep(3);
     } catch {
       setError("Erro ao agendar. Tente novamente.");
     }
@@ -272,18 +252,15 @@ export default function BookingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4 h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-md bg-primary flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="font-bold text-sm" data-testid="text-booking-brand">Renan Martins</span>
+    <div className="min-h-screen bg-white">
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-neutral-100">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="flex items-center justify-between h-14">
+            <Link href="/" className="font-semibold text-sm text-neutral-900" data-testid="text-booking-brand">
+              Renan Martins
             </Link>
             <Link href="/">
-              <Button variant="ghost" size="sm" data-testid="button-back-home">
+              <Button variant="ghost" size="sm" className="text-neutral-500" data-testid="button-back-home">
                 <ArrowLeft className="w-4 h-4 mr-1" />
                 Voltar
               </Button>
@@ -292,17 +269,17 @@ export default function BookingPage() {
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2" data-testid="text-booking-title">
+      <div className="max-w-3xl mx-auto px-6 py-10">
+        <div className="mb-10">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 mb-2" data-testid="text-booking-title">
             Agende sua Consulta
           </h1>
-          <p className="text-muted-foreground">
-            Siga os passos abaixo para agendar sua consulta com o Dr. Renan Martins.
+          <p className="text-neutral-500 text-sm">
+            Siga os passos abaixo para agendar sua consulta com Renan Martins.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
+        <div className="flex items-center gap-2 mb-10">
           {steps.map((step, i) => {
             const isActive = currentStep === step.id;
             const isComplete = currentStep > step.id;
@@ -310,15 +287,15 @@ export default function BookingPage() {
             return (
               <div key={step.id} className="flex items-center gap-2 flex-shrink-0">
                 {i > 0 && (
-                  <div className={`w-8 h-px ${isComplete || isActive ? "bg-primary" : "bg-border"}`} />
+                  <div className={`w-10 h-px ${isComplete || isActive ? "bg-neutral-900" : "bg-neutral-200"}`} />
                 )}
                 <div
-                  className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-colors ${
                     isActive
-                      ? "bg-primary/10 text-primary font-medium"
+                      ? "bg-neutral-900 text-white font-medium"
                       : isComplete
-                        ? "text-primary"
-                        : "text-muted-foreground"
+                        ? "text-neutral-900"
+                        : "text-neutral-400"
                   }`}
                   data-testid={`step-${step.id}`}
                 >
@@ -332,114 +309,69 @@ export default function BookingPage() {
 
         {currentStep === 1 && (
           <div>
-            <h2 className="text-lg font-semibold mb-4" data-testid="text-step1-title">
-              Escolha o tipo de consulta
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {loading
-                ? Array.from({ length: 3 }).map((_, i) => (
-                    <Card key={i}>
-                      <CardContent className="p-6 space-y-3">
-                        <Skeleton className="h-5 w-3/4" />
-                        <Skeleton className="h-4 w-full" />
-                        <Skeleton className="h-4 w-1/2" />
-                      </CardContent>
-                    </Card>
-                  ))
-                : services.map((service, index) => (
-                    <Card
-                      key={index}
-                      className={`cursor-pointer transition-colors ${
-                        selectedServiceIndex === index
-                          ? "border-primary bg-primary/5"
-                          : "hover:border-primary/30"
-                      }`}
-                      onClick={() => {
-                        setSelectedServiceIndex(index);
-                        setCurrentStep(2);
-                      }}
-                      data-testid={`card-select-service-${index}`}
-                    >
-                      <CardContent className="p-6">
-                        <h3 className="font-semibold mb-1">{service.name}</h3>
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                          {service.description}
-                        </p>
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                            <Clock className="w-4 h-4" />
-                            <span>{service.duration_minutes} min</span>
-                          </div>
-                          <Badge variant="secondary">
-                            R$ {(service.price_cents / 100).toFixed(2).replace(".", ",")}
-                          </Badge>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-            </div>
-          </div>
-        )}
-
-        {currentStep === 2 && (
-          <div>
-            <h2 className="text-lg font-semibold mb-4" data-testid="text-step2-title">
+            <h2 className="text-lg font-semibold text-neutral-900 mb-6" data-testid="text-step1-title">
               Escolha a data e horario
             </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card>
-                <CardContent className="p-4">
-                  <SimpleCalendar selected={selectedDate} onSelect={setSelectedDate} />
-                </CardContent>
-              </Card>
 
-              <div>
-                <p className="text-sm font-medium mb-3">
-                  {selectedDate
-                    ? `Horarios disponiveis em ${format(selectedDate, "dd 'de' MMMM", { locale: ptBR })}`
-                    : "Selecione uma data para ver os horarios"}
-                </p>
-                {selectedDate ? (
-                  availableSlots.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-2">
-                      {availableSlots.map((slot) => (
-                        <Button
-                          key={slot.start_time}
-                          type="button"
-                          variant={selectedStartTime === slot.start_time ? "default" : "outline"}
-                          onClick={() => {
-                            setSelectedStartTime(slot.start_time);
-                            setSelectedEndTime(slot.end_time);
-                          }}
-                          data-testid={`button-time-${slot.start_time}`}
-                        >
-                          {slot.start_time.slice(0, 5)}
-                        </Button>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-muted-foreground" data-testid="text-no-slots">
-                      Nenhum horario disponivel nesta data. Tente outra data.
-                    </p>
-                  )
-                ) : (
-                  <div className="flex items-center justify-center h-32 text-muted-foreground text-sm">
-                    <CalendarDays className="w-5 h-5 mr-2" />
-                    Selecione uma data
-                  </div>
-                )}
+            {loading ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="w-5 h-5 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />
               </div>
-            </div>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className="bg-neutral-50 rounded-xl p-5 border border-neutral-100">
+                  <SimpleCalendar selected={selectedDate} onSelect={setSelectedDate} />
+                </div>
 
-            <div className="flex items-center gap-3 mt-6">
-              <Button variant="outline" onClick={() => setCurrentStep(1)} data-testid="button-back-step1">
-                <ArrowLeft className="w-4 h-4 mr-1" />
-                Voltar
-              </Button>
+                <div>
+                  <p className="text-sm font-medium text-neutral-700 mb-4">
+                    {selectedDate
+                      ? `Horarios em ${format(selectedDate, "dd 'de' MMMM", { locale: ptBR })}`
+                      : "Selecione uma data"}
+                  </p>
+                  {selectedDate ? (
+                    availableSlots.length > 0 ? (
+                      <div className="grid grid-cols-2 gap-2">
+                        {availableSlots.map((slot) => (
+                          <button
+                            key={slot.start_time}
+                            type="button"
+                            onClick={() => {
+                              setSelectedStartTime(slot.start_time);
+                              setSelectedEndTime(slot.end_time);
+                            }}
+                            className={`py-2.5 px-3 text-sm rounded-lg border transition-colors ${
+                              selectedStartTime === slot.start_time
+                                ? "bg-neutral-900 text-white border-neutral-900"
+                                : "border-neutral-200 text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50"
+                            }`}
+                            data-testid={`button-time-${slot.start_time}`}
+                          >
+                            {slot.start_time.slice(0, 5)}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-neutral-400 py-8 text-center" data-testid="text-no-slots">
+                        Nenhum horario disponivel nesta data.
+                      </p>
+                    )
+                  ) : (
+                    <div className="flex items-center justify-center py-12 text-neutral-400 text-sm">
+                      <CalendarDays className="w-5 h-5 mr-2" />
+                      Selecione uma data
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 mt-8">
               <Button
-                onClick={() => setCurrentStep(3)}
+                onClick={() => setCurrentStep(2)}
                 disabled={!selectedStartTime}
-                data-testid="button-next-step3"
+                className="rounded-full px-6 bg-neutral-900 text-white hover:bg-neutral-800"
+                data-testid="button-next-step2"
               >
                 Continuar
                 <ArrowRight className="w-4 h-4 ml-1" />
@@ -448,110 +380,118 @@ export default function BookingPage() {
           </div>
         )}
 
-        {currentStep === 3 && (
+        {currentStep === 2 && (
           <div>
-            <h2 className="text-lg font-semibold mb-4" data-testid="text-step3-title">Seus dados</h2>
+            <h2 className="text-lg font-semibold text-neutral-900 mb-6" data-testid="text-step2-title">Seus dados</h2>
 
-            <Card>
-              <CardContent className="p-6">
-                <div className="bg-primary/5 rounded-md p-4 mb-6">
-                  <p className="text-sm font-medium mb-1">Resumo do agendamento:</p>
-                  <p className="text-sm text-muted-foreground">
-                    {selectedService?.name} - {selectedDate && format(selectedDate, "dd/MM/yyyy")} as{" "}
-                    {selectedStartTime?.slice(0, 5)}
-                  </p>
+            <div className="bg-neutral-50 rounded-xl p-4 mb-6 border border-neutral-100">
+              <p className="text-sm text-neutral-500">
+                {selectedDate && format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} as{" "}
+                {selectedStartTime?.slice(0, 5)}
+              </p>
+            </div>
+
+            {error && (
+              <div className="text-sm text-red-600 bg-red-50 rounded-xl p-4 mb-6 border border-red-100" data-testid="text-booking-error">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <Label htmlFor="patientName" className="text-neutral-700 text-sm">Nome completo</Label>
+                  <Input
+                    id="patientName"
+                    placeholder="Seu nome completo"
+                    value={patientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                    required
+                    className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                    data-testid="input-name"
+                  />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="patientEmail" className="text-neutral-700 text-sm">Email</Label>
+                  <Input
+                    id="patientEmail"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={patientEmail}
+                    onChange={(e) => setPatientEmail(e.target.value)}
+                    required
+                    className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                    data-testid="input-email"
+                  />
+                </div>
+              </div>
 
-                {error && (
-                  <div className="text-sm text-destructive bg-destructive/10 rounded-md p-3 mb-4" data-testid="text-booking-error">
-                    {error}
-                  </div>
-                )}
+              <div className="space-y-2">
+                <Label htmlFor="patientPhone" className="text-neutral-700 text-sm">Telefone / WhatsApp</Label>
+                <Input
+                  id="patientPhone"
+                  placeholder="(11) 99999-9999"
+                  value={patientPhone}
+                  onChange={(e) => setPatientPhone(e.target.value)}
+                  required
+                  className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                  data-testid="input-phone"
+                />
+              </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="patientName">Nome completo</Label>
-                      <Input
-                        id="patientName"
-                        placeholder="Seu nome completo"
-                        value={patientName}
-                        onChange={(e) => setPatientName(e.target.value)}
-                        required
-                        data-testid="input-name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="patientEmail">Email</Label>
-                      <Input
-                        id="patientEmail"
-                        type="email"
-                        placeholder="seu@email.com"
-                        value={patientEmail}
-                        onChange={(e) => setPatientEmail(e.target.value)}
-                        required
-                        data-testid="input-email"
-                      />
-                    </div>
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="notes" className="text-neutral-700 text-sm">Observacoes (opcional)</Label>
+                <Textarea
+                  id="notes"
+                  placeholder="Alguma informacao importante para a consulta?"
+                  className="resize-none border-neutral-200 focus:border-neutral-400 rounded-lg"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  data-testid="input-notes"
+                />
+              </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="patientPhone">Telefone / WhatsApp</Label>
-                    <Input
-                      id="patientPhone"
-                      placeholder="(11) 99999-9999"
-                      value={patientPhone}
-                      onChange={(e) => setPatientPhone(e.target.value)}
-                      required
-                      data-testid="input-phone"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="notes">Observacoes (opcional)</Label>
-                    <Textarea
-                      id="notes"
-                      placeholder="Alguma informacao importante para a consulta?"
-                      className="resize-none"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      data-testid="input-notes"
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-3 pt-2">
-                    <Button type="button" variant="outline" onClick={() => setCurrentStep(2)} data-testid="button-back-step2">
-                      <ArrowLeft className="w-4 h-4 mr-1" />
-                      Voltar
-                    </Button>
-                    <Button type="submit" disabled={submitting} data-testid="button-submit-booking">
-                      {submitting ? "Agendando..." : "Confirmar Agendamento"}
-                      <CheckCircle2 className="w-4 h-4 ml-1" />
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
+              <div className="flex items-center gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setCurrentStep(1)}
+                  className="rounded-full px-6 border-neutral-200"
+                  data-testid="button-back-step1"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-1" />
+                  Voltar
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="rounded-full px-6 bg-neutral-900 text-white hover:bg-neutral-800"
+                  data-testid="button-submit-booking"
+                >
+                  {submitting ? "Agendando..." : "Confirmar Agendamento"}
+                </Button>
+              </div>
+            </form>
           </div>
         )}
 
-        {currentStep === 4 && (
-          <div className="text-center py-12">
-            <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-6">
-              <CheckCircle2 className="w-10 h-10 text-primary" />
+        {currentStep === 3 && (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 mx-auto rounded-full bg-green-50 flex items-center justify-center mb-6">
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold mb-2" data-testid="text-booking-success">
+            <h2 className="text-2xl font-bold text-neutral-900 mb-2" data-testid="text-booking-success">
               Consulta Agendada!
             </h2>
-            <p className="text-muted-foreground mb-2">
-              Sua consulta foi agendada com sucesso. Voce recebera uma confirmacao em breve.
+            <p className="text-neutral-500 mb-2">
+              Sua consulta foi agendada com sucesso.
             </p>
-            <p className="text-sm text-muted-foreground mb-8">
-              {selectedService?.name} - {selectedDate && format(selectedDate, "dd/MM/yyyy")} as{" "}
+            <p className="text-sm text-neutral-400 mb-10">
+              {selectedDate && format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} as{" "}
               {selectedStartTime?.slice(0, 5)}
             </p>
             <Link href="/">
-              <Button data-testid="button-back-to-home">
+              <Button className="rounded-full px-6 bg-neutral-900 text-white hover:bg-neutral-800" data-testid="button-back-to-home">
                 <ArrowLeft className="w-4 h-4 mr-1" />
                 Voltar ao inicio
               </Button>

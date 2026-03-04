@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 import { useMounted } from "@/hooks/useMounted";
@@ -71,85 +70,74 @@ export function TestimonialsSection() {
   }, [testimonials.length]);
 
   return (
-    <section id="depoimentos" className="py-20 md:py-28 bg-card/50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" ref={ref}>
+    <section id="depoimentos" className="py-24 md:py-32">
+      <div className="max-w-6xl mx-auto px-6 lg:px-8" ref={ref}>
         <motion.div
-          className="text-center mb-14"
-          initial={mounted ? { y: 30, opacity: 0 } : false}
+          className="text-center mb-16"
+          initial={mounted ? { y: 20, opacity: 0 } : false}
           animate={isInView ? { y: 0, opacity: 1 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
         >
-          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-2">
+          <p className="text-sm font-medium text-neutral-400 uppercase tracking-widest mb-3">
             Depoimentos
           </p>
           <h2
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
-            style={{ fontFamily: "var(--font-serif)" }}
+            className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900"
             data-testid="text-testimonials-title"
           >
             O que meus pacientes dizem
           </h2>
         </motion.div>
 
-        <div className="hidden md:grid md:grid-cols-3 gap-6">
+        <div className="hidden md:grid md:grid-cols-3 gap-8">
           {testimonials.slice(0, 3).map((t, i) => (
             <motion.div
               key={t.id}
-              initial={mounted ? { y: 40, opacity: 0 } : false}
+              initial={mounted ? { y: 30, opacity: 0 } : false}
               animate={isInView ? { y: 0, opacity: 1 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
+              transition={{ duration: 0.4, delay: i * 0.12 }}
             >
-              <Card className="h-full hover:shadow-md transition-shadow" data-testid={`card-testimonial-${i}`}>
-                <CardContent className="p-6 space-y-4">
-                  <Quote className="w-8 h-8 text-primary/20" />
-                  <div className="flex gap-1">
-                    {Array.from({ length: t.rating }).map((_, j) => (
-                      <Star key={j} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                    ))}
+              <div className="h-full p-6 rounded-xl border border-neutral-100" data-testid={`card-testimonial-${i}`}>
+                <div className="flex gap-0.5 mb-4">
+                  {Array.from({ length: t.rating }).map((_, j) => (
+                    <Star key={j} className="w-4 h-4 text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-neutral-600 text-sm leading-relaxed mb-6">
+                  &ldquo;{t.content}&rdquo;
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
+                    <span className="text-neutral-500 font-medium text-xs">P</span>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed italic">
-                    &ldquo;{t.content}&rdquo;
-                  </p>
-                  <div className="flex items-center gap-3 pt-2">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-primary font-bold text-sm">P</span>
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">Paciente verificado</p>
-                      <p className="text-xs text-muted-foreground">Consulta realizada</p>
-                    </div>
+                  <div>
+                    <p className="font-medium text-sm text-neutral-700">Paciente verificado</p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
 
         <div className="md:hidden">
-          <Card data-testid={`card-testimonial-mobile`}>
-            <CardContent className="p-6 space-y-4">
-              <Quote className="w-8 h-8 text-primary/20" />
-              <div className="flex gap-1">
-                {Array.from({ length: testimonials[current]?.rating || 5 }).map((_, j) => (
-                  <Star key={j} className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                ))}
+          <div className="p-6 rounded-xl border border-neutral-100" data-testid="card-testimonial-mobile">
+            <div className="flex gap-0.5 mb-4">
+              {Array.from({ length: testimonials[current]?.rating || 5 }).map((_, j) => (
+                <Star key={j} className="w-4 h-4 text-amber-400 fill-amber-400" />
+              ))}
+            </div>
+            <p className="text-neutral-600 text-sm leading-relaxed min-h-[80px] mb-6">
+              &ldquo;{testimonials[current]?.content}&rdquo;
+            </p>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
+                <span className="text-neutral-500 font-medium text-xs">P</span>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed italic min-h-[80px]">
-                &ldquo;{testimonials[current]?.content}&rdquo;
-              </p>
-              <div className="flex items-center gap-3 pt-2">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-primary font-bold text-sm">P</span>
-                </div>
-                <div>
-                  <p className="font-medium text-sm">Paciente verificado</p>
-                  <p className="text-xs text-muted-foreground">Consulta realizada</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <div className="flex items-center justify-center gap-4 mt-4">
-            <Button variant="outline" size="icon" onClick={prev} aria-label="Depoimento anterior" data-testid="button-testimonial-prev">
+              <p className="font-medium text-sm text-neutral-700">Paciente verificado</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center gap-4 mt-6">
+            <Button variant="ghost" size="icon" onClick={prev} aria-label="Anterior" className="text-neutral-400" data-testid="button-testimonial-prev">
               <ChevronLeft className="w-4 h-4" />
             </Button>
             <div className="flex gap-2">
@@ -157,14 +145,14 @@ export function TestimonialsSection() {
                 <button
                   key={i}
                   onClick={() => setCurrent(i)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    i === current ? "bg-primary" : "bg-muted-foreground/30"
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                    i === current ? "bg-neutral-900" : "bg-neutral-300"
                   }`}
                   data-testid={`button-testimonial-dot-${i}`}
                 />
               ))}
             </div>
-            <Button variant="outline" size="icon" onClick={next} aria-label="Proximo depoimento" data-testid="button-testimonial-next">
+            <Button variant="ghost" size="icon" onClick={next} aria-label="Proximo" className="text-neutral-400" data-testid="button-testimonial-next">
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>

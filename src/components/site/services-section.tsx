@@ -2,12 +2,10 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion, useInView } from "framer-motion";
 import {
-  Clock,
-  ChevronRight,
+  ArrowRight,
   Stethoscope,
   Dumbbell,
   Salad,
@@ -19,43 +17,35 @@ const services = [
   {
     name: "Nutricao Clinica",
     description:
-      "Avaliacao completa do estado nutricional, anamnese detalhada, definicao de objetivos e elaboracao do plano alimentar personalizado para suas necessidades.",
+      "Avaliacao completa do estado nutricional e elaboracao do plano alimentar personalizado.",
     icon: Stethoscope,
-    duration: 60,
-    color: "from-emerald-500/10 to-emerald-500/5",
   },
   {
     name: "Nutricao Esportiva",
     description:
-      "Plano alimentar focado em performance esportiva, com estrategias de periodizacao nutricional e orientacao sobre suplementacao adequada.",
+      "Plano alimentar focado em performance com estrategias de periodizacao nutricional.",
     icon: Dumbbell,
-    duration: 60,
-    color: "from-blue-500/10 to-blue-500/5",
   },
   {
     name: "Reeducacao Alimentar",
     description:
-      "Programa completo para transformar sua relacao com a comida, com acompanhamento personalizado e suporte continuo para resultados duradouros.",
+      "Programa para transformar sua relacao com a comida com resultados duradouros.",
     icon: Salad,
-    duration: 50,
-    color: "from-orange-500/10 to-orange-500/5",
   },
   {
     name: "Nutricao Funcional",
     description:
-      "Abordagem integrativa que busca tratar a causa raiz dos desequilibrios nutricionais, utilizando alimentos como ferramenta terapeutica.",
+      "Abordagem integrativa que trata a causa raiz dos desequilibrios nutricionais.",
     icon: Sparkles,
-    duration: 60,
-    color: "from-purple-500/10 to-purple-500/5",
   },
 ];
 
 const cardVariants = {
-  hidden: { y: 40, opacity: 0 },
+  hidden: { y: 30, opacity: 0 },
   visible: (i: number) => ({
     y: 0,
     opacity: 1,
-    transition: { duration: 0.5, ease: "easeOut", delay: i * 0.1 },
+    transition: { duration: 0.4, ease: "easeOut", delay: i * 0.08 },
   }),
 };
 
@@ -65,22 +55,18 @@ export function ServicesSection() {
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="servicos" className="py-20 md:py-28">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" ref={ref}>
-        <div className="text-center mb-14">
-          <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-2">
-            Areas de Atuacao
+    <section id="servicos" className="py-24 md:py-32 bg-neutral-50">
+      <div className="max-w-6xl mx-auto px-6 lg:px-8" ref={ref}>
+        <div className="text-center mb-16">
+          <p className="text-sm font-medium text-neutral-400 uppercase tracking-widest mb-3">
+            Servicos
           </p>
           <h2
-            className="text-3xl md:text-4xl font-bold tracking-tight mb-4"
-            style={{ fontFamily: "var(--font-serif)" }}
+            className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900"
             data-testid="text-services-title"
           >
             Como posso te ajudar
           </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Ofereco diferentes tipos de acompanhamento para atender suas necessidades especificas de saude e nutricao.
-          </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -94,27 +80,28 @@ export function ServicesSection() {
                 initial={mounted ? "hidden" : false}
                 animate={isInView ? "visible" : "hidden"}
               >
-                <Card className="h-full group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50" data-testid={`card-service-${index}`}>
-                  <CardContent className="p-6 flex flex-col h-full">
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
-                      <IconComponent className="w-7 h-7 text-primary" />
-                    </div>
-                    <h3 className="font-semibold text-lg mb-2">{service.name}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed flex-grow mb-4">
-                      {service.description}
-                    </p>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground mb-4">
-                      <Clock className="w-4 h-4" />
-                      <span>{service.duration} min</span>
-                    </div>
-                    <Link href="/agendar" className="block mt-auto">
-                      <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors" data-testid={`button-book-${index}`}>
-                        Agendar
-                        <ChevronRight className="w-4 h-4 ml-1" />
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
+                <div
+                  className="bg-white rounded-xl p-6 h-full flex flex-col border border-neutral-100 hover:border-neutral-200 hover:shadow-sm transition-all duration-200"
+                  data-testid={`card-service-${index}`}
+                >
+                  <div className="w-11 h-11 rounded-lg bg-neutral-100 flex items-center justify-center mb-5">
+                    <IconComponent className="w-5 h-5 text-neutral-700" />
+                  </div>
+                  <h3 className="font-semibold text-neutral-900 mb-2">{service.name}</h3>
+                  <p className="text-sm text-neutral-500 leading-relaxed flex-grow mb-5">
+                    {service.description}
+                  </p>
+                  <Link href="/agendar">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-between text-neutral-600 hover:text-neutral-900 p-0 h-auto font-medium text-sm"
+                      data-testid={`button-book-${index}`}
+                    >
+                      Agendar
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                </div>
               </motion.div>
             );
           })}
