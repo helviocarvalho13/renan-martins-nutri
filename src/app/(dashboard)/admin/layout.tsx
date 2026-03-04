@@ -76,6 +76,7 @@ function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate
               window.location.href = "/login";
             });
           }}
+          aria-label="Sair da conta"
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-500 hover:bg-red-50 hover:text-red-600 transition-colors w-full"
           data-testid="button-logout"
         >
@@ -133,7 +134,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </header>
 
-        <main className="p-4 lg:p-6">
+        <main id="main-content" className="p-4 lg:p-6">
           {children}
         </main>
       </div>

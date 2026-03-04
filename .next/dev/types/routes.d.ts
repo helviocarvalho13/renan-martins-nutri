@@ -4,7 +4,7 @@
 type AppRoutes = "/" | "/admin" | "/admin/agenda" | "/admin/disponibilidade" | "/admin/pacientes" | "/admin/pacientes/[id]" | "/admin/site" | "/agenda" | "/agendar" | "/cadastro" | "/forgot-password" | "/login" | "/paciente" | "/paciente/agendar" | "/register" | "/setup" | "/update-password"
 type AppRouteHandlerRoutes = "/api/appointments" | "/api/appointments/[id]" | "/api/auth/login" | "/api/available-slots" | "/api/cron/reminders" | "/api/patient/book" | "/api/patient/cancel" | "/api/seed-admin" | "/api/setup"
 type PageRoutes = never
-type LayoutRoutes = "/" | "/admin" | "/paciente"
+type LayoutRoutes = "/" | "/admin" | "/admin/agenda" | "/admin/disponibilidade" | "/admin/pacientes" | "/admin/site" | "/agenda" | "/agendar" | "/forgot-password" | "/login" | "/paciente" | "/paciente/agendar" | "/register"
 type RedirectRoutes = never
 type RewriteRoutes = never
 type Routes = AppRoutes | PageRoutes | LayoutRoutes | RedirectRoutes | RewriteRoutes | AppRouteHandlerRoutes
@@ -45,7 +45,17 @@ export type ParamsOf<Route extends Routes> = ParamMap[Route]
 interface LayoutSlotMap {
   "/": never
   "/admin": never
+  "/admin/agenda": never
+  "/admin/disponibilidade": never
+  "/admin/pacientes": never
+  "/admin/site": never
+  "/agenda": never
+  "/agendar": never
+  "/forgot-password": never
+  "/login": never
   "/paciente": never
+  "/paciente/agendar": never
+  "/register": never
 }
 
 

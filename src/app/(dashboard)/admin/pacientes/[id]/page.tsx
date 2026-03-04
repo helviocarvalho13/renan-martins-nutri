@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, User, Phone, CreditCard, Calendar, Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -38,6 +39,7 @@ const typeLabels: Record<string, string> = {
 export default function PacienteDetailPage() {
   const params = useParams();
   const id = params.id as string;
+  const { toast } = useToast();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -58,10 +60,14 @@ export default function PacienteDetailPage() {
           .order("start_time", { ascending: false }),
       ]);
 
-      if (profileRes.data) {
+      if (profileRes.error) {
+        toast({ title: "Erro ao carregar paciente", description: profileRes.error.message, variant: "destructive" });
+      } else if (profileRes.data) {
         setProfile(profileRes.data as Profile);
       }
-      if (appointmentsRes.data) {
+      if (appointmentsRes.error) {
+        toast({ title: "Erro ao carregar consultas", description: appointmentsRes.error.message, variant: "destructive" });
+      } else if (appointmentsRes.data) {
         setAppointments(appointmentsRes.data as Appointment[]);
       }
       setLoading(false);

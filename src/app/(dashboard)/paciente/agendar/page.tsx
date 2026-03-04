@@ -19,6 +19,7 @@ import {
   Clock,
   Loader2,
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import type { Appointment } from "@/lib/types";
 
 function SimpleCalendar({
@@ -103,6 +104,9 @@ function SimpleCalendar({
                     : "hover:bg-neutral-100 cursor-pointer text-neutral-700"
               }`}
               data-testid={`calendar-day-${date.getDate()}`}
+              aria-label={`${date.getDate()} de ${monthNames[date.getMonth()]} de ${date.getFullYear()}`}
+              aria-selected={isSelected}
+              aria-disabled={disabled}
             >
               {date.getDate()}
             </button>
@@ -116,6 +120,7 @@ function SimpleCalendar({
 const stepLabels = ["Tipo", "Data", "Horário", "Confirmação"];
 
 export default function PatientBookingPage() {
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedType, setSelectedType] = useState<"FIRST_VISIT" | "RETURN" | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -136,37 +141,53 @@ export default function PatientBookingPage() {
   useEffect(() => {
     const supabase = createClient();
     async function fetchPatientInfo() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-      const today = new Date().toISOString().split("T")[0];
+        const today = new Date().toISOString().split("T")[0];
 
-      const { data: appointments } = await supabase
-        .from("appointments")
-        .select("*")
-        .eq("patient_id", user.id);
+        const { data: appointments, error } = await supabase
+          .from("appointments")
+          .select("*")
+          .eq("patient_id", user.id);
 
-      const allAppts = (appointments || []) as Appointment[];
+        if (error) {
+          toast({
+            title: "Erro ao carregar dados",
+            description: "Não foi possível carregar suas informações. Tente novamente.",
+            variant: "destructive",
+          });
+        }
 
-      const futureActive = allAppts.filter(
-        (a) => a.date >= today && (a.status === "PENDING" || a.status === "CONFIRMED")
-      );
+        const allAppts = (appointments || []) as Appointment[];
 
-      setHasActiveFirstVisit(futureActive.some((a) => a.type === "FIRST_VISIT"));
-      setHasActiveReturn(futureActive.some((a) => a.type === "RETURN"));
+        const futureActive = allAppts.filter(
+          (a) => a.date >= today && (a.status === "PENDING" || a.status === "CONFIRMED")
+        );
 
-      const completedWithReturn = allAppts.filter(
-        (a) => a.status === "COMPLETED" && a.return_suggested_date
-      );
+        setHasActiveFirstVisit(futureActive.some((a) => a.type === "FIRST_VISIT"));
+        setHasActiveReturn(futureActive.some((a) => a.type === "RETURN"));
 
-      const hasPendingReturn = futureActive.some((a) => a.type === "RETURN");
+        const completedWithReturn = allAppts.filter(
+          (a) => a.status === "COMPLETED" && a.return_suggested_date
+        );
 
-      if (completedWithReturn.length > 0 && !hasPendingReturn) {
-        setCanReturn(true);
-        setReturnDate(completedWithReturn[0].return_suggested_date);
+        const hasPendingReturn = futureActive.some((a) => a.type === "RETURN");
+
+        if (completedWithReturn.length > 0 && !hasPendingReturn) {
+          setCanReturn(true);
+          setReturnDate(completedWithReturn[0].return_suggested_date);
+        }
+      } catch {
+        toast({
+          title: "Erro ao carregar dados",
+          description: "Ocorreu um erro inesperado. Tente novamente.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoadingInfo(false);
       }
-
-      setLoadingInfo(false);
     }
     fetchPatientInfo();
   }, []);
@@ -198,21 +219,36 @@ export default function PatientBookingPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Erro ao agendar. Tente novamente.");
+        const errorMsg = data.error || "Erro ao agendar. Tente novamente.";
+        setError(errorMsg);
+        toast({
+          title: "Erro ao agendar",
+          description: errorMsg,
+          variant: "destructive",
+        });
         setSubmitting(false);
         return;
       }
 
+      toast({
+        title: "Consulta agendada",
+        description: "Sua consulta foi agendada com sucesso!",
+      });
       setSuccess(true);
     } catch {
       setError("Erro ao agendar. Tente novamente.");
+      toast({
+        title: "Erro ao agendar",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
+        variant: "destructive",
+      });
     }
     setSubmitting(false);
   };
 
   if (success) {
     return (
-      <div className="max-w-2xl mx-auto py-16 text-center">
+      <div className="max-w-2xl mx-auto py-16 text-center px-4 sm:px-0">
         <div className="w-16 h-16 mx-auto rounded-full bg-green-50 flex items-center justify-center mb-6">
           <CheckCircle2 className="w-8 h-8 text-green-600" />
         </div>
@@ -245,7 +281,7 @@ export default function PatientBookingPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto px-4 sm:px-0">
       <div className="mb-8">
         <h1 className="text-xl font-bold text-neutral-900 mb-1" data-testid="text-booking-title">
           Agendar Consulta
@@ -444,7 +480,7 @@ export default function PatientBookingPage() {
               <Loader2 className="w-5 h-5 animate-spin text-neutral-400" />
             </div>
           ) : slots.length > 0 ? (
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-8">
               {slots.map((slot) => {
                 const isSelected =
                   selectedSlot?.start_time === slot.start_time &&

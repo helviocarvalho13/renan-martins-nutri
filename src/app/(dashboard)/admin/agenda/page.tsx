@@ -53,6 +53,7 @@ import {
   User,
   FileText,
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface AppointmentWithProfile extends Appointment {
   profiles: Profile;
@@ -91,6 +92,7 @@ export default function AgendaPage() {
   const [updating, setUpdating] = useState(false);
 
   const supabase = createClient();
+  const { toast } = useToast();
 
   const fetchAppointments = useCallback(async () => {
     setLoading(true);
@@ -120,7 +122,9 @@ export default function AgendaPage() {
       .order("date", { ascending: true })
       .order("start_time", { ascending: true });
 
-    if (!error && data) {
+    if (error) {
+      toast({ title: "Erro ao carregar agenda", description: error.message, variant: "destructive" });
+    } else if (data) {
       setAppointments(data as unknown as AppointmentWithProfile[]);
     }
     setLoading(false);
@@ -165,9 +169,13 @@ export default function AgendaPage() {
       if (res.ok) {
         await fetchAppointments();
         setDialogOpen(false);
+        toast({ title: "Consulta atualizada", description: "As alterações foram salvas com sucesso." });
+      } else {
+        const body = await res.json().catch(() => null);
+        toast({ title: "Erro ao atualizar", description: body?.error || "Não foi possível salvar as alterações.", variant: "destructive" });
       }
     } catch (err) {
-      console.error("Update error:", err);
+      toast({ title: "Erro ao atualizar", description: "Ocorreu um erro de conexão. Tente novamente.", variant: "destructive" });
     }
     setUpdating(false);
   };
@@ -252,44 +260,46 @@ export default function AgendaPage() {
     const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
     return (
-      <div data-testid="view-weekly">
-        <div className="grid grid-cols-7 gap-1 mb-2">
-          {days.map((day) => (
-            <div
-              key={day.toISOString()}
-              className={`text-center text-sm font-medium p-2 rounded-md ${isToday(day) ? "bg-primary/10" : ""}`}
-            >
-              <div>{format(day, "EEE", { locale: ptBR })}</div>
-              <div className="text-lg">{format(day, "dd")}</div>
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-1">
-          {days.map((day) => {
-            const dayAppts = getAppointmentsForDay(day);
-            return (
+      <div data-testid="view-weekly" className="overflow-x-auto">
+        <div className="min-w-[600px]">
+          <div className="grid grid-cols-7 gap-1 mb-2">
+            {days.map((day) => (
               <div
                 key={day.toISOString()}
-                className="min-h-[120px] border rounded-md p-1"
+                className={`text-center text-xs sm:text-sm font-medium p-1 sm:p-2 rounded-md ${isToday(day) ? "bg-primary/10" : ""}`}
               >
-                {dayAppts.map((appt) => (
-                  <button
-                    key={appt.id}
-                    data-testid={`appointment-weekly-${appt.id}`}
-                    className={`w-full text-left text-xs p-1 mb-1 rounded border cursor-pointer ${STATUS_COLORS[appt.status]}`}
-                    onClick={() => openDetail(appt)}
-                  >
-                    <div className="font-medium truncate">
-                      {appt.start_time.slice(0, 5)}
-                    </div>
-                    <div className="truncate">
-                      {appt.profiles?.full_name}
-                    </div>
-                  </button>
-                ))}
+                <div>{format(day, "EEE", { locale: ptBR })}</div>
+                <div className="text-base sm:text-lg">{format(day, "dd")}</div>
               </div>
-            );
-          })}
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-1">
+            {days.map((day) => {
+              const dayAppts = getAppointmentsForDay(day);
+              return (
+                <div
+                  key={day.toISOString()}
+                  className="min-h-[120px] border rounded-md p-1"
+                >
+                  {dayAppts.map((appt) => (
+                    <button
+                      key={appt.id}
+                      data-testid={`appointment-weekly-${appt.id}`}
+                      className={`w-full text-left text-xs p-1 mb-1 rounded border cursor-pointer ${STATUS_COLORS[appt.status]}`}
+                      onClick={() => openDetail(appt)}
+                    >
+                      <div className="font-medium truncate">
+                        {appt.start_time.slice(0, 5)}
+                      </div>
+                      <div className="truncate">
+                        {appt.profiles?.full_name}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     );
@@ -317,17 +327,17 @@ export default function AgendaPage() {
 
     return (
       <div data-testid="view-monthly">
-        <div className="grid grid-cols-7 gap-1 mb-1">
+        <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-1">
           {dayNames.map((name) => (
             <div
               key={name}
-              className="text-center text-xs font-medium text-muted-foreground p-1"
+              className="text-center text-[10px] sm:text-xs font-medium text-muted-foreground p-0.5 sm:p-1"
             >
               {name}
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
           {allDays.map((day) => {
             const dayAppts = getAppointmentsForDay(day);
             const inMonth =
@@ -336,7 +346,7 @@ export default function AgendaPage() {
               <button
                 key={day.toISOString()}
                 data-testid={`month-day-${format(day, "yyyy-MM-dd")}`}
-                className={`min-h-[72px] border rounded-md p-1 text-left cursor-pointer ${
+                className={`min-h-[52px] sm:min-h-[72px] border rounded-md p-0.5 sm:p-1 text-left cursor-pointer ${
                   !inMonth ? "opacity-40" : ""
                 } ${isToday(day) ? "border-primary" : ""}`}
                 onClick={() => {
@@ -344,24 +354,24 @@ export default function AgendaPage() {
                   setView("daily");
                 }}
               >
-                <div className="text-xs font-medium">{format(day, "d")}</div>
+                <div className="text-[10px] sm:text-xs font-medium">{format(day, "d")}</div>
                 {dayAppts.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-1">
+                  <div className="flex flex-wrap gap-0.5 sm:gap-1 mt-0.5 sm:mt-1">
                     {dayAppts.slice(0, 4).map((appt) => (
                       <div
                         key={appt.id}
-                        className={`w-2 h-2 rounded-full ${dotColor[appt.status]}`}
+                        className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${dotColor[appt.status]}`}
                       />
                     ))}
                     {dayAppts.length > 4 && (
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-[10px] sm:text-xs text-muted-foreground">
                         +{dayAppts.length - 4}
                       </span>
                     )}
                   </div>
                 )}
                 {dayAppts.length > 0 && (
-                  <div className="text-xs text-muted-foreground mt-0.5">
+                  <div className="hidden sm:block text-xs text-muted-foreground mt-0.5">
                     {dayAppts.length} consulta{dayAppts.length > 1 ? "s" : ""}
                   </div>
                 )}

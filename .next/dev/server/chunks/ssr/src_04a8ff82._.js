@@ -453,7 +453,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$clock$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Clock$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/clock.js [app-ssr] (ecmascript) <export default as Clock>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$user$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__User$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/user.js [app-ssr] (ecmascript) <export default as User>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$file$2d$text$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__FileText$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/file-text.js [app-ssr] (ecmascript) <export default as FileText>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/hooks/use-toast.ts [app-ssr] (ecmascript)");
 "use client";
+;
 ;
 ;
 ;
@@ -496,6 +498,7 @@ function AgendaPage() {
     const [returnDate, setReturnDate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const [updating, setUpdating] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createClient"])();
+    const { toast } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useToast"])();
     const fetchAppointments = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async ()=>{
         setLoading(true);
         let startDate;
@@ -523,7 +526,13 @@ function AgendaPage() {
         }).order("start_time", {
             ascending: true
         });
-        if (!error && data) {
+        if (error) {
+            toast({
+                title: "Erro ao carregar agenda",
+                description: error.message,
+                variant: "destructive"
+            });
+        } else if (data) {
             setAppointments(data);
         }
         setLoading(false);
@@ -568,9 +577,24 @@ function AgendaPage() {
             if (res.ok) {
                 await fetchAppointments();
                 setDialogOpen(false);
+                toast({
+                    title: "Consulta atualizada",
+                    description: "As alterações foram salvas com sucesso."
+                });
+            } else {
+                const body = await res.json().catch(()=>null);
+                toast({
+                    title: "Erro ao atualizar",
+                    description: body?.error || "Não foi possível salvar as alterações.",
+                    variant: "destructive"
+                });
             }
         } catch (err) {
-            console.error("Update error:", err);
+            toast({
+                title: "Erro ao atualizar",
+                description: "Ocorreu um erro de conexão. Tente novamente.",
+                variant: "destructive"
+            });
         }
         setUpdating(false);
     };
@@ -633,20 +657,20 @@ function AgendaPage() {
                                 children: `${hour.toString().padStart(2, "0")}:00`
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 218,
+                                lineNumber: 226,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "flex-1 relative"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 221,
+                                lineNumber: 229,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, hour, true, {
                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                        lineNumber: 213,
+                        lineNumber: 221,
                         columnNumber: 11
                     }, this)),
                 dayAppointments.map((appt)=>{
@@ -667,7 +691,7 @@ function AgendaPage() {
                                 children: appt.profiles?.full_name
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 236,
+                                lineNumber: 244,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -678,20 +702,20 @@ function AgendaPage() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 239,
+                                lineNumber: 247,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, appt.id, true, {
                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                        lineNumber: 229,
+                        lineNumber: 237,
                         columnNumber: 13
                     }, this);
                 })
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-            lineNumber: 211,
+            lineNumber: 219,
             columnNumber: 7
         }, this);
     };
@@ -708,88 +732,96 @@ function AgendaPage() {
         });
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             "data-testid": "view-weekly",
-            children: [
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "grid grid-cols-7 gap-1 mb-2",
-                    children: days.map((day)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: `text-center text-sm font-medium p-2 rounded-md ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isToday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["isToday"])(day) ? "bg-primary/10" : ""}`,
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(day, "EEE", {
-                                        locale: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$locale$2f$pt$2d$BR$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ptBR"]
-                                    })
-                                }, void 0, false, {
-                                    fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 262,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "text-lg",
-                                    children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(day, "dd")
-                                }, void 0, false, {
-                                    fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 263,
-                                    columnNumber: 15
-                                }, this)
-                            ]
-                        }, day.toISOString(), true, {
-                            fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                            lineNumber: 258,
-                            columnNumber: 13
-                        }, this))
-                }, void 0, false, {
-                    fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                    lineNumber: 256,
-                    columnNumber: 9
-                }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "grid grid-cols-7 gap-1",
-                    children: days.map((day)=>{
-                        const dayAppts = getAppointmentsForDay(day);
-                        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "min-h-[120px] border rounded-md p-1",
-                            children: dayAppts.map((appt)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    "data-testid": `appointment-weekly-${appt.id}`,
-                                    className: `w-full text-left text-xs p-1 mb-1 rounded border cursor-pointer ${STATUS_COLORS[appt.status]}`,
-                                    onClick: ()=>openDetail(appt),
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "font-medium truncate",
-                                            children: appt.start_time.slice(0, 5)
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 282,
-                                            columnNumber: 21
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "truncate",
-                                            children: appt.profiles?.full_name
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 285,
-                                            columnNumber: 21
-                                        }, this)
-                                    ]
-                                }, appt.id, true, {
-                                    fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 276,
-                                    columnNumber: 19
-                                }, this))
-                        }, day.toISOString(), false, {
-                            fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                            lineNumber: 271,
-                            columnNumber: 15
-                        }, this);
-                    })
-                }, void 0, false, {
-                    fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                    lineNumber: 267,
-                    columnNumber: 9
-                }, this)
-            ]
-        }, void 0, true, {
+            className: "overflow-x-auto",
+            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "min-w-[600px]",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "grid grid-cols-7 gap-1 mb-2",
+                        children: days.map((day)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: `text-center text-xs sm:text-sm font-medium p-1 sm:p-2 rounded-md ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isToday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["isToday"])(day) ? "bg-primary/10" : ""}`,
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(day, "EEE", {
+                                            locale: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$locale$2f$pt$2d$BR$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ptBR"]
+                                        })
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
+                                        lineNumber: 271,
+                                        columnNumber: 17
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "text-base sm:text-lg",
+                                        children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(day, "dd")
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
+                                        lineNumber: 272,
+                                        columnNumber: 17
+                                    }, this)
+                                ]
+                            }, day.toISOString(), true, {
+                                fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
+                                lineNumber: 267,
+                                columnNumber: 15
+                            }, this))
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
+                        lineNumber: 265,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "grid grid-cols-7 gap-1",
+                        children: days.map((day)=>{
+                            const dayAppts = getAppointmentsForDay(day);
+                            return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "min-h-[120px] border rounded-md p-1",
+                                children: dayAppts.map((appt)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        "data-testid": `appointment-weekly-${appt.id}`,
+                                        className: `w-full text-left text-xs p-1 mb-1 rounded border cursor-pointer ${STATUS_COLORS[appt.status]}`,
+                                        onClick: ()=>openDetail(appt),
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "font-medium truncate",
+                                                children: appt.start_time.slice(0, 5)
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
+                                                lineNumber: 291,
+                                                columnNumber: 23
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "truncate",
+                                                children: appt.profiles?.full_name
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
+                                                lineNumber: 294,
+                                                columnNumber: 23
+                                            }, this)
+                                        ]
+                                    }, appt.id, true, {
+                                        fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
+                                        lineNumber: 285,
+                                        columnNumber: 21
+                                    }, this))
+                            }, day.toISOString(), false, {
+                                fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
+                                lineNumber: 280,
+                                columnNumber: 17
+                            }, this);
+                        })
+                    }, void 0, false, {
+                        fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
+                        lineNumber: 276,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
+                lineNumber: 264,
+                columnNumber: 9
+            }, this)
+        }, void 0, false, {
             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-            lineNumber: 255,
+            lineNumber: 263,
             columnNumber: 7
         }, this);
     };
@@ -826,70 +858,70 @@ function AgendaPage() {
             "data-testid": "view-monthly",
             children: [
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "grid grid-cols-7 gap-1 mb-1",
+                    className: "grid grid-cols-7 gap-0.5 sm:gap-1 mb-1",
                     children: dayNames.map((name)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "text-center text-xs font-medium text-muted-foreground p-1",
+                            className: "text-center text-[10px] sm:text-xs font-medium text-muted-foreground p-0.5 sm:p-1",
                             children: name
                         }, name, false, {
                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                            lineNumber: 322,
+                            lineNumber: 332,
                             columnNumber: 13
                         }, this))
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                    lineNumber: 320,
+                    lineNumber: 330,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "grid grid-cols-7 gap-1",
+                    className: "grid grid-cols-7 gap-0.5 sm:gap-1",
                     children: allDays.map((day)=>{
                         const dayAppts = getAppointmentsForDay(day);
                         const inMonth = day.getMonth() === currentDate.getMonth();
                         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                             "data-testid": `month-day-${(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(day, "yyyy-MM-dd")}`,
-                            className: `min-h-[72px] border rounded-md p-1 text-left cursor-pointer ${!inMonth ? "opacity-40" : ""} ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isToday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["isToday"])(day) ? "border-primary" : ""}`,
+                            className: `min-h-[52px] sm:min-h-[72px] border rounded-md p-0.5 sm:p-1 text-left cursor-pointer ${!inMonth ? "opacity-40" : ""} ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isToday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["isToday"])(day) ? "border-primary" : ""}`,
                             onClick: ()=>{
                                 setCurrentDate(day);
                                 setView("daily");
                             },
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "text-xs font-medium",
+                                    className: "text-[10px] sm:text-xs font-medium",
                                     children: (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(day, "d")
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 347,
+                                    lineNumber: 357,
                                     columnNumber: 17
                                 }, this),
                                 dayAppts.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex flex-wrap gap-1 mt-1",
+                                    className: "flex flex-wrap gap-0.5 sm:gap-1 mt-0.5 sm:mt-1",
                                     children: [
                                         dayAppts.slice(0, 4).map((appt)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: `w-2 h-2 rounded-full ${dotColor[appt.status]}`
+                                                className: `w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${dotColor[appt.status]}`
                                             }, appt.id, false, {
                                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                                lineNumber: 351,
+                                                lineNumber: 361,
                                                 columnNumber: 23
                                             }, this)),
                                         dayAppts.length > 4 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "text-xs text-muted-foreground",
+                                            className: "text-[10px] sm:text-xs text-muted-foreground",
                                             children: [
                                                 "+",
                                                 dayAppts.length - 4
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 357,
+                                            lineNumber: 367,
                                             columnNumber: 23
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 349,
+                                    lineNumber: 359,
                                     columnNumber: 19
                                 }, this),
                                 dayAppts.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "text-xs text-muted-foreground mt-0.5",
+                                    className: "hidden sm:block text-xs text-muted-foreground mt-0.5",
                                     children: [
                                         dayAppts.length,
                                         " consulta",
@@ -897,25 +929,25 @@ function AgendaPage() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 364,
+                                    lineNumber: 374,
                                     columnNumber: 19
                                 }, this)
                             ]
                         }, day.toISOString(), true, {
                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                            lineNumber: 336,
+                            lineNumber: 346,
                             columnNumber: 15
                         }, this);
                     })
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                    lineNumber: 330,
+                    lineNumber: 340,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-            lineNumber: 319,
+            lineNumber: 329,
             columnNumber: 7
         }, this);
     };
@@ -931,7 +963,7 @@ function AgendaPage() {
                         children: "Agenda"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                        lineNumber: 379,
+                        lineNumber: 389,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -944,12 +976,12 @@ function AgendaPage() {
                                 "data-testid": "button-prev",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$left$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronLeft$3e$__["ChevronLeft"], {}, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 389,
+                                    lineNumber: 399,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 383,
+                                lineNumber: 393,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -959,7 +991,7 @@ function AgendaPage() {
                                 children: "Hoje"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 391,
+                                lineNumber: 401,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -969,12 +1001,12 @@ function AgendaPage() {
                                 "data-testid": "button-next",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__["ChevronRight"], {}, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 404,
+                                    lineNumber: 414,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 398,
+                                lineNumber: 408,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -983,19 +1015,19 @@ function AgendaPage() {
                                 children: getDateLabel()
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 406,
+                                lineNumber: 416,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                        lineNumber: 382,
+                        lineNumber: 392,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                lineNumber: 378,
+                lineNumber: 388,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Tabs"], {
@@ -1010,7 +1042,7 @@ function AgendaPage() {
                                 children: "Diario"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 420,
+                                lineNumber: 430,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -1019,7 +1051,7 @@ function AgendaPage() {
                                 children: "Semanal"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 423,
+                                lineNumber: 433,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsTrigger"], {
@@ -1028,13 +1060,13 @@ function AgendaPage() {
                                 children: "Mensal"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 426,
+                                lineNumber: 436,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                        lineNumber: 419,
+                        lineNumber: 429,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -1050,27 +1082,27 @@ function AgendaPage() {
                                         children: "Carregando..."
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                        lineNumber: 439,
+                                        lineNumber: 449,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 435,
+                                    lineNumber: 445,
                                     columnNumber: 17
                                 }, this) : renderDailyView()
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 433,
+                                lineNumber: 443,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                            lineNumber: 432,
+                            lineNumber: 442,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                        lineNumber: 431,
+                        lineNumber: 441,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -1086,27 +1118,27 @@ function AgendaPage() {
                                         children: "Carregando..."
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                        lineNumber: 456,
+                                        lineNumber: 466,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 452,
+                                    lineNumber: 462,
                                     columnNumber: 17
                                 }, this) : renderWeeklyView()
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 450,
+                                lineNumber: 460,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                            lineNumber: 449,
+                            lineNumber: 459,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                        lineNumber: 448,
+                        lineNumber: 458,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$tabs$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["TabsContent"], {
@@ -1122,33 +1154,33 @@ function AgendaPage() {
                                         children: "Carregando..."
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                        lineNumber: 473,
+                                        lineNumber: 483,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 469,
+                                    lineNumber: 479,
                                     columnNumber: 17
                                 }, this) : renderMonthlyView()
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                lineNumber: 467,
+                                lineNumber: 477,
                                 columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                            lineNumber: 466,
+                            lineNumber: 476,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                        lineNumber: 465,
+                        lineNumber: 475,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                lineNumber: 415,
+                lineNumber: 425,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -1163,20 +1195,20 @@ function AgendaPage() {
                                     children: "Detalhes da Consulta"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 486,
+                                    lineNumber: 496,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogDescription"], {
                                     children: "Gerencie o status e as notas desta consulta"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 489,
+                                    lineNumber: 499,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                            lineNumber: 485,
+                            lineNumber: 495,
                             columnNumber: 11
                         }, this),
                         selectedAppointment && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1189,7 +1221,7 @@ function AgendaPage() {
                                             className: "w-4 h-4 text-muted-foreground"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 497,
+                                            lineNumber: 507,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1198,7 +1230,7 @@ function AgendaPage() {
                                             children: selectedAppointment.profiles?.full_name
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 498,
+                                            lineNumber: 508,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1207,13 +1239,13 @@ function AgendaPage() {
                                             children: STATUS_LABELS[selectedAppointment.status]
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 504,
+                                            lineNumber: 514,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 496,
+                                    lineNumber: 506,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1223,7 +1255,7 @@ function AgendaPage() {
                                             className: "w-4 h-4 text-muted-foreground"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 513,
+                                            lineNumber: 523,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1233,14 +1265,14 @@ function AgendaPage() {
                                             })
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 514,
+                                            lineNumber: 524,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$clock$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Clock$3e$__["Clock"], {
                                             className: "w-4 h-4 text-muted-foreground ml-2"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 521,
+                                            lineNumber: 531,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1253,13 +1285,13 @@ function AgendaPage() {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 522,
+                                            lineNumber: 532,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 512,
+                                    lineNumber: 522,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1270,12 +1302,12 @@ function AgendaPage() {
                                         children: selectedAppointment.type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                        lineNumber: 529,
+                                        lineNumber: 539,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 528,
+                                    lineNumber: 538,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1288,14 +1320,14 @@ function AgendaPage() {
                                                     className: "w-4 h-4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                                    lineNumber: 538,
+                                                    lineNumber: 548,
                                                     columnNumber: 19
                                                 }, this),
                                                 "Notas"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 537,
+                                            lineNumber: 547,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -1305,13 +1337,13 @@ function AgendaPage() {
                                             "data-testid": "input-notes"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 541,
+                                            lineNumber: 551,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 536,
+                                    lineNumber: 546,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1322,7 +1354,7 @@ function AgendaPage() {
                                             children: "Sugerir data de retorno"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 550,
+                                            lineNumber: 560,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1332,13 +1364,13 @@ function AgendaPage() {
                                             "data-testid": "input-return-date"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 553,
+                                            lineNumber: 563,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 549,
+                                    lineNumber: 559,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1352,7 +1384,7 @@ function AgendaPage() {
                                             children: "Confirmar"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 562,
+                                            lineNumber: 572,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1363,7 +1395,7 @@ function AgendaPage() {
                                             children: "Cancelar"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 573,
+                                            lineNumber: 583,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1374,7 +1406,7 @@ function AgendaPage() {
                                             children: "Marcar Concluída"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 584,
+                                            lineNumber: 594,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1385,13 +1417,13 @@ function AgendaPage() {
                                             children: "Registrar No-Show"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                            lineNumber: 595,
+                                            lineNumber: 605,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 561,
+                                    lineNumber: 571,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogFooter"], {
@@ -1402,35 +1434,35 @@ function AgendaPage() {
                                         children: updating ? "Salvando..." : "Salvar Notas"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                        lineNumber: 609,
+                                        lineNumber: 619,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                                    lineNumber: 608,
+                                    lineNumber: 618,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                            lineNumber: 495,
+                            lineNumber: 505,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                    lineNumber: 484,
+                    lineNumber: 494,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-                lineNumber: 483,
+                lineNumber: 493,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
-        lineNumber: 377,
+        lineNumber: 387,
         columnNumber: 5
     }, this);
 }

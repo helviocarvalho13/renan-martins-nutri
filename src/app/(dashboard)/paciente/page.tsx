@@ -17,6 +17,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import type { Appointment } from "@/lib/types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -35,6 +36,7 @@ function formatTypeLabel(type: string) {
 
 export default function PatientDashboard() {
   const router = useRouter();
+  const { toast } = useToast();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -43,21 +45,38 @@ export default function PatientDashboard() {
   const supabase = createClient();
 
   const fetchData = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      router.push("/login");
-      return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+      setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Paciente");
+
+      const { data: appts, error } = await supabase
+        .from("appointments")
+        .select("*")
+        .eq("patient_id", user.id)
+        .order("date", { ascending: true });
+
+      if (error) {
+        toast({
+          title: "Erro ao carregar consultas",
+          description: "Não foi possível carregar suas consultas. Tente novamente.",
+          variant: "destructive",
+        });
+      }
+
+      setAppointments((appts || []) as Appointment[]);
+    } catch {
+      toast({
+        title: "Erro ao carregar consultas",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-    setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Paciente");
-
-    const { data: appts } = await supabase
-      .from("appointments")
-      .select("*")
-      .eq("patient_id", user.id)
-      .order("date", { ascending: true });
-
-    setAppointments((appts || []) as Appointment[]);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -115,12 +134,24 @@ export default function PatientDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
+        toast({
+          title: "Consulta cancelada",
+          description: "Sua consulta foi cancelada com sucesso.",
+        });
         await fetchData();
       } else {
-        alert(data.error || "Erro ao cancelar consulta.");
+        toast({
+          title: "Erro ao cancelar",
+          description: data.error || "Não foi possível cancelar a consulta.",
+          variant: "destructive",
+        });
       }
     } catch {
-      alert("Erro ao cancelar consulta.");
+      toast({
+        title: "Erro ao cancelar",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
+        variant: "destructive",
+      });
     } finally {
       setCancellingId(null);
     }

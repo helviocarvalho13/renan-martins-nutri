@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Clock, Trash2, Plus, Save, CalendarOff } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const DAYS_OF_WEEK = [
   "Domingo",
@@ -43,6 +44,7 @@ const DEFAULT_CONFIG: Omit<DayConfig, "day_of_week"> = {
 
 export default function DisponibilidadePage() {
   const supabase = createClient();
+  const { toast } = useToast();
 
   const [configs, setConfigs] = useState<DayConfig[]>([]);
   const [blockedSlots, setBlockedSlots] = useState<BlockedSlot[]>([]);
@@ -90,6 +92,13 @@ export default function DisponibilidadePage() {
         return { ...DEFAULT_CONFIG, day_of_week: index };
       });
 
+      if (configRes.error) {
+        toast({ title: "Erro ao carregar configurações", description: configRes.error.message, variant: "destructive" });
+      }
+      if (blockedRes.error) {
+        toast({ title: "Erro ao carregar bloqueios", description: blockedRes.error.message, variant: "destructive" });
+      }
+
       setConfigs(dayConfigs);
       setBlockedSlots((blockedRes.data || []) as BlockedSlot[]);
     } finally {
@@ -115,6 +124,7 @@ export default function DisponibilidadePage() {
       } = await supabase.auth.getUser();
       if (!user) return;
 
+      let hasError = false;
       for (const config of configs) {
         const payload = {
           admin_id: user.id,
@@ -127,16 +137,24 @@ export default function DisponibilidadePage() {
         };
 
         if (config.id) {
-          await supabase
+          const { error } = await supabase
             .from("schedule_config")
             .update(payload)
             .eq("id", config.id);
+          if (error) hasError = true;
         } else {
-          await supabase.from("schedule_config").insert(payload);
+          const { error } = await supabase.from("schedule_config").insert(payload);
+          if (error) hasError = true;
         }
       }
 
       await loadData();
+
+      if (hasError) {
+        toast({ title: "Erro ao salvar", description: "Alguns horários não puderam ser salvos.", variant: "destructive" });
+      } else {
+        toast({ title: "Horários salvos", description: "Configurações de disponibilidade atualizadas com sucesso." });
+      }
     } finally {
       setSaving(false);
     }
@@ -151,7 +169,7 @@ export default function DisponibilidadePage() {
       } = await supabase.auth.getUser();
       if (!user) return;
 
-      await supabase.from("blocked_slots").insert({
+      const { error } = await supabase.from("blocked_slots").insert({
         admin_id: user.id,
         date: newBlock.date,
         start_time: newBlock.all_day ? null : newBlock.start_time || null,
@@ -160,13 +178,18 @@ export default function DisponibilidadePage() {
         reason: newBlock.reason || null,
       });
 
-      setNewBlock({
-        date: "",
-        start_time: "",
-        end_time: "",
-        all_day: true,
-        reason: "",
-      });
+      if (error) {
+        toast({ title: "Erro ao adicionar bloqueio", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Bloqueio adicionado", description: "Data bloqueada com sucesso." });
+        setNewBlock({
+          date: "",
+          start_time: "",
+          end_time: "",
+          all_day: true,
+          reason: "",
+        });
+      }
       await loadData();
     } finally {
       setAddingBlock(false);
@@ -176,7 +199,12 @@ export default function DisponibilidadePage() {
   const handleDeleteBlock = async (id: string) => {
     setDeletingId(id);
     try {
-      await supabase.from("blocked_slots").delete().eq("id", id);
+      const { error } = await supabase.from("blocked_slots").delete().eq("id", id);
+      if (error) {
+        toast({ title: "Erro ao remover bloqueio", description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: "Bloqueio removido", description: "O bloqueio foi removido com sucesso." });
+      }
       await loadData();
     } finally {
       setDeletingId(null);
@@ -194,7 +222,7 @@ export default function DisponibilidadePage() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-4xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold" data-testid="text-page-title">
           Disponibilidade
@@ -214,99 +242,103 @@ export default function DisponibilidadePage() {
         <CardContent className="space-y-4">
           {configs.map((config, index) => (
             <div key={config.day_of_week}>
-              <div className="flex items-center gap-4 flex-wrap">
-                <div className="w-24 shrink-0">
-                  <Label
-                    className="font-medium"
-                    data-testid={`text-day-label-${config.day_of_week}`}
-                  >
-                    {DAYS_OF_WEEK[config.day_of_week]}
-                  </Label>
+              <div className="space-y-3 sm:space-y-0">
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="w-24 shrink-0">
+                    <Label
+                      className="font-medium"
+                      data-testid={`text-day-label-${config.day_of_week}`}
+                    >
+                      {DAYS_OF_WEEK[config.day_of_week]}
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={config.is_active}
+                      onCheckedChange={(checked) =>
+                        updateConfig(index, { is_active: checked })
+                      }
+                      data-testid={`switch-active-${config.day_of_week}`}
+                    />
+                    <Label className="text-muted-foreground text-xs">
+                      {config.is_active ? "Ativo" : "Inativo"}
+                    </Label>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={config.is_active}
-                    onCheckedChange={(checked) =>
-                      updateConfig(index, { is_active: checked })
-                    }
-                    data-testid={`switch-active-${config.day_of_week}`}
-                  />
-                  <Label className="text-muted-foreground text-xs">
-                    {config.is_active ? "Ativo" : "Inativo"}
-                  </Label>
-                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-2 sm:mt-0 sm:ml-28">
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-muted-foreground whitespace-nowrap">
+                      Inicio
+                    </Label>
+                    <Input
+                      type="time"
+                      value={config.start_time}
+                      onChange={(e) =>
+                        updateConfig(index, { start_time: e.target.value })
+                      }
+                      disabled={!config.is_active}
+                      className="w-full sm:w-32"
+                      data-testid={`input-start-time-${config.day_of_week}`}
+                    />
+                  </div>
 
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                    Inicio
-                  </Label>
-                  <Input
-                    type="time"
-                    value={config.start_time}
-                    onChange={(e) =>
-                      updateConfig(index, { start_time: e.target.value })
-                    }
-                    disabled={!config.is_active}
-                    className="w-32"
-                    data-testid={`input-start-time-${config.day_of_week}`}
-                  />
-                </div>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-muted-foreground whitespace-nowrap">
+                      Fim
+                    </Label>
+                    <Input
+                      type="time"
+                      value={config.end_time}
+                      onChange={(e) =>
+                        updateConfig(index, { end_time: e.target.value })
+                      }
+                      disabled={!config.is_active}
+                      className="w-full sm:w-32"
+                      data-testid={`input-end-time-${config.day_of_week}`}
+                    />
+                  </div>
 
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                    Fim
-                  </Label>
-                  <Input
-                    type="time"
-                    value={config.end_time}
-                    onChange={(e) =>
-                      updateConfig(index, { end_time: e.target.value })
-                    }
-                    disabled={!config.is_active}
-                    className="w-32"
-                    data-testid={`input-end-time-${config.day_of_week}`}
-                  />
-                </div>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-muted-foreground whitespace-nowrap">
+                      Duracao (min)
+                    </Label>
+                    <Input
+                      type="number"
+                      value={config.slot_duration_min}
+                      onChange={(e) =>
+                        updateConfig(index, {
+                          slot_duration_min: parseInt(e.target.value) || 0,
+                        })
+                      }
+                      disabled={!config.is_active}
+                      className="w-full sm:w-20"
+                      min={10}
+                      max={120}
+                      data-testid={`input-slot-duration-${config.day_of_week}`}
+                    />
+                  </div>
 
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                    Duracao (min)
-                  </Label>
-                  <Input
-                    type="number"
-                    value={config.slot_duration_min}
-                    onChange={(e) =>
-                      updateConfig(index, {
-                        slot_duration_min: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    disabled={!config.is_active}
-                    className="w-20"
-                    min={10}
-                    max={120}
-                    data-testid={`input-slot-duration-${config.day_of_week}`}
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Label className="text-xs text-muted-foreground whitespace-nowrap">
-                    Intervalo (min)
-                  </Label>
-                  <Input
-                    type="number"
-                    value={config.break_duration_min}
-                    onChange={(e) =>
-                      updateConfig(index, {
-                        break_duration_min: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    disabled={!config.is_active}
-                    className="w-20"
-                    min={0}
-                    max={60}
-                    data-testid={`input-break-duration-${config.day_of_week}`}
-                  />
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-muted-foreground whitespace-nowrap">
+                      Intervalo (min)
+                    </Label>
+                    <Input
+                      type="number"
+                      value={config.break_duration_min}
+                      onChange={(e) =>
+                        updateConfig(index, {
+                          break_duration_min: parseInt(e.target.value) || 0,
+                        })
+                      }
+                      disabled={!config.is_active}
+                      className="w-full sm:w-20"
+                      min={0}
+                      max={60}
+                      data-testid={`input-break-duration-${config.day_of_week}`}
+                    />
+                  </div>
                 </div>
               </div>
               {index < configs.length - 1 && <Separator className="mt-4" />}
@@ -335,7 +367,7 @@ export default function DisponibilidadePage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center gap-4 flex-wrap">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 items-end">
               <div className="flex items-center gap-2">
                 <Label className="text-sm whitespace-nowrap">Data</Label>
                 <Input
@@ -344,7 +376,7 @@ export default function DisponibilidadePage() {
                   onChange={(e) =>
                     setNewBlock((p) => ({ ...p, date: e.target.value }))
                   }
-                  className="w-44"
+                  className="w-full sm:w-44"
                   data-testid="input-block-date"
                 />
               </div>
@@ -375,7 +407,7 @@ export default function DisponibilidadePage() {
                           start_time: e.target.value,
                         }))
                       }
-                      className="w-32"
+                      className="w-full sm:w-32"
                       data-testid="input-block-start-time"
                     />
                   </div>
@@ -389,7 +421,7 @@ export default function DisponibilidadePage() {
                       onChange={(e) =>
                         setNewBlock((p) => ({ ...p, end_time: e.target.value }))
                       }
-                      className="w-32"
+                      className="w-full sm:w-32"
                       data-testid="input-block-end-time"
                     />
                   </div>
@@ -404,20 +436,23 @@ export default function DisponibilidadePage() {
                     setNewBlock((p) => ({ ...p, reason: e.target.value }))
                   }
                   placeholder="Ex: Feriado, Ferias..."
-                  className="w-48"
+                  className="w-full sm:w-48"
                   data-testid="input-block-reason"
                 />
               </div>
 
-              <Button
-                onClick={handleAddBlock}
-                disabled={addingBlock || !newBlock.date}
-                variant="outline"
-                data-testid="button-add-block"
-              >
-                <Plus className="w-4 h-4" />
-                {addingBlock ? "Adicionando..." : "Adicionar"}
-              </Button>
+              <div>
+                <Button
+                  onClick={handleAddBlock}
+                  disabled={addingBlock || !newBlock.date}
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                  data-testid="button-add-block"
+                >
+                  <Plus className="w-4 h-4" />
+                  {addingBlock ? "Adicionando..." : "Adicionar"}
+                </Button>
+              </div>
             </div>
           </div>
 

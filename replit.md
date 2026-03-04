@@ -140,6 +140,15 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 - `POST /api/patient/cancel` - Authenticated patient cancellation (12h advance) + triggers notifications/email/calendar
 - `GET /api/cron/reminders` - 24h appointment reminder emails + in-app notifications (secured by CRON_SECRET)
 
+## UI Polish
+- **Toast System**: Shadcn/UI toast (src/components/ui/toast.tsx, toaster.tsx) + useToast hook. Global Toaster in root layout.
+- **SEO**: Complete meta tags (OG, Twitter Card, robots, metadataBase) in root layout. Per-page metadata via layout.tsx files for all routes.
+- **Favicon**: SVG icon (src/app/icon.svg) with "RM" initials. Apple touch icon via src/app/apple-icon.tsx.
+- **Accessibility**: Skip-to-content link, ARIA labels on interactive elements, role="navigation" on navbar, aria-live on notification count, aria-label on calendar day buttons.
+- **Responsiveness**: All pages optimized for mobile (<768px), tablet (768-1024px), desktop (>1024px). Agenda weekly view scrolls horizontally on mobile. Day configs stack on mobile. Time slots grid adapts.
+- **Error Handling**: All Supabase operations wrapped in try/catch with toast feedback. Success/error toasts on all admin and patient operations.
+- **Loading States**: Skeleton screens on all data-loading pages.
+
 ## Key Files
 - `db/` - Versioned SQL scripts (00001-00011 + seed.sql + README.md)
 - `supabase/migrations/` - 10 migration files (enums, tables, RLS)

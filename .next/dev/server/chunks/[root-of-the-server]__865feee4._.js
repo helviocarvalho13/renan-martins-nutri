@@ -59,7 +59,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$head
 ;
 async function createServerSupabaseClient() {
     const cookieStore = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["cookies"])();
-    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$ssr$2f$dist$2f$module$2f$createServerClient$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServerClient"])(("TURBOPACK compile-time value", "https://dvrwltbunfwnymoqrqzg.supabase.co"), ("TURBOPACK compile-time value", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cndsdGJ1bmZ3bnltb3FycXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODA1OTYsImV4cCI6MjA4ODE1NjU5Nn0.dAOqu824PidFe-KtDxSPaMV42JUaziZII9BVNh5izDw"), {
+    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$ssr$2f$dist$2f$module$2f$createServerClient$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServerClient"])(("TURBOPACK compile-time value", "https://smvdxecclhlvzuzebhwm.supabase.co"), ("TURBOPACK compile-time value", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtdmR4ZWNjbGhsdnp1emViaHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NDAwNTgsImV4cCI6MjA4ODIxNjA1OH0.1YucSYgB3MYTNxT7FxxNdO8GMeYiwOMKjUkxOuGoZl0"), {
         cookies: {
             getAll () {
                 return cookieStore.getAll();
@@ -73,7 +73,7 @@ async function createServerSupabaseClient() {
     });
 }
 function createServiceRoleClient() {
-    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$supabase$2d$js$2f$dist$2f$index$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["createClient"])(("TURBOPACK compile-time value", "https://dvrwltbunfwnymoqrqzg.supabase.co"), process.env.SUPABASE_SERVICE_ROLE_KEY);
+    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$supabase$2d$js$2f$dist$2f$index$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["createClient"])(("TURBOPACK compile-time value", "https://smvdxecclhlvzuzebhwm.supabase.co"), process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
 }),
 "[project]/src/app/api/patient/book/route.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
@@ -98,7 +98,7 @@ async function POST(request) {
         const authHeader = request.headers.get("Authorization");
         if (authHeader?.startsWith("Bearer ")) {
             const token = authHeader.slice(7);
-            const supabaseWithToken = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$supabase$2d$js$2f$dist$2f$index$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["createClient"])(("TURBOPACK compile-time value", "https://dvrwltbunfwnymoqrqzg.supabase.co"), ("TURBOPACK compile-time value", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cndsdGJ1bmZ3bnltb3FycXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODA1OTYsImV4cCI6MjA4ODE1NjU5Nn0.dAOqu824PidFe-KtDxSPaMV42JUaziZII9BVNh5izDw"), {
+            const supabaseWithToken = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$supabase$2d$js$2f$dist$2f$index$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["createClient"])(("TURBOPACK compile-time value", "https://smvdxecclhlvzuzebhwm.supabase.co"), ("TURBOPACK compile-time value", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtdmR4ZWNjbGhsdnp1emViaHdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NDAwNTgsImV4cCI6MjA4ODIxNjA1OH0.1YucSYgB3MYTNxT7FxxNdO8GMeYiwOMKjUkxOuGoZl0"), {
                 global: {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -232,18 +232,17 @@ async function POST(request) {
             status: 500
         });
     }
-    const { data: admins } = await supabase.from("profiles").select("id").eq("role", "ADMIN").limit(1);
-    if (admins && admins.length > 0) {
-        const { data: patientProfile } = await supabase.from("profiles").select("full_name").eq("id", user.id).single();
-        const patientName = patientProfile?.full_name || user.email || "Paciente";
-        const typeLabel = type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
-        await supabase.from("notifications").insert({
-            user_id: admins[0].id,
-            type: "APPOINTMENT_CREATED",
-            title: "Nova consulta agendada",
-            message: `${patientName} agendou ${typeLabel} para ${date} as ${start_time.slice(0, 5)}`,
-            appointment_id: appointment.id
-        });
+    try {
+        const { notifyNewAppointment, getAdminUserId, getPatientName } = await __turbopack_context__.A("[project]/src/lib/notifications.ts [app-route] (ecmascript, async loader)");
+        const { addCalendarEvent } = await __turbopack_context__.A("[project]/src/lib/google-calendar.ts [app-route] (ecmascript, async loader)");
+        const adminId = await getAdminUserId();
+        if (adminId) {
+            const patientName = await getPatientName(user.id);
+            await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, adminId);
+        }
+        await addCalendarEvent(appointment);
+    } catch (notifError) {
+        console.error("[patient/book] Notification/calendar error:", notifError);
     }
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
         appointment

@@ -30,6 +30,7 @@ export function AboutSection() {
                 src="/images/renan-martins.jpg"
                 alt="Renan Martins - Nutricionista"
                 fill
+                loading="lazy"
                 className="object-cover object-top"
                 sizes="(max-width: 1024px) 100vw, 500px"
               />

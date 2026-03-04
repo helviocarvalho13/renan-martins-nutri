@@ -11,10 +11,12 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <main id="main-content">
       <HeroSection />
       <AboutSection />
       <ServicesSection />
       <ContactSection />
+      </main>
       <Footer />
     </div>
   );

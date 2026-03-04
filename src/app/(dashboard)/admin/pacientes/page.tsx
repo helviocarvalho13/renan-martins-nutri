@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, ChevronLeft, ChevronRight, User } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -16,6 +17,7 @@ import { ptBR } from "date-fns/locale";
 const PAGE_SIZE = 20;
 
 export default function PacientesPage() {
+  const { toast } = useToast();
   const [patients, setPatients] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -49,7 +51,9 @@ export default function PacientesPage() {
 
     const { data, count, error } = await query;
 
-    if (!error && data) {
+    if (error) {
+      toast({ title: "Erro ao carregar pacientes", description: error.message, variant: "destructive" });
+    } else if (data) {
       setPatients(data as Profile[]);
       setTotalCount(count ?? 0);
     }

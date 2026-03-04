@@ -122,11 +122,12 @@ export function NotificationBell() {
         size="icon"
         className="relative"
         onClick={() => setShowNotifications(!showNotifications)}
+        aria-label="Notificações"
         data-testid="button-notifications"
       >
         <Bell className="w-5 h-5 text-neutral-600" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" data-testid="text-unread-count">
+          <span aria-live="polite" className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" data-testid="text-unread-count">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}

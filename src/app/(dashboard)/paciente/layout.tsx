@@ -58,6 +58,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Sair da conta"
               onClick={() => {
                 const supabase = createClient();
                 supabase.auth.signOut().then(() => {
@@ -72,7 +73,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
         </div>
       </header>
 
-      <main className="p-4 lg:p-6 max-w-5xl mx-auto">
+      <main id="main-content" className="p-4 lg:p-6 max-w-5xl mx-auto">
         {children}
       </main>
     </div>
