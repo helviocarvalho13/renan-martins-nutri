@@ -44,22 +44,15 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:block lg:w-1/2 relative">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-neutral-900 items-center justify-center">
         <Image
-          src="/images/renan-martins.jpg"
-          alt="Renan Martins - Nutricionista"
-          fill
-          className="object-cover object-top"
+          src="/images/team-mago.jpg"
+          alt="Team Mago - Renan Martins Nutricionista"
+          width={400}
+          height={400}
+          className="object-contain"
           priority
-          sizes="50vw"
         />
-        <div className="absolute inset-0 bg-white/30" />
-        <div className="absolute bottom-12 left-12 right-12">
-          <p className="text-2xl font-bold text-neutral-900 leading-tight">
-            Nutricao consciente para transformar sua vida
-          </p>
-          <p className="text-sm text-neutral-600 mt-2">Renan Martins — Nutricionista</p>
-        </div>
       </div>
 
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">

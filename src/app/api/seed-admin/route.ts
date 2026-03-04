@@ -34,9 +34,10 @@ export async function POST(request: Request) {
         .from("profiles")
         .update({ role: "ADMIN" })
         .eq("id", adminUser.id);
+      await seedScheduleConfig(supabase, adminUser.id);
     }
     return NextResponse.json({
-      message: "Admin user already exists. Role updated to ADMIN.",
+      message: "Admin user already exists. Role updated to ADMIN. Schedule config seeded.",
     });
   }
 
@@ -59,10 +60,33 @@ export async function POST(request: Request) {
       .from("profiles")
       .update({ role: "ADMIN", full_name: "Renan Martins" })
       .eq("id", data.user.id);
+
+    await seedScheduleConfig(supabase, data.user.id);
   }
 
   return NextResponse.json({
     message: "Admin user created successfully.",
     userId: data.user?.id,
   });
+}
+
+async function seedScheduleConfig(supabase: any, adminId: string) {
+  const { data: existing } = await supabase
+    .from("schedule_config")
+    .select("id")
+    .limit(1);
+
+  if (existing && existing.length > 0) return;
+
+  const configs = [
+    { admin_id: adminId, day_of_week: 1, start_time: "08:00:00", end_time: "18:00:00", slot_duration_min: 50, break_duration_min: 10, is_active: true },
+    { admin_id: adminId, day_of_week: 2, start_time: "08:00:00", end_time: "18:00:00", slot_duration_min: 50, break_duration_min: 10, is_active: true },
+    { admin_id: adminId, day_of_week: 3, start_time: "08:00:00", end_time: "18:00:00", slot_duration_min: 50, break_duration_min: 10, is_active: true },
+    { admin_id: adminId, day_of_week: 4, start_time: "08:00:00", end_time: "18:00:00", slot_duration_min: 50, break_duration_min: 10, is_active: true },
+    { admin_id: adminId, day_of_week: 5, start_time: "08:00:00", end_time: "18:00:00", slot_duration_min: 50, break_duration_min: 10, is_active: true },
+    { admin_id: adminId, day_of_week: 6, start_time: "08:00:00", end_time: "12:00:00", slot_duration_min: 50, break_duration_min: 10, is_active: true },
+    { admin_id: adminId, day_of_week: 0, start_time: "08:00:00", end_time: "12:00:00", slot_duration_min: 50, break_duration_min: 10, is_active: false },
+  ];
+
+  await supabase.from("schedule_config").insert(configs);
 }

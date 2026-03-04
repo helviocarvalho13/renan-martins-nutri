@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -13,7 +14,6 @@ import {
   LayoutDashboard,
   CalendarDays,
   Users,
-  Globe,
   Settings,
   Bell,
   Menu,
@@ -26,7 +26,6 @@ const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/admin/pacientes", label: "Pacientes", icon: Users },
-  { href: "/admin/site", label: "Site", icon: Globe },
   { href: "/admin/disponibilidade", label: "Disponibilidade", icon: Settings },
 ];
 
@@ -34,9 +33,18 @@ function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate
   return (
     <div className="flex flex-col h-full">
       <div className="p-6">
-        <Link href="/admin" onClick={onNavigate} className="block">
-          <h2 className="font-bold text-lg text-neutral-900" data-testid="text-admin-brand">Renan Martins</h2>
-          <p className="text-xs text-neutral-400 mt-0.5">Painel Administrativo</p>
+        <Link href="/admin" onClick={onNavigate} className="flex items-center gap-3" data-testid="text-admin-brand">
+          <Image
+            src="/images/team-mago.jpg"
+            alt="Team Mago"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+          <div>
+            <h2 className="font-bold text-sm text-neutral-900">Renan Martins</h2>
+            <p className="text-xs text-neutral-400">Painel Administrativo</p>
+          </div>
         </Link>
       </div>
       <Separator />

@@ -46,7 +46,7 @@ export function HeroSection() {
           variants={itemVariants}
           data-testid="text-hero-title"
         >
-          Nutricao consciente para transformar sua vida
+          Nutrição consciente para transformar sua vida
         </motion.h1>
 
         <motion.p
@@ -54,10 +54,14 @@ export function HeroSection() {
           variants={itemVariants}
           data-testid="text-hero-subtitle"
         >
-          Consultas personalizadas para ajudar voce a alcancar seus objetivos de saude e bem-estar com um plano alimentar sob medida.
+          Consultas personalizadas para ajudar voce a alcancar seus objetivos de
+          saude e bem-estar com um plano alimentar sob medida.
         </motion.p>
 
-        <motion.div className="flex flex-wrap items-center justify-center gap-4" variants={itemVariants}>
+        <motion.div
+          className="flex flex-wrap items-center justify-center gap-4"
+          variants={itemVariants}
+        >
           <a href="#sobre">
             <Button
               variant="outline"

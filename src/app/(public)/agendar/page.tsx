@@ -13,8 +13,6 @@ import {
   User,
   CheckCircle2,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import type { ScheduleConfig, BlockedSlot } from "@/lib/types";
 import { format, addDays, isBefore, startOfToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -27,30 +25,6 @@ const steps = [
 interface GeneratedSlot {
   start_time: string;
   end_time: string;
-}
-
-function generateSlots(config: ScheduleConfig): GeneratedSlot[] {
-  const slots: GeneratedSlot[] = [];
-  const [startH, startM] = config.start_time.split(":").map(Number);
-  const [endH, endM] = config.end_time.split(":").map(Number);
-  const startMinutes = startH * 60 + startM;
-  const endMinutes = endH * 60 + endM;
-  const totalSlotMinutes = config.slot_duration_min + config.break_duration_min;
-
-  let current = startMinutes;
-  while (current + config.slot_duration_min <= endMinutes) {
-    const slotEnd = current + config.slot_duration_min;
-    const sh = Math.floor(current / 60);
-    const sm = current % 60;
-    const eh = Math.floor(slotEnd / 60);
-    const em = slotEnd % 60;
-    slots.push({
-      start_time: `${String(sh).padStart(2, "0")}:${String(sm).padStart(2, "0")}:00`,
-      end_time: `${String(eh).padStart(2, "0")}:${String(em).padStart(2, "0")}:00`,
-    });
-    current += totalSlotMinutes;
-  }
-  return slots;
 }
 
 function SimpleCalendar({
@@ -147,10 +121,8 @@ function SimpleCalendar({
 
 export default function BookingPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [scheduleConfigs, setScheduleConfigs] = useState<ScheduleConfig[]>([]);
-  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
-  const [blockedSlots, setBlockedSlots] = useState<BlockedSlot[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [availableSlots, setAvailableSlots] = useState<GeneratedSlot[]>([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -162,58 +134,23 @@ export default function BookingPage() {
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
 
-  const supabase = createClient();
-
-  useEffect(() => {
-    async function load() {
-      const schedRes = await supabase
-        .from("schedule_config")
-        .select("*")
-        .eq("is_active", true);
-
-      setScheduleConfigs((schedRes.data as ScheduleConfig[]) || []);
-      setLoading(false);
-    }
-    load();
-  }, []);
-
   useEffect(() => {
     if (!selectedDate) return;
-    async function loadBooked() {
-      const dateStr = format(selectedDate!, "yyyy-MM-dd");
-      const [apptRes, blockedRes] = await Promise.all([
-        supabase
-          .from("appointments")
-          .select("start_time")
-          .eq("date", dateStr)
-          .in("status", ["PENDING", "CONFIRMED"]),
-        supabase
-          .from("blocked_slots")
-          .select("*")
-          .eq("date", dateStr),
-      ]);
-      setBookedSlots((apptRes.data || []).map((d) => d.start_time));
-      setBlockedSlots((blockedRes.data as BlockedSlot[]) || []);
-    }
-    loadBooked();
+    setLoadingSlots(true);
+    setSelectedStartTime("");
+    setSelectedEndTime("");
+    const dateStr = format(selectedDate, "yyyy-MM-dd");
+    fetch(`/api/available-slots?date=${dateStr}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setAvailableSlots(data.slots || []);
+        setLoadingSlots(false);
+      })
+      .catch(() => {
+        setAvailableSlots([]);
+        setLoadingSlots(false);
+      });
   }, [selectedDate]);
-
-  const availableSlots: GeneratedSlot[] = (() => {
-    if (!selectedDate) return [];
-    const dayConfig = scheduleConfigs.find((c) => c.day_of_week === selectedDate.getDay());
-    if (!dayConfig) return [];
-    const generated = generateSlots(dayConfig);
-    return generated.filter((slot) => {
-      if (bookedSlots.includes(slot.start_time)) return false;
-      for (const blocked of blockedSlots) {
-        if (blocked.all_day) return false;
-        if (blocked.start_time && blocked.end_time) {
-          if (slot.start_time >= blocked.start_time && slot.start_time < blocked.end_time) return false;
-        }
-      }
-      return true;
-    });
-  })();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -313,58 +250,56 @@ export default function BookingPage() {
               Escolha a data e horario
             </h2>
 
-            {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <div className="w-5 h-5 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-neutral-50 rounded-xl p-5 border border-neutral-100">
+                <SimpleCalendar selected={selectedDate} onSelect={setSelectedDate} />
               </div>
-            ) : (
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-neutral-50 rounded-xl p-5 border border-neutral-100">
-                  <SimpleCalendar selected={selectedDate} onSelect={setSelectedDate} />
-                </div>
 
-                <div>
-                  <p className="text-sm font-medium text-neutral-700 mb-4">
-                    {selectedDate
-                      ? `Horarios em ${format(selectedDate, "dd 'de' MMMM", { locale: ptBR })}`
-                      : "Selecione uma data"}
-                  </p>
-                  {selectedDate ? (
-                    availableSlots.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-2">
-                        {availableSlots.map((slot) => (
-                          <button
-                            key={slot.start_time}
-                            type="button"
-                            onClick={() => {
-                              setSelectedStartTime(slot.start_time);
-                              setSelectedEndTime(slot.end_time);
-                            }}
-                            className={`py-2.5 px-3 text-sm rounded-lg border transition-colors ${
-                              selectedStartTime === slot.start_time
-                                ? "bg-neutral-900 text-white border-neutral-900"
-                                : "border-neutral-200 text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50"
-                            }`}
-                            data-testid={`button-time-${slot.start_time}`}
-                          >
-                            {slot.start_time.slice(0, 5)}
-                          </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-neutral-400 py-8 text-center" data-testid="text-no-slots">
-                        Nenhum horario disponivel nesta data.
-                      </p>
-                    )
-                  ) : (
-                    <div className="flex items-center justify-center py-12 text-neutral-400 text-sm">
-                      <CalendarDays className="w-5 h-5 mr-2" />
-                      Selecione uma data
+              <div>
+                <p className="text-sm font-medium text-neutral-700 mb-4">
+                  {selectedDate
+                    ? `Horarios em ${format(selectedDate, "dd 'de' MMMM", { locale: ptBR })}`
+                    : "Selecione uma data"}
+                </p>
+                {selectedDate ? (
+                  loadingSlots ? (
+                    <div className="flex items-center justify-center py-12">
+                      <div className="w-5 h-5 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />
                     </div>
-                  )}
-                </div>
+                  ) : availableSlots.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      {availableSlots.map((slot) => (
+                        <button
+                          key={slot.start_time}
+                          type="button"
+                          onClick={() => {
+                            setSelectedStartTime(slot.start_time);
+                            setSelectedEndTime(slot.end_time);
+                          }}
+                          className={`py-2.5 px-3 text-sm rounded-lg border transition-colors ${
+                            selectedStartTime === slot.start_time
+                              ? "bg-neutral-900 text-white border-neutral-900"
+                              : "border-neutral-200 text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50"
+                          }`}
+                          data-testid={`button-time-${slot.start_time}`}
+                        >
+                          {slot.start_time.slice(0, 5)}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-neutral-400 py-8 text-center" data-testid="text-no-slots">
+                      Nenhum horario disponivel nesta data.
+                    </p>
+                  )
+                ) : (
+                  <div className="flex items-center justify-center py-12 text-neutral-400 text-sm">
+                    <CalendarDays className="w-5 h-5 mr-2" />
+                    Selecione uma data
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
             <div className="flex items-center gap-3 mt-8">
               <Button

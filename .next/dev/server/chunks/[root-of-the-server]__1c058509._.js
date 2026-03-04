@@ -85,9 +85,24 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/supabase/server.ts [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/headers.js [app-route] (ecmascript)");
 ;
 ;
-async function POST() {
+;
+async function POST(request) {
+    const headersList = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["headers"])();
+    const host = headersList.get("host") || "";
+    const isLocalhost = host.includes("localhost") || host.includes("127.0.0.1");
+    const { searchParams } = new URL(request.url);
+    const secret = searchParams.get("secret");
+    const sessionSecret = process.env.SESSION_SECRET;
+    if (!isLocalhost && secret !== sessionSecret) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            error: "Unauthorized. This endpoint is restricted."
+        }, {
+            status: 403
+        });
+    }
     const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServiceRoleClient"])();
     const { data: existingUsers } = await supabase.auth.admin.listUsers();
     const adminExists = existingUsers?.users?.some((u)=>u.email === "admin@admin.com");
@@ -97,9 +112,10 @@ async function POST() {
             await supabase.from("profiles").update({
                 role: "ADMIN"
             }).eq("id", adminUser.id);
+            await seedScheduleConfig(supabase, adminUser.id);
         }
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            message: "Admin user already exists. Role updated to ADMIN."
+            message: "Admin user already exists. Role updated to ADMIN. Schedule config seeded."
         });
     }
     const { data, error } = await supabase.auth.admin.createUser({
@@ -123,11 +139,82 @@ async function POST() {
             role: "ADMIN",
             full_name: "Renan Martins"
         }).eq("id", data.user.id);
+        await seedScheduleConfig(supabase, data.user.id);
     }
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-        message: "Admin user created successfully: admin@admin.com / 123456",
+        message: "Admin user created successfully.",
         userId: data.user?.id
     });
+}
+async function seedScheduleConfig(supabase, adminId) {
+    const { data: existing } = await supabase.from("schedule_config").select("id").limit(1);
+    if (existing && existing.length > 0) return;
+    const configs = [
+        {
+            admin_id: adminId,
+            day_of_week: 1,
+            start_time: "08:00:00",
+            end_time: "18:00:00",
+            slot_duration_min: 50,
+            break_duration_min: 10,
+            is_active: true
+        },
+        {
+            admin_id: adminId,
+            day_of_week: 2,
+            start_time: "08:00:00",
+            end_time: "18:00:00",
+            slot_duration_min: 50,
+            break_duration_min: 10,
+            is_active: true
+        },
+        {
+            admin_id: adminId,
+            day_of_week: 3,
+            start_time: "08:00:00",
+            end_time: "18:00:00",
+            slot_duration_min: 50,
+            break_duration_min: 10,
+            is_active: true
+        },
+        {
+            admin_id: adminId,
+            day_of_week: 4,
+            start_time: "08:00:00",
+            end_time: "18:00:00",
+            slot_duration_min: 50,
+            break_duration_min: 10,
+            is_active: true
+        },
+        {
+            admin_id: adminId,
+            day_of_week: 5,
+            start_time: "08:00:00",
+            end_time: "18:00:00",
+            slot_duration_min: 50,
+            break_duration_min: 10,
+            is_active: true
+        },
+        {
+            admin_id: adminId,
+            day_of_week: 6,
+            start_time: "08:00:00",
+            end_time: "12:00:00",
+            slot_duration_min: 50,
+            break_duration_min: 10,
+            is_active: true
+        },
+        {
+            admin_id: adminId,
+            day_of_week: 0,
+            start_time: "08:00:00",
+            end_time: "12:00:00",
+            slot_duration_min: 50,
+            break_duration_min: 10,
+            is_active: false
+        }
+    ];
+    await supabase.from("schedule_config").insert(configs);
 }
 }),
 ];

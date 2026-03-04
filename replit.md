@@ -64,20 +64,21 @@ user_role, appointment_type, appointment_status, notification_type
 ## Admin Dashboard
 - Layout: fixed sidebar (desktop) / sheet drawer (mobile) with nav items
 - Header: page title, notification bell with real-time count, Renan's name
-- Sidebar items: Dashboard, Agenda, Pacientes, Site, Disponibilidade
+- Sidebar items: Dashboard, Agenda, Pacientes, Disponibilidade
 - Uses Supabase Realtime for live appointment and notification updates
 - Color coding: blue=confirmed, yellow=pending, red=cancelled, green=completed, gray=no-show
 
 ## Auth Pages Design
 All auth pages (login, register, forgot-password, update-password) use split-screen layout:
-- Left half: Renan's photo (hidden on mobile) with white overlay and tagline
+- Left half: Team Mago logo (hidden on mobile) on dark neutral-900 background
 - Right half: Clean form on white background with neutral palette
 - Pill buttons (rounded-full, bg-neutral-900), neutral-200 borders on inputs
-- Matches the hero section aesthetic (clean, minimal, no green gradients)
+- Admin sidebar also shows Team Mago logo (small, rounded)
 
 ## API Routes
 - `GET /api/setup` - Returns combined SQL from /db folder
-- `POST /api/seed-admin` - Creates admin user (admin@admin.com / 123456) via Supabase Admin API
+- `POST /api/seed-admin` - Creates admin user (admin@admin.com / 123456) + seeds schedule_config defaults
+- `GET /api/available-slots?date=YYYY-MM-DD` - Public API returning available time slots (bypasses RLS via service role)
 - `POST /api/appointments` - Server-side booking with validation, double-booking prevention
 - `PATCH /api/appointments/[id]` - Admin-only status update
 
