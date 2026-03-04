@@ -19,8 +19,9 @@ Platform for nutritionist Renan Martins with appointment scheduling, institution
 - **Colors**: Primary green (hue 142) for theme variables, but landing page uses neutral palette for cleaner look.
 
 ## Database (Supabase)
-Migrations in `supabase/migrations/` (10 files). Seed data in `supabase/seed.sql`.
-Run SQL via Supabase Dashboard SQL Editor (or use `/setup` page to copy SQL).
+Versioned SQL scripts in `/db` folder (11 migration files + seed). Also mirrored in `supabase/migrations/`.
+Run SQL via Supabase Dashboard SQL Editor (or use `/api/setup` to get combined SQL).
+Admin user: admin@admin.com / 123456 (created via `/api/seed-admin` POST endpoint).
 
 ### Tables
 - `profiles` - Extends auth.users: role (ENUM: ADMIN/PATIENT), full_name, phone, cpf (UNIQUE), date_of_birth, avatar_url, is_active. Auto-created via `handle_new_user()` trigger.
@@ -55,12 +56,21 @@ user_role, appointment_type, appointment_status, notification_type
 - `/paciente` - Patient dashboard (role-gated)
 - `/setup` - Database setup helper (copy SQL for Supabase)
 
+## Auth Pages Design
+All auth pages (login, register, forgot-password, update-password) use split-screen layout:
+- Left half: Renan's photo (hidden on mobile) with white overlay and tagline
+- Right half: Clean form on white background with neutral palette
+- Pill buttons (rounded-full, bg-neutral-900), neutral-200 borders on inputs
+- Matches the hero section aesthetic (clean, minimal, no green gradients)
+
 ## API Routes
-- `GET /api/setup` - Returns combined migration + seed SQL
+- `GET /api/setup` - Returns combined SQL from /db folder
+- `POST /api/seed-admin` - Creates admin user (admin@admin.com / 123456) via Supabase Admin API
 - `POST /api/appointments` - Server-side booking with validation, double-booking prevention
 - `PATCH /api/appointments/[id]` - Admin-only status update
 
 ## Key Files
+- `db/` - Versioned SQL scripts (00001-00011 + seed.sql + README.md)
 - `supabase/migrations/` - 10 migration files (enums, tables, RLS)
 - `supabase/seed.sql` - Initial site_content and testimonials
 - `src/lib/types/database.ts` - Full TypeScript types

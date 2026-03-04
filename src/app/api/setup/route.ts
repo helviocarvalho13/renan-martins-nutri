@@ -2,15 +2,14 @@ import { NextResponse } from "next/server";
 import { readFileSync, readdirSync } from "fs";
 import { join } from "path";
 
-function loadMigrations(): string {
-  const migrationsDir = join(process.cwd(), "supabase", "migrations");
+function loadScripts(dir: string): string {
   try {
-    const files = readdirSync(migrationsDir)
+    const files = readdirSync(dir)
       .filter((f) => f.endsWith(".sql"))
       .sort();
     return files
       .map((f) => {
-        const content = readFileSync(join(migrationsDir, f), "utf-8");
+        const content = readFileSync(join(dir, f), "utf-8");
         return `-- ========================================\n-- ${f}\n-- ========================================\n${content}`;
       })
       .join("\n\n");
@@ -19,23 +18,14 @@ function loadMigrations(): string {
   }
 }
 
-function loadSeed(): string {
-  try {
-    return readFileSync(join(process.cwd(), "supabase", "seed.sql"), "utf-8");
-  } catch {
-    return "";
-  }
-}
-
 export async function GET() {
-  const migrations = loadMigrations();
-  const seed = loadSeed();
-  const fullSql = `${migrations}\n\n-- ========================================\n-- SEED DATA\n-- ========================================\n${seed}`;
+  const dbDir = join(process.cwd(), "db");
+  const allScripts = loadScripts(dbDir);
 
   return NextResponse.json({
     instructions:
-      "Copy the SQL below and run it in your Supabase SQL Editor (Dashboard > SQL Editor > New Query).",
-    sql: fullSql,
+      "Copy the SQL below and run it in your Supabase SQL Editor (Dashboard > SQL Editor > New Query). Execute in order.",
+    sql: allScripts,
   });
 }
 

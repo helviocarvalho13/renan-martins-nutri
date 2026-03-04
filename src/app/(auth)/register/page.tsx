@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Leaf, UserPlus, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 function formatCPF(value: string): string {
@@ -113,16 +113,21 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-background to-emerald-50 dark:from-background dark:via-background dark:to-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-white flex items-center justify-center p-6">
         <div className="w-full max-w-sm text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-            <Leaf className="w-8 h-8 text-primary" />
+          <div className="w-14 h-14 mx-auto rounded-full bg-green-50 flex items-center justify-center">
+            <CheckCircle2 className="w-7 h-7 text-green-600" />
           </div>
-          <h2 className="text-xl font-bold" data-testid="text-register-success">Conta criada com sucesso!</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-xl font-bold text-neutral-900" data-testid="text-register-success">Conta criada com sucesso!</h2>
+          <p className="text-sm text-neutral-500">
             Verifique seu email para confirmar o cadastro antes de fazer login.
           </p>
-          <Button variant="outline" className="w-full" asChild data-testid="link-go-to-login">
+          <Button
+            variant="outline"
+            className="w-full rounded-full border-neutral-200"
+            asChild
+            data-testid="link-go-to-login"
+          >
             <Link href="/login">Ir para o login</Link>
           </Button>
         </div>
@@ -131,167 +136,189 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-background to-emerald-50 dark:from-background dark:via-background dark:to-background flex items-center justify-center p-4 py-8">
-      <div className="w-full max-w-sm space-y-6">
-        <div className="text-center">
-          <Link href="/">
-            <div className="w-14 h-14 mx-auto rounded-xl bg-primary flex items-center justify-center mb-4 cursor-pointer shadow-md hover:shadow-lg transition-shadow">
-              <Leaf className="w-8 h-8 text-primary-foreground" />
-            </div>
-          </Link>
-          <h1 className="text-2xl font-bold tracking-tight" data-testid="text-register-title">
-            Criar Conta
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Cadastre-se para agendar suas consultas
+    <div className="min-h-screen flex">
+      <div className="hidden lg:block lg:w-1/2 relative">
+        <Image
+          src="/images/renan-martins.jpg"
+          alt="Renan Martins - Nutricionista"
+          fill
+          className="object-cover object-top"
+          priority
+          sizes="50vw"
+        />
+        <div className="absolute inset-0 bg-white/30" />
+        <div className="absolute bottom-12 left-12 right-12">
+          <p className="text-2xl font-bold text-neutral-900 leading-tight">
+            Comece sua jornada para uma vida mais saudavel
           </p>
+          <p className="text-sm text-neutral-600 mt-2">Renan Martins — Nutricionista</p>
         </div>
+      </div>
 
-        <Card className="shadow-lg border-border/50">
-          <CardContent className="p-6">
-            <form onSubmit={handleRegister} className="space-y-4">
-              {error && (
-                <div className="text-sm text-destructive bg-destructive/10 rounded-lg p-3 border border-destructive/20" data-testid="text-register-error">
-                  {error}
-                </div>
-              )}
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">
+        <div className="w-full max-w-sm space-y-8">
+          <div>
+            <Link href="/" className="inline-block mb-8">
+              <span className="font-semibold text-neutral-900">Renan Martins</span>
+            </Link>
+            <h1 className="text-2xl font-bold tracking-tight text-neutral-900" data-testid="text-register-title">
+              Criar Conta
+            </h1>
+            <p className="text-sm text-neutral-500 mt-1">
+              Cadastre-se para agendar suas consultas
+            </p>
+          </div>
 
+          <form onSubmit={handleRegister} className="space-y-4">
+            {error && (
+              <div className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100" data-testid="text-register-error">
+                {error}
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="fullName" className="text-neutral-700 text-sm">Nome completo *</Label>
+              <Input
+                id="fullName"
+                placeholder="Maria da Silva"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                autoComplete="name"
+                className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                data-testid="input-fullname"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-neutral-700 text-sm">Email *</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                data-testid="input-email"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Nome completo *</Label>
+                <Label htmlFor="phone" className="text-neutral-700 text-sm">Telefone</Label>
                 <Input
-                  id="fullName"
-                  placeholder="Maria da Silva"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
-                  autoComplete="name"
-                  data-testid="input-fullname"
+                  id="phone"
+                  placeholder="(11) 99999-9999"
+                  value={phone}
+                  onChange={(e) => setPhone(formatPhone(e.target.value))}
+                  autoComplete="tel"
+                  className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                  data-testid="input-phone"
                 />
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="cpf" className="text-neutral-700 text-sm">CPF</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                  data-testid="input-email"
+                  id="cpf"
+                  placeholder="000.000.000-00"
+                  value={cpf}
+                  onChange={(e) => setCpf(formatCPF(e.target.value))}
+                  className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                  data-testid="input-cpf"
                 />
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Telefone</Label>
-                  <Input
-                    id="phone"
-                    placeholder="(11) 99999-9999"
-                    value={phone}
-                    onChange={(e) => setPhone(formatPhone(e.target.value))}
-                    autoComplete="tel"
-                    data-testid="input-phone"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cpf">CPF</Label>
-                  <Input
-                    id="cpf"
-                    placeholder="000.000.000-00"
-                    value={cpf}
-                    onChange={(e) => setCpf(formatCPF(e.target.value))}
-                    data-testid="input-cpf"
-                  />
-                </div>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="dateOfBirth" className="text-neutral-700 text-sm">Data de nascimento</Label>
+              <Input
+                id="dateOfBirth"
+                type="date"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                max={new Date().toISOString().split("T")[0]}
+                className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                data-testid="input-date-of-birth"
+              />
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="dateOfBirth">Data de nascimento</Label>
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-neutral-700 text-sm">Senha *</Label>
+              <div className="relative">
                 <Input
-                  id="dateOfBirth"
-                  type="date"
-                  value={dateOfBirth}
-                  onChange={(e) => setDateOfBirth(e.target.value)}
-                  max={new Date().toISOString().split("T")[0]}
-                  data-testid="input-date-of-birth"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha *</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Minimo 6 caracteres"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    autoComplete="new-password"
-                    className="pr-10"
-                    data-testid="input-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    data-testid="button-toggle-password"
-                    tabIndex={-1}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar senha *</Label>
-                <Input
-                  id="confirmPassword"
+                  id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Repita a senha"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Minimo 6 caracteres"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
                   autoComplete="new-password"
-                  data-testid="input-confirm-password"
+                  className="pr-10 border-neutral-200 focus:border-neutral-400 rounded-lg"
+                  data-testid="input-password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 transition-colors"
+                  data-testid="button-toggle-password"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
+            </div>
 
-              <Button type="submit" className="w-full" disabled={loading} data-testid="button-register">
-                {loading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    Criando conta...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    Criar Conta
-                    <UserPlus className="w-4 h-4" />
-                  </span>
-                )}
-              </Button>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-neutral-700 text-sm">Confirmar senha *</Label>
+              <Input
+                id="confirmPassword"
+                type={showPassword ? "text" : "password"}
+                placeholder="Repita a senha"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
+                autoComplete="new-password"
+                className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                data-testid="input-confirm-password"
+              />
+            </div>
 
-              <p className="text-xs text-center text-muted-foreground">
-                Campos marcados com * sao obrigatorios
-              </p>
-            </form>
-          </CardContent>
-        </Card>
+            <Button
+              type="submit"
+              className="w-full rounded-full bg-neutral-900 text-white hover:bg-neutral-800"
+              disabled={loading}
+              data-testid="button-register"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Criando conta...
+                </span>
+              ) : (
+                "Criar Conta"
+              )}
+            </Button>
 
-        <div className="text-center space-y-3">
-          <p className="text-sm text-muted-foreground">
-            Ja tem uma conta?{" "}
-            <Link href="/login" className="text-primary font-medium hover:underline" data-testid="link-login">
-              Entrar
+            <p className="text-xs text-center text-neutral-400">
+              Campos marcados com * sao obrigatorios
+            </p>
+          </form>
+
+          <div className="text-center space-y-3">
+            <p className="text-sm text-neutral-500">
+              Ja tem uma conta?{" "}
+              <Link href="/login" className="text-neutral-900 font-medium hover:underline" data-testid="link-login">
+                Entrar
+              </Link>
+            </p>
+            <Link href="/" className="text-xs text-neutral-400 hover:text-neutral-700 transition-colors block" data-testid="link-back-home">
+              Voltar ao site
             </Link>
-          </p>
-          <Link href="/" className="text-xs text-muted-foreground hover:underline block" data-testid="link-back-home">
-            Voltar ao site
-          </Link>
+          </div>
         </div>
       </div>
     </div>
