@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import MageBotLoader from "@/components/chatbot/MageBotLoader";
-import { Toaster } from "@/components/ui/toaster";
+import { ClientProviders } from "@/components/ClientProviders";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://renanmartins.com.br"),
@@ -47,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <link
           rel="preconnect"
@@ -68,8 +67,7 @@ export default function RootLayout({
           Pular para conteúdo principal
         </a>
         {children}
-        <Toaster />
-        <MageBotLoader />
+        <ClientProviders />
       </body>
     </html>
   );

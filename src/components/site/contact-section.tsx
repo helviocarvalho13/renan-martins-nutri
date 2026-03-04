@@ -1,17 +1,10 @@
 "use client";
 
-import { useRef } from "react";
 import { Phone, Mail, MapPin, Instagram } from "lucide-react";
-import { motion, useInView } from "framer-motion";
-
-const fadeIn = {
-  hidden: { y: 30, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
-};
+import { useAnimateIn } from "@/hooks/useAnimateIn";
 
 export function ContactSection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const { ref, visible } = useAnimateIn();
 
   const contactItems = [
     {
@@ -47,13 +40,12 @@ export function ContactSection() {
   return (
     <section id="contato" className="py-24 md:py-32 bg-neutral-50">
       <div className="max-w-6xl mx-auto px-6 lg:px-8" ref={ref}>
-        <motion.div
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
-          className="max-w-2xl mx-auto"
+        <div
+          className={`max-w-2xl mx-auto transition-all duration-700 ease-out ${
+            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
         >
-          <motion.div variants={fadeIn} className="text-center mb-10">
+          <div className="text-center mb-10">
             <p className="text-sm font-medium text-neutral-400 uppercase tracking-widest mb-3">
               Contato
             </p>
@@ -66,9 +58,9 @@ export function ContactSection() {
             <p className="text-neutral-500">
               Ficou com alguma dúvida? Entre em contato ou agende sua consulta diretamente.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div className="space-y-4" variants={fadeIn}>
+          <div className="space-y-4">
             {contactItems.map((item) => (
               <a
                 key={item.testId}
@@ -87,8 +79,8 @@ export function ContactSection() {
                 </div>
               </a>
             ))}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

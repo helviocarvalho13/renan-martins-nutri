@@ -1,28 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-
-const fadeIn = {
-  hidden: { y: 30, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
-};
+import { useAnimateIn } from "@/hooks/useAnimateIn";
 
 export function AboutSection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const { ref, visible } = useAnimateIn("-100px");
 
   return (
     <section id="sobre" className="py-24 md:py-32">
       <div className="max-w-6xl mx-auto px-6 lg:px-8" ref={ref}>
-        <motion.div
-          className="grid lg:grid-cols-2 gap-16 items-center"
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
+        <div
+          className={`grid lg:grid-cols-2 gap-16 items-center transition-all duration-700 ease-out ${
+            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
         >
-          <motion.div variants={fadeIn}>
+          <div>
             <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden">
               <Image
                 src="/images/renan-martins.jpg"
@@ -33,9 +25,9 @@ export function AboutSection() {
                 sizes="(max-width: 1024px) 100vw, 500px"
               />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div className="space-y-6" variants={fadeIn}>
+          <div className="space-y-6">
             <p className="text-sm font-medium text-neutral-400 uppercase tracking-widest" data-testid="text-about-label">
               Sobre Mim
             </p>
@@ -66,8 +58,8 @@ export function AboutSection() {
                 <p className="text-sm text-neutral-400 mt-1">Avaliação</p>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -3,20 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: 0.2 },
-  },
-};
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
-};
 
 export function HeroSection() {
   return (
@@ -33,33 +19,23 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-white/60" />
       </div>
 
-      <motion.div
-        className="relative z-10 text-center max-w-3xl mx-auto px-6 py-32"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.h1
+      <div className="relative z-10 text-center max-w-3xl mx-auto px-6 py-32 animate-fade-in-up">
+        <h1
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-neutral-900 mb-6"
-          variants={itemVariants}
           data-testid="text-hero-title"
         >
           Nutrição consciente para transformar sua vida
-        </motion.h1>
+        </h1>
 
-        <motion.p
-          className="text-base sm:text-lg text-neutral-600 max-w-xl mx-auto mb-10 leading-relaxed"
-          variants={itemVariants}
+        <p
+          className="text-base sm:text-lg text-neutral-600 max-w-xl mx-auto mb-10 leading-relaxed animate-fade-in-up [animation-delay:200ms]"
           data-testid="text-hero-subtitle"
         >
           Consultas personalizadas para ajudar você a alcançar seus objetivos de
           saúde e bem-estar com um plano alimentar sob medida.
-        </motion.p>
+        </p>
 
-        <motion.div
-          className="flex flex-wrap items-center justify-center gap-4"
-          variants={itemVariants}
-        >
+        <div className="flex flex-wrap items-center justify-center gap-4 animate-fade-in-up [animation-delay:400ms]">
           <Button
             variant="outline"
             size="lg"
@@ -77,8 +53,8 @@ export function HeroSection() {
           >
             <Link href="/paciente/agendar">Agendar Consulta</Link>
           </Button>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   );
 }

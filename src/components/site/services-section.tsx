@@ -1,9 +1,7 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { motion, useInView } from "framer-motion";
 import {
   ArrowRight,
   Stethoscope,
@@ -11,6 +9,7 @@ import {
   Salad,
   Sparkles,
 } from "lucide-react";
+import { useAnimateIn } from "@/hooks/useAnimateIn";
 
 const services = [
   {
@@ -39,18 +38,8 @@ const services = [
   },
 ];
 
-const cardVariants = {
-  hidden: { y: 30, opacity: 0 },
-  visible: (i: number) => ({
-    y: 0,
-    opacity: 1,
-    transition: { duration: 0.4, ease: "easeOut", delay: i * 0.08 },
-  }),
-};
-
 export function ServicesSection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const { ref, visible } = useAnimateIn();
 
   return (
     <section id="servicos" className="py-24 md:py-32 bg-neutral-50">
@@ -71,12 +60,12 @@ export function ServicesSection() {
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (
-              <motion.div
+              <div
                 key={index}
-                custom={index}
-                variants={cardVariants}
-                initial="hidden"
-                animate={isInView ? "visible" : "hidden"}
+                className={`transition-all duration-500 ease-out ${
+                  visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+                style={{ transitionDelay: visible ? `${index * 80}ms` : "0ms" }}
               >
                 <div
                   className="bg-white rounded-xl p-6 h-full flex flex-col border border-neutral-100 hover:border-neutral-200 hover:shadow-sm transition-all duration-200"
@@ -101,7 +90,7 @@ export function ServicesSection() {
                     </Link>
                   </Button>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>

@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
-import { motion, useInView } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
+import { useAnimateIn } from "@/hooks/useAnimateIn";
 
 interface Testimonial {
   id: string;
@@ -37,8 +37,7 @@ const fallbackTestimonials: Testimonial[] = [
 export function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
   const [current, setCurrent] = useState(0);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const { ref, visible } = useAnimateIn();
 
   useEffect(() => {
     async function load() {
@@ -70,11 +69,10 @@ export function TestimonialsSection() {
   return (
     <section id="depoimentos" className="py-24 md:py-32">
       <div className="max-w-6xl mx-auto px-6 lg:px-8" ref={ref}>
-        <motion.div
-          className="text-center mb-16"
-          initial={{ y: 20, opacity: 0 }}
-          animate={isInView ? { y: 0, opacity: 1 } : {}}
-          transition={{ duration: 0.5 }}
+        <div
+          className={`text-center mb-16 transition-all duration-600 ease-out ${
+            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+          }`}
         >
           <p className="text-sm font-medium text-neutral-400 uppercase tracking-widest mb-3">
             Depoimentos
@@ -85,15 +83,16 @@ export function TestimonialsSection() {
           >
             O que meus pacientes dizem
           </h2>
-        </motion.div>
+        </div>
 
         <div className="hidden md:grid md:grid-cols-3 gap-8">
           {testimonials.slice(0, 3).map((t, i) => (
-            <motion.div
+            <div
               key={t.id}
-              initial={{ y: 30, opacity: 0 }}
-              animate={isInView ? { y: 0, opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: i * 0.12 }}
+              className={`transition-all duration-500 ease-out ${
+                visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              }`}
+              style={{ transitionDelay: visible ? `${i * 120}ms` : "0ms" }}
             >
               <div className="h-full p-6 rounded-xl border border-neutral-100" data-testid={`card-testimonial-${i}`}>
                 <div className="flex gap-0.5 mb-4">
@@ -113,7 +112,7 @@ export function TestimonialsSection() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
