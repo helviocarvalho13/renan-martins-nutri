@@ -69,7 +69,7 @@ const STATUS_LABELS: Record<AppointmentStatus, string> = {
   CONFIRMED: "Confirmada",
   PENDING: "Pendente",
   CANCELLED: "Cancelada",
-  COMPLETED: "Concluida",
+  COMPLETED: "Concluída",
   NO_SHOW: "No-show",
 };
 
@@ -583,7 +583,7 @@ export default function AgendaPage() {
                   }
                   data-testid="button-complete"
                 >
-                  Marcar Concluida
+                  Marcar Concluída
                 </Button>
                 <Button
                   variant="outline"

@@ -53,7 +53,7 @@ export default function UpdatePasswordPage() {
     }
 
     if (password !== confirmPassword) {
-      setError("As senhas nao coincidem.");
+      setError("As senhas não coincidem.");
       return;
     }
 
@@ -94,9 +94,9 @@ export default function UpdatePasswordPage() {
           <div className="w-14 h-14 mx-auto rounded-full bg-red-50 flex items-center justify-center">
             <Lock className="w-7 h-7 text-red-500" />
           </div>
-          <h2 className="text-xl font-bold text-neutral-900" data-testid="text-invalid-link">Link invalido ou expirado</h2>
+          <h2 className="text-xl font-bold text-neutral-900" data-testid="text-invalid-link">Link inválido ou expirado</h2>
           <p className="text-sm text-neutral-500">
-            O link de recuperacao de senha e invalido ou ja expirou.
+            O link de recuperação de senha é inválido ou já expirou.
           </p>
           <Button
             asChild

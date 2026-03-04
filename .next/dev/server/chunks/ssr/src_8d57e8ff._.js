@@ -110,7 +110,7 @@ function Navbar() {
             href: "#sobre"
         },
         {
-            label: "Servicos",
+            label: "Serviços",
             href: "#servicos"
         },
         {
@@ -148,7 +148,7 @@ function Navbar() {
                             children: navLinks.map((link)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
                                     href: link.href,
                                     className: "text-sm text-neutral-500 hover:text-neutral-900 transition-colors",
-                                    "data-testid": `link-nav-${link.label.toLowerCase().replace(/\s/g, "-")}`,
+                                    "data-testid": `link-nav-${link.label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s/g, "-")}`,
                                     children: link.label
                                 }, link.label, false, {
                                     fileName: "[project]/src/components/site/navbar.tsx",
@@ -377,7 +377,7 @@ function HeroSection() {
                         className: "text-base sm:text-lg text-neutral-600 max-w-xl mx-auto mb-10 leading-relaxed",
                         variants: itemVariants,
                         "data-testid": "text-hero-subtitle",
-                        children: "Consultas personalizadas para ajudar voce a alcancar seus objetivos de saude e bem-estar com um plano alimentar sob medida."
+                        children: "Consultas personalizadas para ajudar você a alcançar seus objetivos de saúde e bem-estar com um plano alimentar sob medida."
                     }, void 0, false, {
                         fileName: "[project]/src/components/site/hero-section.tsx",
                         lineNumber: 52,
@@ -406,7 +406,7 @@ function HeroSection() {
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                href: "/agendar",
+                                href: "/paciente/agendar",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                                     size: "lg",
                                     className: "rounded-full px-8 bg-neutral-900 text-white hover:bg-neutral-800",
@@ -541,7 +541,7 @@ function AboutSection() {
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                 className: "text-3xl md:text-4xl font-bold tracking-tight text-neutral-900",
                                 "data-testid": "text-about-title",
-                                children: "Nutricao com ciencia e acolhimento"
+                                children: "Nutrição com ciência e acolhimento"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/site/about-section.tsx",
                                 lineNumber: 43,
@@ -550,7 +550,7 @@ function AboutSection() {
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-neutral-500 leading-relaxed",
                                 "data-testid": "text-about-desc",
-                                children: "Sou o Renan Martins, nutricionista clinico com mais de 8 anos de experiencia. Acredito que a nutricao vai alem de uma dieta — e sobre construir uma relacao saudavel com a comida e alcancar qualidade de vida."
+                                children: "Sou o Renan Martins, nutricionista clínico com mais de 8 anos de experiência. Acredito que a nutrição vai além de uma dieta — é sobre construir uma relação saudável com a comida e alcançar qualidade de vida."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/site/about-section.tsx",
                                 lineNumber: 49,
@@ -558,7 +558,7 @@ function AboutSection() {
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-neutral-500 leading-relaxed",
-                                children: "Minha abordagem e baseada em evidencias cientificas e personalizada para cada paciente, considerando objetivos, rotina e preferencias alimentares."
+                                children: "Minha abordagem é baseada em evidências científicas e personalizada para cada paciente, considerando objetivos, rotina e preferências alimentares."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/site/about-section.tsx",
                                 lineNumber: 52,
@@ -630,7 +630,7 @@ function AboutSection() {
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 className: "text-sm text-neutral-400 mt-1",
-                                                children: "Avaliacao"
+                                                children: "Avaliação"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/site/about-section.tsx",
                                                 lineNumber: 67,
@@ -701,23 +701,23 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useMounted$2
 ;
 const services = [
     {
-        name: "Nutricao Clinica",
-        description: "Avaliacao completa do estado nutricional e elaboracao do plano alimentar personalizado.",
+        name: "Nutrição Clínica",
+        description: "Avaliação completa do estado nutricional e elaboração do plano alimentar personalizado.",
         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$stethoscope$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Stethoscope$3e$__["Stethoscope"]
     },
     {
-        name: "Nutricao Esportiva",
-        description: "Plano alimentar focado em performance com estrategias de periodizacao nutricional.",
+        name: "Nutrição Esportiva",
+        description: "Plano alimentar focado em performance com estratégias de periodização nutricional.",
         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$dumbbell$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Dumbbell$3e$__["Dumbbell"]
     },
     {
-        name: "Reeducacao Alimentar",
-        description: "Programa para transformar sua relacao com a comida com resultados duradouros.",
+        name: "Reeducação Alimentar",
+        description: "Programa para transformar sua relação com a comida com resultados duradouros.",
         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$salad$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Salad$3e$__["Salad"]
     },
     {
-        name: "Nutricao Funcional",
-        description: "Abordagem integrativa que trata a causa raiz dos desequilibrios nutricionais.",
+        name: "Nutrição Funcional",
+        description: "Abordagem integrativa que trata a causa raiz dos desequilíbrios nutricionais.",
         icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$sparkles$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Sparkles$3e$__["Sparkles"]
     }
 ];
@@ -755,7 +755,7 @@ function ServicesSection() {
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                             className: "text-sm font-medium text-neutral-400 uppercase tracking-widest mb-3",
-                            children: "Servicos"
+                            children: "Serviços"
                         }, void 0, false, {
                             fileName: "[project]/src/components/site/services-section.tsx",
                             lineNumber: 61,
@@ -820,7 +820,7 @@ function ServicesSection() {
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                        href: "/agendar",
+                                        href: "/paciente/agendar",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                                             variant: "ghost",
                                             className: "w-full justify-between text-neutral-600 hover:text-neutral-900 p-0 h-auto font-medium text-sm",
@@ -935,7 +935,7 @@ function ContactSection() {
         },
         {
             icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$map$2d$pin$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__MapPin$3e$__["MapPin"],
-            label: "Endereco",
+            label: "Endereço",
             value: "Av. Paulista, 1000 - Bela Vista, SP",
             href: "https://maps.google.com/?q=Av.+Paulista+1000+Sao+Paulo",
             testId: "contact-address"
@@ -989,7 +989,7 @@ function ContactSection() {
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-neutral-500",
-                                children: "Ficou com alguma duvida? Entre em contato ou agende sua consulta diretamente."
+                                children: "Ficou com alguma dúvida? Entre em contato ou agende sua consulta diretamente."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/site/contact-section.tsx",
                                 lineNumber: 68,

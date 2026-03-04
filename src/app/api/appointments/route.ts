@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
 
   if (!date || !start_time || !end_time || !patient_name || !patient_email || !patient_phone) {
     return NextResponse.json(
-      { error: "Todos os campos obrigatorios devem ser preenchidos" },
+      { error: "Todos os campos obrigatórios devem ser preenchidos" },
       { status: 400 }
     );
   }
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(patient_email)) {
     return NextResponse.json(
-      { error: "Email invalido" },
+      { error: "Email inválido" },
       { status: 400 }
     );
   }
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     const existingAppt = existing[0];
     if (existingAppt.status === "PENDING" || existingAppt.status === "CONFIRMED") {
       return NextResponse.json(
-        { error: "Este horario ja esta ocupado. Por favor, escolha outro horario." },
+        { error: "Este horário já está ocupado. Por favor, escolha outro horário." },
         { status: 409 }
       );
     }
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
   if (error) {
     if (error.code === "23505") {
       return NextResponse.json(
-        { error: "Este horario ja esta ocupado. Por favor, escolha outro horario." },
+        { error: "Este horário já está ocupado. Por favor, escolha outro horário." },
         { status: 409 }
       );
     }

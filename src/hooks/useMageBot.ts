@@ -219,7 +219,7 @@ export function useMageBot(): UseMageBotReturn {
           addBotMessages(successResponse.messages, successResponse.context, successResponse.quickReplies);
           return;
         } catch {
-          const failResponse = getLoginFailureResponse(context, "Erro de conexao. Tente novamente.");
+          const failResponse = getLoginFailureResponse(context, "Erro de conexão. Tente novamente.");
           addBotMessages(failResponse.messages, failResponse.context, failResponse.quickReplies);
           return;
         }

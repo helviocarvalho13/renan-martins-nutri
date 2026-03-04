@@ -54,8 +54,8 @@ export function HeroSection() {
           variants={itemVariants}
           data-testid="text-hero-subtitle"
         >
-          Consultas personalizadas para ajudar voce a alcancar seus objetivos de
-          saude e bem-estar com um plano alimentar sob medida.
+          Consultas personalizadas para ajudar você a alcançar seus objetivos de
+          saúde e bem-estar com um plano alimentar sob medida.
         </motion.p>
 
         <motion.div
@@ -72,7 +72,7 @@ export function HeroSection() {
               Saiba Mais
             </Button>
           </a>
-          <Link href="/agendar">
+          <Link href="/paciente/agendar">
             <Button
               size="lg"
               className="rounded-full px-8 bg-neutral-900 text-white hover:bg-neutral-800"

@@ -14,7 +14,7 @@ export async function PATCH(
   } = await serverSupabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
+    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
 
   if (user.user_metadata?.role !== "ADMIN" && user.user_metadata?.role !== "admin") {
@@ -27,7 +27,7 @@ export async function PATCH(
   const validStatuses: AppointmentStatus[] = ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED", "NO_SHOW"];
   if (!status || !validStatuses.includes(status)) {
     return NextResponse.json(
-      { error: "Status invalido" },
+      { error: "Status inválido" },
       { status: 400 }
     );
   }

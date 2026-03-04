@@ -217,18 +217,24 @@ async function bookAppointment(params) {
             },
             body: JSON.stringify(params)
         });
-        const data = await res.json();
-        if (!res.ok) return {
-            success: false,
-            error: data.error || "Erro ao agendar."
-        };
+        if (!res.ok) {
+            let errorMsg = "Erro ao agendar.";
+            try {
+                const data = await res.json();
+                errorMsg = data.error || errorMsg;
+            } catch  {}
+            return {
+                success: false,
+                error: errorMsg
+            };
+        }
         return {
             success: true
         };
     } catch  {
         return {
             success: false,
-            error: "Erro de conexao. Tente novamente."
+            error: "Erro de conexão. Verifique sua internet e tente novamente."
         };
     }
 }
@@ -237,19 +243,19 @@ function formatSlotTime(time) {
 }
 const MENU_REPLIES = [
     {
-        label: "Agendar consulta",
+        label: "📅 Agendar consulta",
         value: "agendar"
     },
     {
-        label: "Ver agendamentos",
+        label: "📋 Ver agendamentos",
         value: "agendamentos"
     },
     {
-        label: "Servicos",
+        label: "💼 Serviços",
         value: "servicos"
     },
     {
-        label: "Contato",
+        label: "📞 Contato",
         value: "contato"
     }
 ];
@@ -259,7 +265,7 @@ const ANYTHING_ELSE_REPLIES = [
         value: "sim"
     },
     {
-        label: "Nao, obrigado",
+        label: "Não, obrigado",
         value: "nao"
     }
 ];
@@ -279,7 +285,7 @@ const TYPE_REPLIES = [
 ];
 async function processMessage(input, context) {
     const trimmed = input.trim().toLowerCase();
-    if (trimmed === "menu" || trimmed === "voltar" || trimmed === "inicio") {
+    if (trimmed === "menu" || trimmed === "voltar" || trimmed === "inicio" || trimmed === "início") {
         return {
             messages: [
                 "Como posso te ajudar?"
@@ -292,45 +298,59 @@ async function processMessage(input, context) {
             quickReplies: MENU_REPLIES
         };
     }
-    switch(context.state){
-        case "GREETING":
-            return handleGreeting(context);
-        case "MENU":
-            return handleMenu(trimmed, context);
-        case "AUTH_CHECK":
-            return handleAuthCheck(context);
-        case "LOGIN_EMAIL":
-            return handleLoginEmail(input.trim(), context);
-        case "LOGIN_PASSWORD":
-            return handleLoginPassword(context);
-        case "SELECT_TYPE":
-            return handleSelectType(trimmed, context);
-        case "SELECT_DATE":
-            return handleSelectDate(input, context);
-        case "VALIDATE_DATE":
-            return handleValidateDate(context);
-        case "SHOW_SLOTS":
-            return handleShowSlots(trimmed, context);
-        case "CONFIRM":
-            return handleConfirm(trimmed, context);
-        case "BOOKING":
-            return handleBooking(context);
-        case "ANYTHING_ELSE":
-            return handleAnythingElse(trimmed, context);
-        case "FAREWELL":
-            return handleFarewell(context);
-        case "VIEW_APPOINTMENTS":
-            return handleViewAppointments(context);
-        case "SERVICES_INFO":
-            return handleServicesInfo(context);
-        case "CONTACT_INFO":
-            return handleContactInfo(context);
-        default:
-            return handleGreeting(context);
+    try {
+        switch(context.state){
+            case "GREETING":
+                return handleGreeting(context);
+            case "MENU":
+                return handleMenu(trimmed, context);
+            case "AUTH_CHECK":
+                return handleAuthCheck(context);
+            case "LOGIN_EMAIL":
+                return handleLoginEmail(input.trim(), context);
+            case "LOGIN_PASSWORD":
+                return handleLoginPassword(context);
+            case "SELECT_TYPE":
+                return handleSelectType(trimmed, context);
+            case "SELECT_DATE":
+                return await handleSelectDate(input, context);
+            case "VALIDATE_DATE":
+                return handleValidateDate(context);
+            case "SHOW_SLOTS":
+                return handleShowSlots(trimmed, context);
+            case "CONFIRM":
+                return await handleConfirm(trimmed, context);
+            case "BOOKING":
+                return handleBooking(context);
+            case "ANYTHING_ELSE":
+                return handleAnythingElse(trimmed, context);
+            case "FAREWELL":
+                return handleFarewell(context);
+            case "VIEW_APPOINTMENTS":
+                return handleViewAppointments(context);
+            case "SERVICES_INFO":
+                return handleServicesInfo(context);
+            case "CONTACT_INFO":
+                return handleContactInfo(context);
+            default:
+                return handleGreeting(context);
+        }
+    } catch  {
+        return {
+            messages: [
+                "Desculpe, ocorreu um erro inesperado. Vamos tentar novamente.",
+                "Como posso te ajudar?"
+            ],
+            context: {
+                ...context,
+                state: "MENU"
+            },
+            quickReplies: MENU_REPLIES
+        };
     }
 }
 function handleGreeting(context) {
-    const greeting = context.userName ? `Ola, ${context.userName}! Eu sou o MageBot, assistente virtual do Renan Martins Nutricao. Como posso te ajudar hoje?` : "Ola! Eu sou o MageBot, assistente virtual do Renan Martins Nutricao. Como posso te ajudar hoje?";
+    const greeting = context.userName ? `Olá, ${context.userName}! Eu sou o MageBot, assistente virtual do Renan Martins Nutrição. Como posso te ajudar hoje?` : "Olá! Eu sou o MageBot, assistente virtual do Renan Martins Nutrição. Como posso te ajudar hoje?";
     return {
         messages: [
             greeting
@@ -344,29 +364,52 @@ function handleGreeting(context) {
 }
 function handleMenu(input, context) {
     if (input === "agendar" || input.includes("agendar") || input.includes("consulta") || input.includes("marcar")) {
+        if (!context.isAuthenticated) {
+            return {
+                messages: [
+                    "Vamos agendar sua consulta! 📅",
+                    "Para agendar, você precisa estar logado. Deseja fazer login agora pelo chat?"
+                ],
+                context: {
+                    ...context,
+                    state: "LOGIN_EMAIL"
+                },
+                quickReplies: [
+                    {
+                        label: "Sim, fazer login",
+                        value: "sim_login"
+                    },
+                    {
+                        label: "Voltar ao menu",
+                        value: "menu"
+                    }
+                ]
+            };
+        }
         return {
             messages: [
-                "Vamos agendar sua consulta!"
+                "Vamos agendar sua consulta! 📅",
+                "Qual tipo de consulta você deseja agendar?"
             ],
             context: {
                 ...context,
-                state: "AUTH_CHECK"
+                state: "SELECT_TYPE"
             },
-            quickReplies: []
+            quickReplies: TYPE_REPLIES
         };
     }
     if (input === "agendamentos" || input.includes("agendamento") || input.includes("minhas consultas")) {
         return handleViewAppointments(context);
     }
-    if (input === "servicos" || input.includes("servico") || input.includes("serviço")) {
+    if (input === "servicos" || input.includes("servico") || input.includes("serviço") || input.includes("serviços")) {
         return handleServicesInfo(context);
     }
-    if (input === "contato" || input.includes("contato") || input.includes("telefone") || input.includes("endereco")) {
+    if (input === "contato" || input.includes("contato") || input.includes("telefone") || input.includes("endereço") || input.includes("endereco")) {
         return handleContactInfo(context);
     }
     return {
         messages: [
-            "Desculpe, nao entendi. Escolha uma das opcoes abaixo:"
+            "Desculpe, não entendi. Escolha uma das opções abaixo:"
         ],
         context: {
             ...context,
@@ -379,7 +422,7 @@ function handleAuthCheck(context) {
     if (!context.isAuthenticated) {
         return {
             messages: [
-                "Para agendar uma consulta, voce precisa estar logado.",
+                "Para agendar uma consulta, você precisa estar logado.",
                 "Deseja fazer login agora pelo chat?"
             ],
             context: {
@@ -400,7 +443,7 @@ function handleAuthCheck(context) {
     }
     return {
         messages: [
-            "Qual tipo de consulta voce deseja agendar?"
+            "Qual tipo de consulta você deseja agendar?"
         ],
         context: {
             ...context,
@@ -413,7 +456,7 @@ function handleLoginEmail(input, context) {
     if (input.toLowerCase() === "sim_login" || input.toLowerCase() === "sim" || input.toLowerCase().includes("login")) {
         return {
             messages: [
-                "Por favor, digite seu email:"
+                "Por favor, digite seu e-mail:"
             ],
             context: {
                 ...context,
@@ -438,7 +481,7 @@ function handleLoginEmail(input, context) {
     }
     return {
         messages: [
-            "Por favor, digite um email valido:"
+            "Por favor, digite um e-mail válido:"
         ],
         context: {
             ...context,
@@ -464,8 +507,8 @@ function handleLoginPassword(_context) {
 function getLoginSuccessResponse(context) {
     return {
         messages: [
-            `Login realizado com sucesso! Bem-vindo(a), ${context.userName || ""}!`,
-            "Qual tipo de consulta voce deseja agendar?"
+            `Login realizado com sucesso! Bem-vindo(a), ${context.userName || ""}! ✅`,
+            "Qual tipo de consulta você deseja agendar?"
         ],
         context: {
             ...context,
@@ -476,10 +519,11 @@ function getLoginSuccessResponse(context) {
     };
 }
 function getLoginFailureResponse(context, error) {
+    const errorMsg = error === "Invalid login credentials" ? "E-mail ou senha incorretos." : error || "E-mail ou senha incorretos.";
     return {
         messages: [
-            error || "Email ou senha incorretos. Tente novamente.",
-            "Digite seu email:"
+            `❌ ${errorMsg}`,
+            "Tente novamente. Digite seu e-mail:"
         ],
         context: {
             ...context,
@@ -498,8 +542,8 @@ function handleSelectType(input, context) {
     if (input === "first_visit" || input.includes("primeira")) {
         return {
             messages: [
-                "Primeira consulta selecionada!",
-                "Para qual data voce gostaria de agendar? Voce pode digitar: 'amanha', 'proxima segunda', 'dia 15', '15/03', etc."
+                "Primeira consulta selecionada! ✅",
+                "Para qual data você gostaria de agendar? Você pode digitar: 'amanhã', 'próxima segunda', 'dia 15', '15/03', etc."
             ],
             context: {
                 ...context,
@@ -508,19 +552,19 @@ function handleSelectType(input, context) {
             },
             quickReplies: [
                 {
-                    label: "Amanha",
+                    label: "Amanhã",
                     value: "amanha"
                 },
                 {
-                    label: "Proxima segunda",
+                    label: "Próxima segunda",
                     value: "proxima segunda"
                 },
                 {
-                    label: "Proxima quarta",
+                    label: "Próxima quarta",
                     value: "proxima quarta"
                 },
                 {
-                    label: "Proxima sexta",
+                    label: "Próxima sexta",
                     value: "proxima sexta"
                 }
             ]
@@ -529,8 +573,8 @@ function handleSelectType(input, context) {
     if (input === "return" || input.includes("retorno")) {
         return {
             messages: [
-                "Retorno selecionado!",
-                "Para qual data voce gostaria de agendar o retorno? Voce pode digitar: 'amanha', 'proxima segunda', 'dia 15', '15/03', etc."
+                "Retorno selecionado! ✅",
+                "Para qual data você gostaria de agendar o retorno? Você pode digitar: 'amanhã', 'próxima segunda', 'dia 15', '15/03', etc."
             ],
             context: {
                 ...context,
@@ -539,19 +583,19 @@ function handleSelectType(input, context) {
             },
             quickReplies: [
                 {
-                    label: "Amanha",
+                    label: "Amanhã",
                     value: "amanha"
                 },
                 {
-                    label: "Proxima segunda",
+                    label: "Próxima segunda",
                     value: "proxima segunda"
                 },
                 {
-                    label: "Proxima quarta",
+                    label: "Próxima quarta",
                     value: "proxima quarta"
                 },
                 {
-                    label: "Proxima sexta",
+                    label: "Próxima sexta",
                     value: "proxima sexta"
                 }
             ]
@@ -573,8 +617,8 @@ async function handleSelectDate(input, context) {
     if (!parsed) {
         return {
             messages: [
-                "Nao consegui entender a data. Tente novamente usando formatos como:",
-                "'amanha', 'proxima segunda', 'dia 15', '15/03', '15/03/2025', '15 de marco'"
+                "Não consegui entender a data. Tente novamente usando formatos como:",
+                "'amanhã', 'próxima segunda', 'dia 15', '15/03', '15/03/2025', '15 de março'"
             ],
             context: {
                 ...context,
@@ -582,11 +626,11 @@ async function handleSelectDate(input, context) {
             },
             quickReplies: [
                 {
-                    label: "Amanha",
+                    label: "Amanhã",
                     value: "amanha"
                 },
                 {
-                    label: "Proxima segunda",
+                    label: "Próxima segunda",
                     value: "proxima segunda"
                 },
                 {
@@ -601,7 +645,7 @@ async function handleSelectDate(input, context) {
     if (parsed < minDate) {
         return {
             messages: [
-                "A data precisa ser pelo menos amanha. Agendamentos devem ser feitos com pelo menos 24 horas de antecedencia."
+                "A data precisa ser pelo menos amanhã. Agendamentos devem ser feitos com pelo menos 24 horas de antecedência."
             ],
             context: {
                 ...context,
@@ -609,25 +653,51 @@ async function handleSelectDate(input, context) {
             },
             quickReplies: [
                 {
-                    label: "Amanha",
+                    label: "Amanhã",
                     value: "amanha"
                 },
                 {
-                    label: "Proxima segunda",
+                    label: "Próxima segunda",
                     value: "proxima segunda"
                 }
             ]
         };
     }
     const dateISO = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDateISO"])(parsed);
-    const slots = await fetchAvailableSlots(dateISO);
+    let slots;
+    try {
+        slots = await fetchAvailableSlots(dateISO);
+    } catch  {
+        return {
+            messages: [
+                "Ocorreu um erro ao buscar os horários disponíveis. Por favor, tente novamente."
+            ],
+            context: {
+                ...context,
+                state: "SELECT_DATE"
+            },
+            quickReplies: [
+                {
+                    label: "Tentar novamente",
+                    value: input
+                },
+                {
+                    label: "Voltar ao menu",
+                    value: "menu"
+                }
+            ]
+        };
+    }
     if (slots.length === 0) {
-        const suggestions = await findNextAvailableDays(dateISO, 3);
+        let suggestions = [];
+        try {
+            suggestions = await findNextAvailableDays(dateISO, 3);
+        } catch  {}
         const suggestionMessages = suggestions.length > 0 ? [
-            `Nao ha horarios disponiveis para ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(parsed)}.`,
-            `Proximos dias disponiveis: ${suggestions.map((s)=>(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(s + "T12:00:00"))).join(", ")}`
+            `Não há horários disponíveis para ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(parsed)}.`,
+            `Próximos dias disponíveis: ${suggestions.map((s)=>(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(s + "T12:00:00"))).join(", ")}`
         ] : [
-            `Nao ha horarios disponiveis para ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(parsed)}. Tente outra data.`
+            `Não há horários disponíveis para ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(parsed)}. Tente outra data.`
         ];
         const suggestionReplies = suggestions.map((s)=>({
                 label: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(s + "T12:00:00")),
@@ -648,8 +718,8 @@ async function handleSelectDate(input, context) {
     }
     return {
         messages: [
-            `Horarios disponiveis para ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(parsed)}:`,
-            "Escolha um horario:"
+            `Horários disponíveis para ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(parsed)}:`,
+            "Escolha um horário:"
         ],
         context: {
             ...context,
@@ -668,10 +738,12 @@ async function findNextAvailableDays(fromDate, count) {
     let current = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["addDays"])(new Date(fromDate + "T12:00:00"), 1);
     for(let i = 0; i < 30 && results.length < count; i++){
         const dateStr = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDateISO"])(current);
-        const slots = await fetchAvailableSlots(dateStr);
-        if (slots.length > 0) {
-            results.push(dateStr);
-        }
+        try {
+            const slots = await fetchAvailableSlots(dateStr);
+            if (slots.length > 0) {
+                results.push(dateStr);
+            }
+        } catch  {}
         current = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["addDays"])(current, 1);
     }
     return results;
@@ -679,18 +751,46 @@ async function findNextAvailableDays(fromDate, count) {
 function handleValidateDate(context) {
     return {
         messages: [
-            "Buscando horarios disponiveis..."
+            "Buscando horários disponíveis..."
         ],
         context,
         quickReplies: []
     };
 }
 function handleShowSlots(input, context) {
+    if (!context.availableSlots || context.availableSlots.length === 0) {
+        return {
+            messages: [
+                "Os horários expiraram. Vamos selecionar a data novamente.",
+                "Para qual data você gostaria de agendar?"
+            ],
+            context: {
+                ...context,
+                state: "SELECT_DATE",
+                availableSlots: [],
+                selectedDate: null
+            },
+            quickReplies: [
+                {
+                    label: "Amanhã",
+                    value: "amanha"
+                },
+                {
+                    label: "Próxima segunda",
+                    value: "proxima segunda"
+                },
+                {
+                    label: "Voltar ao menu",
+                    value: "menu"
+                }
+            ]
+        };
+    }
     const matchedSlot = context.availableSlots.find((s)=>s.start_time === input || formatSlotTime(s.start_time) === input);
     if (!matchedSlot) {
         return {
             messages: [
-                "Por favor, escolha um dos horarios disponiveis:"
+                "Por favor, escolha um dos horários disponíveis:"
             ],
             context: {
                 ...context,
@@ -706,10 +806,10 @@ function handleShowSlots(input, context) {
     const dateFormatted = context.selectedDate ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(context.selectedDate + "T12:00:00")) : "";
     return {
         messages: [
-            "Por favor, confirme os dados do agendamento:",
+            "📋 Por favor, confirme os dados do agendamento:",
             `Tipo: ${typeLabel}`,
             `Data: ${dateFormatted}`,
-            `Horario: ${formatSlotTime(matchedSlot.start_time)} - ${formatSlotTime(matchedSlot.end_time)}`,
+            `Horário: ${formatSlotTime(matchedSlot.start_time)} - ${formatSlotTime(matchedSlot.end_time)}`,
             "Deseja confirmar?"
         ],
         context: {
@@ -719,11 +819,11 @@ function handleShowSlots(input, context) {
         },
         quickReplies: [
             {
-                label: "Confirmar",
+                label: "✅ Confirmar",
                 value: "sim"
             },
             {
-                label: "Escolher outro horario",
+                label: "Escolher outro horário",
                 value: "outro_horario"
             },
             {
@@ -738,16 +838,37 @@ async function handleConfirm(input, context) {
         if (!context.selectedDate || !context.selectedSlot || !context.appointmentType) {
             return {
                 messages: [
-                    "Erro: dados do agendamento incompletos. Vamos comecar de novo."
+                    "⚠️ Dados do agendamento incompletos. Vamos recomeçar.",
+                    "Qual tipo de consulta você deseja agendar?"
                 ],
                 context: {
                     ...context,
                     state: "SELECT_TYPE",
                     selectedDate: null,
                     selectedSlot: null,
-                    appointmentType: null
+                    appointmentType: null,
+                    availableSlots: []
                 },
                 quickReplies: TYPE_REPLIES
+            };
+        }
+        if (!context.isAuthenticated) {
+            return {
+                messages: [
+                    "⚠️ Sua sessão expirou. Você precisa fazer login novamente para agendar.",
+                    "Digite seu e-mail:"
+                ],
+                context: {
+                    ...context,
+                    state: "LOGIN_EMAIL",
+                    loginEmail: null
+                },
+                quickReplies: [
+                    {
+                        label: "Voltar ao menu",
+                        value: "menu"
+                    }
+                ]
             };
         }
         const result = await bookAppointment({
@@ -760,9 +881,9 @@ async function handleConfirm(input, context) {
             const dateFormatted = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(context.selectedDate + "T12:00:00"));
             return {
                 messages: [
-                    "Consulta agendada com sucesso!",
-                    `Data: ${dateFormatted} as ${formatSlotTime(context.selectedSlot.start_time)}`,
-                    "Voce recebera uma confirmacao em breve. Posso ajudar com mais alguma coisa?"
+                    "✅ Consulta agendada com sucesso!",
+                    `Data: ${dateFormatted} às ${formatSlotTime(context.selectedSlot.start_time)}`,
+                    "Você receberá uma confirmação em breve. Posso ajudar com mais alguma coisa?"
                 ],
                 context: {
                     ...context,
@@ -775,9 +896,17 @@ async function handleConfirm(input, context) {
                 quickReplies: ANYTHING_ELSE_REPLIES
             };
         }
+        let userFriendlyError = result.error || "Erro desconhecido.";
+        if (userFriendlyError.includes("already have") || userFriendlyError.includes("já possui")) {
+            userFriendlyError = "Você já possui uma consulta deste tipo agendada.";
+        } else if (userFriendlyError.includes("24") || userFriendlyError.includes("antecedência") || userFriendlyError.includes("antecedencia")) {
+            userFriendlyError = "Agendamentos devem ser feitos com pelo menos 24 horas de antecedência.";
+        } else if (userFriendlyError.includes("slot") || userFriendlyError.includes("horário") || userFriendlyError.includes("horario")) {
+            userFriendlyError = "Este horário não está mais disponível. Por favor, escolha outro.";
+        }
         return {
             messages: [
-                `Nao foi possivel agendar: ${result.error}`,
+                `❌ Não foi possível agendar: ${userFriendlyError}`,
                 "Deseja tentar novamente?"
             ],
             context: {
@@ -797,9 +926,32 @@ async function handleConfirm(input, context) {
         };
     }
     if (input === "outro_horario" || input.includes("outro")) {
+        if (!context.availableSlots || context.availableSlots.length === 0) {
+            return {
+                messages: [
+                    "Os horários não estão mais disponíveis. Vamos selecionar a data novamente."
+                ],
+                context: {
+                    ...context,
+                    state: "SELECT_DATE",
+                    availableSlots: [],
+                    selectedSlot: null
+                },
+                quickReplies: [
+                    {
+                        label: "Amanhã",
+                        value: "amanha"
+                    },
+                    {
+                        label: "Próxima segunda",
+                        value: "proxima segunda"
+                    }
+                ]
+            };
+        }
         return {
             messages: [
-                "Escolha outro horario:"
+                "Escolha outro horário:"
             ],
             context: {
                 ...context,
@@ -835,7 +987,7 @@ async function handleConfirm(input, context) {
         context,
         quickReplies: [
             {
-                label: "Confirmar",
+                label: "✅ Confirmar",
                 value: "sim"
             },
             {
@@ -871,7 +1023,7 @@ function handleAnythingElse(input, context) {
         return {
             messages: [
                 "Vamos fazer seu login!",
-                "Por favor, digite seu email:"
+                "Por favor, digite seu e-mail:"
             ],
             context: {
                 ...context,
@@ -886,7 +1038,7 @@ function handleAnythingElse(input, context) {
 function handleFarewell(context) {
     return {
         messages: [
-            "Obrigado por usar o MageBot! Ate a proxima! Se precisar de algo, e so me chamar."
+            "Obrigado por usar o MageBot! Até a próxima! Se precisar de algo, é só me chamar. 👋"
         ],
         context: {
             ...context,
@@ -904,7 +1056,7 @@ function handleViewAppointments(context) {
     if (!context.isAuthenticated) {
         return {
             messages: [
-                "Para ver seus agendamentos, voce precisa estar logado.",
+                "Para ver seus agendamentos, você precisa estar logado.",
                 "Deseja fazer login agora?"
             ],
             context: {
@@ -925,8 +1077,8 @@ function handleViewAppointments(context) {
     }
     return {
         messages: [
-            "Voce pode ver todos os seus agendamentos na area do paciente.",
-            "Acesse /paciente para ver suas consultas, cancelar ou agendar novas.",
+            "Você pode ver todos os seus agendamentos na área do paciente.",
+            "Acesse a página /paciente para ver suas consultas, cancelar ou agendar novas.",
             "Posso ajudar com mais alguma coisa?"
         ],
         context: {
@@ -939,9 +1091,11 @@ function handleViewAppointments(context) {
 function handleServicesInfo(context) {
     return {
         messages: [
-            "Nossos servicos incluem:",
-            "- Consulta Nutricional (Primeira Visita): Avaliacao completa, anamnese, plano alimentar personalizado.",
-            "- Retorno Nutricional: Acompanhamento, ajuste do plano alimentar, avaliacao de progresso.",
+            "Nossos serviços incluem:",
+            "🩺 Nutrição Clínica — Avaliação completa, anamnese e plano alimentar personalizado.",
+            "🏋️ Nutrição Esportiva — Performance e periodização nutricional.",
+            "🥗 Reeducação Alimentar — Transforme sua relação com a comida.",
+            "✨ Nutrição Funcional — Abordagem integrativa para desequilíbrios nutricionais.",
             "Gostaria de agendar uma consulta?"
         ],
         context: {
@@ -963,9 +1117,9 @@ function handleServicesInfo(context) {
 function handleContactInfo(context) {
     return {
         messages: [
-            "Informacoes de contato:",
-            "Renan Martins - Nutricionista",
-            "Acesse a secao de contato no site para mais informacoes sobre telefone, endereco e horario de funcionamento.",
+            "📞 Informações de contato:",
+            "Renan Martins — Nutricionista",
+            "Acesse a seção de contato no site para mais informações sobre telefone, endereço e horário de funcionamento.",
             "Posso ajudar com mais alguma coisa?"
         ],
         context: {
@@ -1222,7 +1376,7 @@ function useMageBot() {
                     addBotMessages(successResponse.messages, successResponse.context, successResponse.quickReplies);
                     return;
                 } catch  {
-                    const failResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getLoginFailureResponse"])(context, "Erro de conexao. Tente novamente.");
+                    const failResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getLoginFailureResponse"])(context, "Erro de conexão. Tente novamente.");
                     addBotMessages(failResponse.messages, failResponse.context, failResponse.quickReplies);
                     return;
                 }

@@ -17,7 +17,7 @@ export function Navbar() {
 
   const navLinks = [
     { label: "Sobre", href: "#sobre" },
-    { label: "Servicos", href: "#servicos" },
+    { label: "Serviços", href: "#servicos" },
     { label: "Contato", href: "#contato" },
   ];
 
@@ -43,7 +43,7 @@ export function Navbar() {
                 key={link.label}
                 href={link.href}
                 className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
-                data-testid={`link-nav-${link.label.toLowerCase().replace(/\s/g, "-")}`}
+                data-testid={`link-nav-${link.label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s/g, "-")}`}
               >
                 {link.label}
               </a>

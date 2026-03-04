@@ -43,7 +43,7 @@ function SimpleCalendar({
   for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
 
   const monthNames = [
-    "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho",
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
   ];
 
@@ -113,7 +113,7 @@ function SimpleCalendar({
   );
 }
 
-const stepLabels = ["Tipo", "Data", "Horario", "Confirmacao"];
+const stepLabels = ["Tipo", "Data", "Horário", "Confirmação"];
 
 export default function PatientBookingPage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -316,7 +316,7 @@ export default function PatientBookingPage() {
                     </p>
                     {hasActiveFirstVisit && (
                       <p className="text-xs text-red-500 mt-2" data-testid="text-first-visit-disabled">
-                        Voce ja tem uma consulta agendada
+                        Você já tem uma consulta agendada
                       </p>
                     )}
                   </div>
@@ -356,7 +356,7 @@ export default function PatientBookingPage() {
                     )}
                     {canReturn && hasActiveReturn && (
                       <p className="text-xs text-red-500 mt-2" data-testid="text-return-already-active">
-                        Voce ja possui um retorno agendado
+                        Você já possui um retorno agendado
                       </p>
                     )}
                     {canReturn && !hasActiveReturn && returnDate && (
@@ -396,7 +396,7 @@ export default function PatientBookingPage() {
 
           {selectedDate && !loadingSlots && slots.length === 0 && (
             <p className="text-sm text-neutral-500 mb-6" data-testid="text-no-slots-date">
-              Nenhum horario disponivel nesta data. Escolha outra data.
+              Nenhum horário disponível nesta data. Escolha outra data.
             </p>
           )}
 
@@ -433,7 +433,7 @@ export default function PatientBookingPage() {
       {currentStep === 3 && (
         <div>
           <h2 className="text-lg font-semibold text-neutral-900 mb-2" data-testid="text-step3-title">
-            Escolha o horario
+            Escolha o horário
           </h2>
           <p className="text-sm text-neutral-500 mb-6">
             {selectedDateObj && format(selectedDateObj, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
@@ -468,7 +468,7 @@ export default function PatientBookingPage() {
             </div>
           ) : (
             <p className="text-sm text-neutral-400 py-8 text-center" data-testid="text-no-slots">
-              Nenhum horario disponivel nesta data.
+              Nenhum horário disponível nesta data.
             </p>
           )}
 
@@ -521,7 +521,7 @@ export default function PatientBookingPage() {
               </div>
               <div className="h-px bg-neutral-100" />
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="text-sm text-neutral-500">Horario</span>
+                <span className="text-sm text-neutral-500">Horário</span>
                 <span className="text-sm font-medium text-neutral-900" data-testid="text-confirm-time">
                   {selectedSlot?.start_time.slice(0, 5)} - {selectedSlot?.end_time.slice(0, 5)}
                 </span>

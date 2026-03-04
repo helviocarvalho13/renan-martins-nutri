@@ -229,7 +229,7 @@ export default function AgendaPage() {
               Disponibilidade de Horarios
             </h1>
             <p className="text-muted-foreground max-w-lg mx-auto">
-              Confira os dias com horarios disponiveis e agende sua consulta.
+              Confira os dias com horários disponíveis e agende sua consulta.
             </p>
           </div>
 
@@ -330,7 +330,7 @@ export default function AgendaPage() {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
-                      Indisponivel
+                      Indisponível
                     </div>
                   </div>
                 </CardContent>
@@ -362,7 +362,7 @@ export default function AgendaPage() {
                       {selectedStatus === "available" && (
                         <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200">
                           <CheckCircle2 className="w-3 h-3 mr-1" />
-                          Horarios disponiveis
+                          Horários disponíveis
                         </Badge>
                       )}
                       {selectedStatus === "limited" && (

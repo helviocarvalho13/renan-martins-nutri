@@ -40,7 +40,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
             />
             <div className="hidden sm:block">
               <p className="font-bold text-sm text-neutral-900 leading-tight">Renan Martins</p>
-              <p className="text-xs text-neutral-400 leading-tight">Area do Paciente</p>
+              <p className="text-xs text-neutral-400 leading-tight">Área do Paciente</p>
             </div>
           </Link>
 

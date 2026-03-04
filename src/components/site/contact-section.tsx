@@ -32,7 +32,7 @@ export function ContactSection() {
     },
     {
       icon: MapPin,
-      label: "Endereco",
+      label: "Endereço",
       value: "Av. Paulista, 1000 - Bela Vista, SP",
       href: "https://maps.google.com/?q=Av.+Paulista+1000+Sao+Paulo",
       testId: "contact-address",
@@ -66,7 +66,7 @@ export function ContactSection() {
               Entre em contato
             </h2>
             <p className="text-neutral-500">
-              Ficou com alguma duvida? Entre em contato ou agende sua consulta diretamente.
+              Ficou com alguma dúvida? Entre em contato ou agende sua consulta diretamente.
             </p>
           </motion.div>
 

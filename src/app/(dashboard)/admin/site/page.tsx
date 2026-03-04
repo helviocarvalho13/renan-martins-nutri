@@ -19,7 +19,7 @@ interface TestimonialWithProfile extends Testimonial {
 const sectionLabels: Record<string, string> = {
   hero: "Hero",
   about: "Sobre",
-  services: "Servicos",
+  services: "Serviços",
   contact: "Contato",
   footer: "Rodape",
 };
@@ -84,7 +84,7 @@ export default function SiteManagementPage() {
       }
       await fetchSiteContent();
     } catch {
-      alert("JSON invalido. Verifique a formatacao.");
+      alert("JSON inválido. Verifique a formatação.");
     }
     setSavingSection(null);
   };

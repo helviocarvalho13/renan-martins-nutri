@@ -15,27 +15,27 @@ import { useMounted } from "@/hooks/useMounted";
 
 const services = [
   {
-    name: "Nutricao Clinica",
+    name: "Nutrição Clínica",
     description:
-      "Avaliacao completa do estado nutricional e elaboracao do plano alimentar personalizado.",
+      "Avaliação completa do estado nutricional e elaboração do plano alimentar personalizado.",
     icon: Stethoscope,
   },
   {
-    name: "Nutricao Esportiva",
+    name: "Nutrição Esportiva",
     description:
-      "Plano alimentar focado em performance com estrategias de periodizacao nutricional.",
+      "Plano alimentar focado em performance com estratégias de periodização nutricional.",
     icon: Dumbbell,
   },
   {
-    name: "Reeducacao Alimentar",
+    name: "Reeducação Alimentar",
     description:
-      "Programa para transformar sua relacao com a comida com resultados duradouros.",
+      "Programa para transformar sua relação com a comida com resultados duradouros.",
     icon: Salad,
   },
   {
-    name: "Nutricao Funcional",
+    name: "Nutrição Funcional",
     description:
-      "Abordagem integrativa que trata a causa raiz dos desequilibrios nutricionais.",
+      "Abordagem integrativa que trata a causa raiz dos desequilíbrios nutricionais.",
     icon: Sparkles,
   },
 ];
@@ -59,7 +59,7 @@ export function ServicesSection() {
       <div className="max-w-6xl mx-auto px-6 lg:px-8" ref={ref}>
         <div className="text-center mb-16">
           <p className="text-sm font-medium text-neutral-400 uppercase tracking-widest mb-3">
-            Servicos
+            Serviços
           </p>
           <h2
             className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900"
@@ -91,7 +91,7 @@ export function ServicesSection() {
                   <p className="text-sm text-neutral-500 leading-relaxed flex-grow mb-5">
                     {service.description}
                   </p>
-                  <Link href="/agendar">
+                  <Link href="/paciente/agendar">
                     <Button
                       variant="ghost"
                       className="w-full justify-between text-neutral-600 hover:text-neutral-900 p-0 h-auto font-medium text-sm"

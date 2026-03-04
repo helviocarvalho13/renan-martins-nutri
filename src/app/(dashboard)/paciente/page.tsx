@@ -25,8 +25,8 @@ const statusMap: Record<string, { label: string; class: string }> = {
   CONFIRMED: { label: "Confirmada", class: "bg-blue-100 text-blue-700" },
   PENDING: { label: "Pendente", class: "bg-yellow-100 text-yellow-700" },
   CANCELLED: { label: "Cancelada", class: "bg-red-100 text-red-700" },
-  COMPLETED: { label: "Concluida", class: "bg-green-100 text-green-700" },
-  NO_SHOW: { label: "Nao compareceu", class: "bg-neutral-200 text-neutral-600" },
+  COMPLETED: { label: "Concluída", class: "bg-green-100 text-green-700" },
+  NO_SHOW: { label: "Não compareceu", class: "bg-neutral-200 text-neutral-600" },
 };
 
 function formatTypeLabel(type: string) {
@@ -140,7 +140,7 @@ export default function PatientDashboard() {
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-bold tracking-tight text-neutral-900" data-testid="text-dashboard-title">
-        Ola, {userName.split(" ")[0]}
+        Olá, {userName.split(" ")[0]}
       </h1>
 
       <Link href="/paciente/agendar" data-testid="link-schedule-new">
@@ -170,7 +170,7 @@ export default function PatientDashboard() {
                       {format(new Date(a.return_suggested_date + "T12:00:00"), "dd/MM/yyyy")}
                     </p>
                     <p className="text-xs text-blue-700 mt-0.5">
-                      {formatTypeLabel(a.type)} concluida em{" "}
+                      {formatTypeLabel(a.type)} concluída em{" "}
                       {format(new Date(a.date + "T12:00:00"), "dd/MM/yyyy")}
                     </p>
                   </div>
@@ -189,14 +189,14 @@ export default function PatientDashboard() {
 
       <div>
         <h2 className="text-base font-semibold text-neutral-900 mb-4" data-testid="text-upcoming-title">
-          Proximas Consultas
+          Próximas Consultas
         </h2>
         {upcoming.length === 0 ? (
           <Card data-testid="card-no-upcoming">
             <CardContent className="p-6 text-center">
               <CalendarDays className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
               <p className="text-sm text-neutral-500">
-                Voce nao tem consultas agendadas
+                Você não tem consultas agendadas
               </p>
             </CardContent>
           </Card>
@@ -265,13 +265,13 @@ export default function PatientDashboard() {
 
       <div>
         <h2 className="text-base font-semibold text-neutral-900 mb-4" data-testid="text-history-title">
-          Historico de Consultas
+          Histórico de Consultas
         </h2>
         {history.length === 0 ? (
           <Card data-testid="card-no-history">
             <CardContent className="p-6 text-center">
               <p className="text-sm text-neutral-500">
-                Nenhuma consulta no historico
+                Nenhuma consulta no histórico
               </p>
             </CardContent>
           </Card>

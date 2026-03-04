@@ -26,7 +26,7 @@ const statusLabels: Record<AppointmentStatus, string> = {
   CONFIRMED: "Confirmada",
   PENDING: "Pendente",
   CANCELLED: "Cancelada",
-  COMPLETED: "Concluida",
+  COMPLETED: "Concluída",
   NO_SHOW: "No-show",
 };
 
@@ -97,7 +97,7 @@ export default function PacienteDetailPage() {
         </Link>
         <Card>
           <CardContent className="p-8 text-center text-muted-foreground" data-testid="text-not-found">
-            Paciente nao encontrado.
+            Paciente não encontrado.
           </CardContent>
         </Card>
       </div>
@@ -179,7 +179,7 @@ export default function PacienteDetailPage() {
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold" data-testid="text-history-title">
-            Historico de Consultas
+            Histórico de Consultas
           </h2>
           <Badge variant="secondary" data-testid="text-appointment-count">
             {appointments.length} consulta{appointments.length !== 1 ? "s" : ""}

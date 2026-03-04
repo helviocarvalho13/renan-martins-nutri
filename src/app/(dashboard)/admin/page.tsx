@@ -34,7 +34,7 @@ const statusLabels: Record<AppointmentStatus, string> = {
   CONFIRMED: "Confirmada",
   PENDING: "Pendente",
   CANCELLED: "Cancelada",
-  COMPLETED: "Concluida",
+  COMPLETED: "Concluída",
   NO_SHOW: "No-show",
 };
 
@@ -234,11 +234,11 @@ export default function AdminDashboardPage() {
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-yellow-50">
                   <AlertCircle className="w-4 h-4 text-yellow-600" />
-                  <p className="text-sm font-medium text-yellow-900">{pendingCount} aguardando confirmacao</p>
+                  <p className="text-sm font-medium text-yellow-900">{pendingCount} aguardando confirmação</p>
                 </div>
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50">
                   <Clock className="w-4 h-4 text-green-600" />
-                  <p className="text-sm font-medium text-green-900">{freeSlots} horarios disponiveis</p>
+                  <p className="text-sm font-medium text-green-900">{freeSlots} horários disponíveis</p>
                 </div>
               </div>
 

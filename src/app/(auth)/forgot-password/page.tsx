@@ -29,7 +29,7 @@ export default function ForgotPasswordPage() {
     );
 
     if (resetError) {
-      setError("Erro ao enviar email de recuperacao. Tente novamente.");
+      setError("Erro ao enviar email de recuperação. Tente novamente.");
       setLoading(false);
       return;
     }
@@ -47,10 +47,10 @@ export default function ForgotPasswordPage() {
           </div>
           <h2 className="text-xl font-bold text-neutral-900" data-testid="text-email-sent-title">Email enviado!</h2>
           <p className="text-sm text-neutral-500">
-            Se existe uma conta com o email <strong className="text-neutral-700">{email}</strong>, voce recebera um link para redefinir sua senha.
+            Se existe uma conta com o email <strong className="text-neutral-700">{email}</strong>, você receberá um link para redefinir sua senha.
           </p>
           <p className="text-xs text-neutral-400">
-            Verifique tambem sua caixa de spam.
+            Verifique também sua caixa de spam.
           </p>
           <Button
             variant="outline"
@@ -98,7 +98,7 @@ export default function ForgotPasswordPage() {
               Recuperar Senha
             </h1>
             <p className="text-sm text-neutral-500 mt-1">
-              Informe seu email para receber o link de recuperacao
+              Informe seu email para receber o link de recuperação
             </p>
           </div>
 
@@ -136,7 +136,7 @@ export default function ForgotPasswordPage() {
                   Enviando...
                 </span>
               ) : (
-                "Enviar link de recuperacao"
+                "Enviar link de recuperação"
               )}
             </Button>
           </form>

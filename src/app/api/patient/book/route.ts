@@ -7,26 +7,26 @@ export async function POST(request: Request) {
   const { data: { user } } = await serverClient.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
+    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
 
   const body = await request.json();
   const { date, start_time, end_time, type } = body;
 
   if (!date || !start_time || !end_time || !type) {
-    return NextResponse.json({ error: "Campos obrigatorios faltando" }, { status: 400 });
+    return NextResponse.json({ error: "Campos obrigatórios faltando" }, { status: 400 });
   }
 
   const validTypes: AppointmentType[] = ["FIRST_VISIT", "RETURN"];
   if (!validTypes.includes(type)) {
-    return NextResponse.json({ error: "Tipo de consulta invalido" }, { status: 400 });
+    return NextResponse.json({ error: "Tipo de consulta inválido" }, { status: 400 });
   }
 
   const appointmentDateTime = new Date(`${date}T${start_time}`);
   const minAdvance = Date.now() + 24 * 60 * 60 * 1000;
   if (appointmentDateTime.getTime() < minAdvance) {
     return NextResponse.json(
-      { error: "Agendamentos devem ser feitos com pelo menos 24 horas de antecedencia." },
+      { error: "Agendamentos devem ser feitos com pelo menos 24 horas de antecedência." },
       { status: 400 }
     );
   }
@@ -67,14 +67,14 @@ export async function POST(request: Request) {
 
   if (type === "FIRST_VISIT" && activeFirstVisits >= 1) {
     return NextResponse.json(
-      { error: "Voce ja possui uma consulta agendada. Cancele a existente antes de agendar outra." },
+      { error: "Você já possui uma consulta agendada. Cancele a existente antes de agendar outra." },
       { status: 409 }
     );
   }
 
   if (type === "RETURN" && activeReturns >= 1) {
     return NextResponse.json(
-      { error: "Voce ja possui um retorno agendado." },
+      { error: "Você já possui um retorno agendado." },
       { status: 409 }
     );
   }
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
 
     if (!completed || completed.length === 0) {
       return NextResponse.json(
-        { error: "Retornos so estao disponiveis apos uma consulta concluida com sugestao de data." },
+        { error: "Retornos só estão disponíveis após uma consulta concluída com sugestão de data." },
         { status: 403 }
       );
     }
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
     const existingAppt = existing[0];
     if (existingAppt.status === "PENDING" || existingAppt.status === "CONFIRMED") {
       return NextResponse.json(
-        { error: "Este horario ja esta ocupado. Escolha outro horario." },
+        { error: "Este horário já está ocupado. Escolha outro horário." },
         { status: 409 }
       );
     }
@@ -133,7 +133,7 @@ export async function POST(request: Request) {
     console.error("[patient/book] Insert error:", error.code, error.message, error.details);
     if (error.code === "23505") {
       return NextResponse.json(
-        { error: "Este horario ja esta ocupado. Escolha outro horario." },
+        { error: "Este horário já está ocupado. Escolha outro horário." },
         { status: 409 }
       );
     }

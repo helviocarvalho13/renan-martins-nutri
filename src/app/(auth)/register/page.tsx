@@ -70,13 +70,13 @@ export default function RegisterPage() {
     }
 
     if (password !== confirmPassword) {
-      setError("As senhas nao coincidem.");
+      setError("As senhas não coincidem.");
       return;
     }
 
     const cpfDigits = cpf.replace(/\D/g, "");
     if (cpfDigits.length > 0 && !validateCPF(cpf)) {
-      setError("CPF invalido. Verifique o numero informado.");
+      setError("CPF inválido. Verifique o número informado.");
       return;
     }
 
@@ -297,7 +297,7 @@ export default function RegisterPage() {
             </Button>
 
             <p className="text-xs text-center text-neutral-400">
-              Campos marcados com * sao obrigatorios
+              Campos marcados com * são obrigatórios
             </p>
           </form>
 
