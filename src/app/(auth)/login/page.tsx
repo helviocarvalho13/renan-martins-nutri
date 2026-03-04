@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -21,21 +20,26 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const supabase = createClient();
-    const { data, error: authError } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), password }),
+      });
 
-    if (authError) {
-      setError("Email ou senha incorretos. Verifique suas credenciais.");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError("Email ou senha incorretos. Verifique suas credenciais.");
+        setLoading(false);
+        return;
+      }
+
+      window.location.href = data.destination || "/admin";
+    } catch {
+      setError("Erro ao fazer login. Tente novamente.");
       setLoading(false);
-      return;
     }
-
-    const role = data.user?.user_metadata?.role;
-    const destination = role === "ADMIN" || role === "admin" ? "/admin" : "/paciente";
-    window.location.href = destination;
   };
 
   return (
