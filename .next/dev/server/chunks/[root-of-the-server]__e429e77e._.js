@@ -68,32 +68,23 @@ var __TURBOPACK__imported__module__$5b$externals$5d2f$path__$5b$external$5d$__$2
 ;
 ;
 ;
-function loadMigrations() {
-    const migrationsDir = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$path__$5b$external$5d$__$28$path$2c$__cjs$29$__["join"])(process.cwd(), "supabase", "migrations");
+function loadScripts(dir) {
     try {
-        const files = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$fs__$5b$external$5d$__$28$fs$2c$__cjs$29$__["readdirSync"])(migrationsDir).filter((f)=>f.endsWith(".sql")).sort();
+        const files = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$fs__$5b$external$5d$__$28$fs$2c$__cjs$29$__["readdirSync"])(dir).filter((f)=>f.endsWith(".sql")).sort();
         return files.map((f)=>{
-            const content = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$fs__$5b$external$5d$__$28$fs$2c$__cjs$29$__["readFileSync"])((0, __TURBOPACK__imported__module__$5b$externals$5d2f$path__$5b$external$5d$__$28$path$2c$__cjs$29$__["join"])(migrationsDir, f), "utf-8");
+            const content = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$fs__$5b$external$5d$__$28$fs$2c$__cjs$29$__["readFileSync"])((0, __TURBOPACK__imported__module__$5b$externals$5d2f$path__$5b$external$5d$__$28$path$2c$__cjs$29$__["join"])(dir, f), "utf-8");
             return `-- ========================================\n-- ${f}\n-- ========================================\n${content}`;
         }).join("\n\n");
     } catch  {
         return "";
     }
 }
-function loadSeed() {
-    try {
-        return (0, __TURBOPACK__imported__module__$5b$externals$5d2f$fs__$5b$external$5d$__$28$fs$2c$__cjs$29$__["readFileSync"])((0, __TURBOPACK__imported__module__$5b$externals$5d2f$path__$5b$external$5d$__$28$path$2c$__cjs$29$__["join"])(process.cwd(), "supabase", "seed.sql"), "utf-8");
-    } catch  {
-        return "";
-    }
-}
 async function GET() {
-    const migrations = loadMigrations();
-    const seed = loadSeed();
-    const fullSql = `${migrations}\n\n-- ========================================\n-- SEED DATA\n-- ========================================\n${seed}`;
+    const dbDir = (0, __TURBOPACK__imported__module__$5b$externals$5d2f$path__$5b$external$5d$__$28$path$2c$__cjs$29$__["join"])(process.cwd(), "db");
+    const allScripts = loadScripts(dbDir);
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-        instructions: "Copy the SQL below and run it in your Supabase SQL Editor (Dashboard > SQL Editor > New Query).",
-        sql: fullSql
+        instructions: "Copy the SQL below and run it in your Supabase SQL Editor (Dashboard > SQL Editor > New Query). Execute in order.",
+        sql: allScripts
     });
 }
 async function POST() {
