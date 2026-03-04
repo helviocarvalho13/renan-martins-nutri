@@ -125,8 +125,10 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 
 ## Google Calendar Integration
 - src/lib/google-calendar.ts — adds/updates/deletes events when appointments change
-- Requires: GOOGLE_CALENDAR_CLIENT_ID, GOOGLE_CALENDAR_CLIENT_SECRET, GOOGLE_CALENDAR_REFRESH_TOKEN, GOOGLE_CALENDAR_ID
-- Gracefully skips if credentials not configured
+- Uses Replit Google Calendar Connector (OAuth via googleapis SDK)
+- Authentication handled automatically via REPLIT_CONNECTORS_HOSTNAME
+- Events created on "primary" calendar; stores google_calendar_event_id in appointments table
+- Gracefully skips if connector not available
 
 ## API Routes
 - `GET /api/setup` - Returns combined SQL from /db folder
@@ -167,10 +169,8 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 - `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
 - `RESEND_API_KEY` - (Optional) Resend API key for email notifications
 - `CRON_SECRET` - (Optional) Secret for cron endpoint authentication
-- `GOOGLE_CALENDAR_CLIENT_ID` - (Optional) Google Calendar OAuth client ID
-- `GOOGLE_CALENDAR_CLIENT_SECRET` - (Optional) Google Calendar OAuth client secret
-- `GOOGLE_CALENDAR_REFRESH_TOKEN` - (Optional) Google Calendar OAuth refresh token
-- `GOOGLE_CALENDAR_ID` - (Optional) Google Calendar ID to add events to
+- `REPLIT_CONNECTORS_HOSTNAME` - (Auto) Replit connector host for Google Calendar OAuth
+- `REPL_IDENTITY` / `WEB_REPL_RENEWAL` - (Auto) Replit identity tokens
 
 ## Port
 Runs on port 5000 (required for Replit webview).
