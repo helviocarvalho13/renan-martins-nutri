@@ -11,7 +11,6 @@ import {
   Salad,
   Sparkles,
 } from "lucide-react";
-import { useMounted } from "@/hooks/useMounted";
 
 const services = [
   {
@@ -50,7 +49,6 @@ const cardVariants = {
 };
 
 export function ServicesSection() {
-  const mounted = useMounted();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -77,7 +75,7 @@ export function ServicesSection() {
                 key={index}
                 custom={index}
                 variants={cardVariants}
-                initial={mounted ? "hidden" : false}
+                initial="hidden"
                 animate={isInView ? "visible" : "hidden"}
               >
                 <div
@@ -91,16 +89,17 @@ export function ServicesSection() {
                   <p className="text-sm text-neutral-500 leading-relaxed flex-grow mb-5">
                     {service.description}
                   </p>
-                  <Link href="/paciente/agendar">
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-between text-neutral-600 hover:text-neutral-900 p-0 h-auto font-medium text-sm"
-                      data-testid={`button-book-${index}`}
-                    >
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-between text-neutral-600 hover:text-neutral-900 p-0 h-auto font-medium text-sm"
+                    data-testid={`button-book-${index}`}
+                    asChild
+                  >
+                    <Link href="/paciente/agendar">
                       Agendar
                       <ArrowRight className="w-4 h-4" />
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </div>
               </motion.div>
             );

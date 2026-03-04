@@ -95,12 +95,12 @@ export default function PacienteDetailPage() {
   if (!profile) {
     return (
       <div className="p-4 md:p-6 space-y-4">
-        <Link href="/admin/pacientes">
-          <Button variant="ghost" data-testid="button-back">
+        <Button variant="ghost" data-testid="button-back" asChild>
+          <Link href="/admin/pacientes">
             <ArrowLeft className="h-4 w-4" />
             Voltar
-          </Button>
-        </Link>
+          </Link>
+        </Button>
         <Card>
           <CardContent className="p-8 text-center text-muted-foreground" data-testid="text-not-found">
             Paciente não encontrado.
@@ -112,12 +112,12 @@ export default function PacienteDetailPage() {
 
   return (
     <div className="p-4 md:p-6 space-y-4">
-      <Link href="/admin/pacientes">
-        <Button variant="ghost" data-testid="button-back">
+      <Button variant="ghost" data-testid="button-back" asChild>
+        <Link href="/admin/pacientes">
           <ArrowLeft className="h-4 w-4" />
           Voltar
-        </Button>
-      </Link>
+        </Link>
+      </Button>
 
       <Card>
         <CardHeader>

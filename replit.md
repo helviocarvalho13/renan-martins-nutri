@@ -148,6 +148,8 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 - **Responsiveness**: All pages optimized for mobile (<768px), tablet (768-1024px), desktop (>1024px). Agenda weekly view scrolls horizontally on mobile. Day configs stack on mobile. Time slots grid adapts.
 - **Error Handling**: All Supabase operations wrapped in try/catch with toast feedback. Success/error toasts on all admin and patient operations.
 - **Loading States**: Skeleton screens on all data-loading pages.
+- **HTML Validity**: All Button+Link combinations use `asChild` pattern (Button asChild > Link) to avoid invalid `<a><button>` nesting.
+- **Hydration**: Landing page framer-motion sections dynamically imported with `ssr: false` to prevent SSR/client mismatch. `useMounted` hook removed from all sections.
 
 ## Key Files
 - `db/` - Versioned SQL scripts (00001-00011 + seed.sql + README.md)

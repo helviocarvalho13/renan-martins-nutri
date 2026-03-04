@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { useMounted } from "@/hooks/useMounted";
 
 const fadeIn = {
   hidden: { y: 30, opacity: 0 },
@@ -11,7 +10,6 @@ const fadeIn = {
 };
 
 export function AboutSection() {
-  const mounted = useMounted();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -20,7 +18,7 @@ export function AboutSection() {
       <div className="max-w-6xl mx-auto px-6 lg:px-8" ref={ref}>
         <motion.div
           className="grid lg:grid-cols-2 gap-16 items-center"
-          initial={mounted ? "hidden" : false}
+          initial="hidden"
           animate={isInView ? "visible" : "hidden"}
           variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
         >

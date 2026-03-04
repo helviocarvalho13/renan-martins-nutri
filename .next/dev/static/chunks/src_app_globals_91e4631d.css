@@ -2928,6 +2928,10 @@ body {
     display: flex;
   }
 
+  .sm\:inline-flex {
+    display: inline-flex;
+  }
+
   .sm\:h-2 {
     height: .5rem;
   }

@@ -13,5 +13,37 @@
       "static/chunks/src_components_site_PoweredByBanner_tsx_f810de1e._.js",
       "static/chunks/src_components_site_PoweredByBanner_tsx_e85bc5f6._.js"
     ]
+  },
+  "[project]/src/components/site/hero-section.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/src/components/site/hero-section.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_e082ab00._.js",
+      "static/chunks/src_components_site_hero-section_tsx_0b38905f._.js",
+      "static/chunks/src_components_site_hero-section_tsx_8f438b0f._.js"
+    ]
+  },
+  "[project]/src/components/site/about-section.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/src/components/site/about-section.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_5eb9162a._.js",
+      "static/chunks/src_components_site_about-section_tsx_76ef1eb3._.js",
+      "static/chunks/src_components_site_about-section_tsx_8f438b0f._.js"
+    ]
+  },
+  "[project]/src/components/site/services-section.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/src/components/site/services-section.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_5b969c0c._.js",
+      "static/chunks/src_components_site_services-section_tsx_718b04fc._.js",
+      "static/chunks/src_components_site_services-section_tsx_8f438b0f._.js"
+    ]
+  },
+  "[project]/src/components/site/contact-section.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/src/components/site/contact-section.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_efd1a7ef._.js",
+      "static/chunks/src_components_site_contact-section_tsx_f234053f._.js",
+      "static/chunks/src_components_site_contact-section_tsx_8f438b0f._.js"
+    ]
   }
 }

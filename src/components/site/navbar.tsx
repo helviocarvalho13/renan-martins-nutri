@@ -53,16 +53,15 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link href="/login" className="hidden sm:block">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-neutral-500 hover:text-neutral-900"
-                data-testid="button-admin-login"
-              >
-                Login
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex text-neutral-500 hover:text-neutral-900"
+              data-testid="button-admin-login"
+              asChild
+            >
+              <Link href="/login">Login</Link>
+            </Button>
             <Button
               variant="ghost"
               size="icon"

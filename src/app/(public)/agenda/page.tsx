@@ -373,12 +373,12 @@ export default function AgendaPage() {
                       )}
                     </div>
 
-                    <Link href="/agendar">
-                      <Button className="w-full mt-2" data-testid="button-book-from-agenda">
+                    <Button className="w-full mt-2" data-testid="button-book-from-agenda" asChild>
+                      <Link href="/agendar">
                         Agendar neste dia
                         <ArrowRight className="w-4 h-4 ml-1" />
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                   </CardContent>
                 </Card>
               ) : (

@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { useMounted } from "@/hooks/useMounted";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -20,7 +19,6 @@ const itemVariants = {
 };
 
 export function HeroSection() {
-  const mounted = useMounted();
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
@@ -38,7 +36,7 @@ export function HeroSection() {
       <motion.div
         className="relative z-10 text-center max-w-3xl mx-auto px-6 py-32"
         variants={containerVariants}
-        initial={mounted ? "hidden" : false}
+        initial="hidden"
         animate="visible"
       >
         <motion.h1
@@ -62,25 +60,23 @@ export function HeroSection() {
           className="flex flex-wrap items-center justify-center gap-4"
           variants={itemVariants}
         >
-          <a href="#sobre">
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-full px-8 border-neutral-300 text-neutral-700 hover:bg-white/80 bg-white/60 backdrop-blur-sm"
-              data-testid="button-hero-about"
-            >
-              Saiba Mais
-            </Button>
-          </a>
-          <Link href="/paciente/agendar">
-            <Button
-              size="lg"
-              className="rounded-full px-8 bg-neutral-900 text-white hover:bg-neutral-800"
-              data-testid="button-hero-schedule"
-            >
-              Agendar Consulta
-            </Button>
-          </Link>
+          <Button
+            variant="outline"
+            size="lg"
+            className="rounded-full px-8 border-neutral-300 text-neutral-700 hover:bg-white/80 bg-white/60 backdrop-blur-sm"
+            data-testid="button-hero-about"
+            asChild
+          >
+            <a href="#sobre">Saiba Mais</a>
+          </Button>
+          <Button
+            size="lg"
+            className="rounded-full px-8 bg-neutral-900 text-white hover:bg-neutral-800"
+            data-testid="button-hero-schedule"
+            asChild
+          >
+            <Link href="/paciente/agendar">Agendar Consulta</Link>
+          </Button>
         </motion.div>
       </motion.div>
     </section>

@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { Phone, Mail, MapPin, Instagram } from "lucide-react";
 import { motion, useInView } from "framer-motion";
-import { useMounted } from "@/hooks/useMounted";
 
 const fadeIn = {
   hidden: { y: 30, opacity: 0 },
@@ -11,7 +10,6 @@ const fadeIn = {
 };
 
 export function ContactSection() {
-  const mounted = useMounted();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -50,7 +48,7 @@ export function ContactSection() {
     <section id="contato" className="py-24 md:py-32 bg-neutral-50">
       <div className="max-w-6xl mx-auto px-6 lg:px-8" ref={ref}>
         <motion.div
-          initial={mounted ? "hidden" : false}
+          initial="hidden"
           animate={isInView ? "visible" : "hidden"}
           variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
           className="max-w-2xl mx-auto"

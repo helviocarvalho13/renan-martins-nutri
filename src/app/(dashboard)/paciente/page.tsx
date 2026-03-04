@@ -206,12 +206,12 @@ export default function PatientDashboard() {
                     </p>
                   </div>
                 </div>
-                <Link href="/paciente/agendar?type=RETURN" data-testid={`link-schedule-return-${a.id}`}>
-                  <Button size="sm">
+                <Button size="sm" asChild>
+                  <Link href="/paciente/agendar?type=RETURN" data-testid={`link-schedule-return-${a.id}`}>
                     <RotateCcw className="w-4 h-4 mr-1" />
                     Agendar Retorno
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
           ))}
@@ -363,12 +363,12 @@ export default function PatientDashboard() {
             <p className="text-sm text-neutral-400 mb-4" data-testid="text-empty-description">
               Agende sua primeira consulta com o nutricionista.
             </p>
-            <Link href="/paciente/agendar" data-testid="link-schedule-first">
-              <Button>
+            <Button asChild>
+              <Link href="/paciente/agendar" data-testid="link-schedule-first">
                 <CalendarPlus className="w-4 h-4 mr-1" />
                 Agendar primeira consulta
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       )}

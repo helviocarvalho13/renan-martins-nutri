@@ -179,11 +179,11 @@ export default function AdminDashboardPage() {
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-semibold text-neutral-900">Agenda do Dia</h2>
-                <Link href="/admin/agenda">
-                  <Button variant="ghost" size="sm" className="text-neutral-500 hover:text-neutral-900" data-testid="link-view-agenda">
+                <Button variant="ghost" size="sm" className="text-neutral-500 hover:text-neutral-900" data-testid="link-view-agenda" asChild>
+                  <Link href="/admin/agenda">
                     Ver agenda completa <ArrowRight className="w-4 h-4 ml-1" />
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </div>
 
               {todayAppointments.length === 0 ? (
@@ -245,16 +245,16 @@ export default function AdminDashboardPage() {
               <Separator className="my-4" />
 
               <div className="space-y-2">
-                <Link href="/admin/agenda" className="block">
-                  <Button variant="outline" size="sm" className="w-full justify-start text-neutral-600 border-neutral-200" data-testid="link-manage-agenda">
+                <Button variant="outline" size="sm" className="w-full justify-start text-neutral-600 border-neutral-200" data-testid="link-manage-agenda" asChild>
+                  <Link href="/admin/agenda" className="block">
                     <CalendarDays className="w-4 h-4 mr-2" /> Gerenciar agenda
-                  </Button>
-                </Link>
-                <Link href="/admin/pacientes" className="block">
-                  <Button variant="outline" size="sm" className="w-full justify-start text-neutral-600 border-neutral-200" data-testid="link-manage-patients">
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" className="w-full justify-start text-neutral-600 border-neutral-200" data-testid="link-manage-patients" asChild>
+                  <Link href="/admin/pacientes" className="block">
                     <Users className="w-4 h-4 mr-2" /> Ver pacientes
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </div>
             </CardContent>
           </Card>
