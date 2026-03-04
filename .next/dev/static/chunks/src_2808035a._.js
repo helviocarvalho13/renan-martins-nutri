@@ -274,11 +274,11 @@ const statusMap = {
         class: "bg-red-100 text-red-700"
     },
     COMPLETED: {
-        label: "Concluida",
+        label: "Concluída",
         class: "bg-green-100 text-green-700"
     },
     NO_SHOW: {
-        label: "Nao compareceu",
+        label: "Não compareceu",
         class: "bg-neutral-200 text-neutral-600"
     }
 };
@@ -392,7 +392,7 @@ function PatientDashboard() {
                 className: "text-2xl font-bold tracking-tight text-neutral-900",
                 "data-testid": "text-dashboard-title",
                 children: [
-                    "Ola, ",
+                    "Olá, ",
                     userName.split(" ")[0]
                 ]
             }, void 0, true, {
@@ -500,7 +500,7 @@ function PatientDashboard() {
                                                     className: "text-xs text-blue-700 mt-0.5",
                                                     children: [
                                                         formatTypeLabel(a.type),
-                                                        " concluida em",
+                                                        " concluída em",
                                                         " ",
                                                         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(new Date(a.date + "T12:00:00"), "dd/MM/yyyy")
                                                     ]
@@ -567,7 +567,7 @@ function PatientDashboard() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                         className: "text-base font-semibold text-neutral-900 mb-4",
                         "data-testid": "text-upcoming-title",
-                        children: "Proximas Consultas"
+                        children: "Próximas Consultas"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
                         lineNumber: 191,
@@ -587,7 +587,7 @@ function PatientDashboard() {
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-neutral-500",
-                                    children: "Voce nao tem consultas agendadas"
+                                    children: "Você não tem consultas agendadas"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
                                     lineNumber: 198,
@@ -773,7 +773,7 @@ function PatientDashboard() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                         className: "text-base font-semibold text-neutral-900 mb-4",
                         "data-testid": "text-history-title",
-                        children: "Historico de Consultas"
+                        children: "Histórico de Consultas"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
                         lineNumber: 267,
@@ -785,7 +785,7 @@ function PatientDashboard() {
                             className: "p-6 text-center",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-sm text-neutral-500",
-                                children: "Nenhuma consulta no historico"
+                                children: "Nenhuma consulta no histórico"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
                                 lineNumber: 273,

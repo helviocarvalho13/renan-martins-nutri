@@ -184,6 +184,10 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 "use strict";
 
 __turbopack_context__.s([
+    "getBookingErrorResponse",
+    ()=>getBookingErrorResponse,
+    "getBookingSuccessResponse",
+    ()=>getBookingSuccessResponse,
     "getGreetingResponse",
     ()=>getGreetingResponse,
     "getLoginFailureResponse",
@@ -208,36 +212,6 @@ async function fetchAvailableSlots(date) {
         return [];
     }
 }
-async function bookAppointment(params) {
-    try {
-        const res = await fetch("/api/patient/book", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(params)
-        });
-        if (!res.ok) {
-            let errorMsg = "Erro ao agendar.";
-            try {
-                const data = await res.json();
-                errorMsg = data.error || errorMsg;
-            } catch  {}
-            return {
-                success: false,
-                error: errorMsg
-            };
-        }
-        return {
-            success: true
-        };
-    } catch  {
-        return {
-            success: false,
-            error: "Erro de conexão. Verifique sua internet e tente novamente."
-        };
-    }
-}
 function formatSlotTime(time) {
     return time.slice(0, 5);
 }
@@ -245,23 +219,11 @@ const MENU_REPLIES = [
     {
         label: "📅 Agendar consulta",
         value: "agendar"
-    },
-    {
-        label: "📋 Ver agendamentos",
-        value: "agendamentos"
-    },
-    {
-        label: "💼 Serviços",
-        value: "servicos"
-    },
-    {
-        label: "📞 Contato",
-        value: "contato"
     }
 ];
 const ANYTHING_ELSE_REPLIES = [
     {
-        label: "Sim, quero mais ajuda",
+        label: "Sim, agendar outra",
         value: "sim"
     },
     {
@@ -277,10 +239,6 @@ const TYPE_REPLIES = [
     {
         label: "Retorno",
         value: "RETURN"
-    },
-    {
-        label: "Voltar ao menu",
-        value: "menu"
     }
 ];
 async function processMessage(input, context) {
@@ -304,8 +262,6 @@ async function processMessage(input, context) {
                 return handleGreeting(context);
             case "MENU":
                 return handleMenu(trimmed, context);
-            case "AUTH_CHECK":
-                return handleAuthCheck(context);
             case "LOGIN_EMAIL":
                 return handleLoginEmail(input.trim(), context);
             case "LOGIN_PASSWORD":
@@ -314,24 +270,22 @@ async function processMessage(input, context) {
                 return handleSelectType(trimmed, context);
             case "SELECT_DATE":
                 return await handleSelectDate(input, context);
-            case "VALIDATE_DATE":
-                return handleValidateDate(context);
             case "SHOW_SLOTS":
                 return handleShowSlots(trimmed, context);
             case "CONFIRM":
-                return await handleConfirm(trimmed, context);
-            case "BOOKING":
-                return handleBooking(context);
+                return handleConfirm(trimmed, context);
+            case "BOOKING_READY":
+                return {
+                    messages: [
+                        "Processando seu agendamento..."
+                    ],
+                    context,
+                    quickReplies: []
+                };
             case "ANYTHING_ELSE":
                 return handleAnythingElse(trimmed, context);
             case "FAREWELL":
                 return handleFarewell(context);
-            case "VIEW_APPOINTMENTS":
-                return handleViewAppointments(context);
-            case "SERVICES_INFO":
-                return handleServicesInfo(context);
-            case "CONTACT_INFO":
-                return handleContactInfo(context);
             default:
                 return handleGreeting(context);
         }
@@ -350,7 +304,7 @@ async function processMessage(input, context) {
     }
 }
 function handleGreeting(context) {
-    const greeting = context.userName ? `Olá, ${context.userName}! Eu sou o MageBot, assistente virtual do Renan Martins Nutrição. Como posso te ajudar hoje?` : "Olá! Eu sou o MageBot, assistente virtual do Renan Martins Nutrição. Como posso te ajudar hoje?";
+    const greeting = context.userName ? `Olá, ${context.userName}! Eu sou o MageBot, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!` : "Olá! Eu sou o MageBot, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!";
     return {
         messages: [
             greeting
@@ -363,7 +317,7 @@ function handleGreeting(context) {
     };
 }
 function handleMenu(input, context) {
-    if (input === "agendar" || input.includes("agendar") || input.includes("consulta") || input.includes("marcar")) {
+    if (input === "agendar" || input.includes("agendar") || input.includes("consulta") || input.includes("marcar") || input === "sim") {
         if (!context.isAuthenticated) {
             return {
                 messages: [
@@ -398,58 +352,16 @@ function handleMenu(input, context) {
             quickReplies: TYPE_REPLIES
         };
     }
-    if (input === "agendamentos" || input.includes("agendamento") || input.includes("minhas consultas")) {
-        return handleViewAppointments(context);
-    }
-    if (input === "servicos" || input.includes("servico") || input.includes("serviço") || input.includes("serviços")) {
-        return handleServicesInfo(context);
-    }
-    if (input === "contato" || input.includes("contato") || input.includes("telefone") || input.includes("endereço") || input.includes("endereco")) {
-        return handleContactInfo(context);
-    }
     return {
         messages: [
-            "Desculpe, não entendi. Escolha uma das opções abaixo:"
+            "Eu posso te ajudar a agendar uma consulta com o nutricionista Renan Martins.",
+            "Deseja agendar agora?"
         ],
         context: {
             ...context,
             state: "MENU"
         },
         quickReplies: MENU_REPLIES
-    };
-}
-function handleAuthCheck(context) {
-    if (!context.isAuthenticated) {
-        return {
-            messages: [
-                "Para agendar uma consulta, você precisa estar logado.",
-                "Deseja fazer login agora pelo chat?"
-            ],
-            context: {
-                ...context,
-                state: "LOGIN_EMAIL"
-            },
-            quickReplies: [
-                {
-                    label: "Sim, fazer login",
-                    value: "sim_login"
-                },
-                {
-                    label: "Voltar ao menu",
-                    value: "menu"
-                }
-            ]
-        };
-    }
-    return {
-        messages: [
-            "Qual tipo de consulta você deseja agendar?"
-        ],
-        context: {
-            ...context,
-            state: "SELECT_TYPE"
-        },
-        quickReplies: TYPE_REPLIES
     };
 }
 function handleLoginEmail(input, context) {
@@ -748,15 +660,6 @@ async function findNextAvailableDays(fromDate, count) {
     }
     return results;
 }
-function handleValidateDate(context) {
-    return {
-        messages: [
-            "Buscando horários disponíveis..."
-        ],
-        context,
-        quickReplies: []
-    };
-}
 function handleShowSlots(input, context) {
     if (!context.availableSlots || context.availableSlots.length === 0) {
         return {
@@ -833,7 +736,7 @@ function handleShowSlots(input, context) {
         ]
     };
 }
-async function handleConfirm(input, context) {
+function handleConfirm(input, context) {
     if (input === "sim" || input === "confirmar" || input.includes("confirm")) {
         if (!context.selectedDate || !context.selectedSlot || !context.appointmentType) {
             return {
@@ -871,58 +774,16 @@ async function handleConfirm(input, context) {
                 ]
             };
         }
-        const result = await bookAppointment({
-            date: context.selectedDate,
-            start_time: context.selectedSlot.start_time,
-            end_time: context.selectedSlot.end_time,
-            type: context.appointmentType
-        });
-        if (result.success) {
-            const dateFormatted = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(context.selectedDate + "T12:00:00"));
-            return {
-                messages: [
-                    "✅ Consulta agendada com sucesso!",
-                    `Data: ${dateFormatted} às ${formatSlotTime(context.selectedSlot.start_time)}`,
-                    "Você receberá uma confirmação em breve. Posso ajudar com mais alguma coisa?"
-                ],
-                context: {
-                    ...context,
-                    state: "ANYTHING_ELSE",
-                    selectedDate: null,
-                    selectedSlot: null,
-                    appointmentType: null,
-                    availableSlots: []
-                },
-                quickReplies: ANYTHING_ELSE_REPLIES
-            };
-        }
-        let userFriendlyError = result.error || "Erro desconhecido.";
-        if (userFriendlyError.includes("already have") || userFriendlyError.includes("já possui")) {
-            userFriendlyError = "Você já possui uma consulta deste tipo agendada.";
-        } else if (userFriendlyError.includes("24") || userFriendlyError.includes("antecedência") || userFriendlyError.includes("antecedencia")) {
-            userFriendlyError = "Agendamentos devem ser feitos com pelo menos 24 horas de antecedência.";
-        } else if (userFriendlyError.includes("slot") || userFriendlyError.includes("horário") || userFriendlyError.includes("horario")) {
-            userFriendlyError = "Este horário não está mais disponível. Por favor, escolha outro.";
-        }
         return {
             messages: [
-                `❌ Não foi possível agendar: ${userFriendlyError}`,
-                "Deseja tentar novamente?"
+                "Agendando sua consulta..."
             ],
             context: {
                 ...context,
-                state: "ANYTHING_ELSE"
+                state: "BOOKING_READY"
             },
-            quickReplies: [
-                {
-                    label: "Tentar novamente",
-                    value: "agendar"
-                },
-                {
-                    label: "Voltar ao menu",
-                    value: "menu"
-                }
-            ]
+            quickReplies: [],
+            needsBooking: true
         };
     }
     if (input === "outro_horario" || input.includes("outro")) {
@@ -997,27 +858,61 @@ async function handleConfirm(input, context) {
         ]
     };
 }
-function handleBooking(context) {
+function getBookingSuccessResponse(context) {
+    const dateFormatted = context.selectedDate ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(context.selectedDate + "T12:00:00")) : "";
+    const timeFormatted = context.selectedSlot ? formatSlotTime(context.selectedSlot.start_time) : "";
     return {
         messages: [
-            "Processando seu agendamento..."
+            "✅ Consulta agendada com sucesso!",
+            `Data: ${dateFormatted} às ${timeFormatted}`,
+            "Você receberá uma confirmação em breve. Posso ajudar com mais alguma coisa?"
         ],
-        context,
-        quickReplies: []
+        context: {
+            ...context,
+            state: "ANYTHING_ELSE",
+            selectedDate: null,
+            selectedSlot: null,
+            appointmentType: null,
+            availableSlots: []
+        },
+        quickReplies: ANYTHING_ELSE_REPLIES
+    };
+}
+function getBookingErrorResponse(context, error) {
+    let userFriendlyError = error;
+    if (error.includes("already have") || error.includes("já possui")) {
+        userFriendlyError = "Você já possui uma consulta deste tipo agendada.";
+    } else if (error.includes("24") || error.includes("antecedência") || error.includes("antecedencia")) {
+        userFriendlyError = "Agendamentos devem ser feitos com pelo menos 24 horas de antecedência.";
+    } else if (error.includes("slot") || error.includes("horário") || error.includes("horario") || error.includes("ocupado")) {
+        userFriendlyError = "Este horário não está mais disponível. Por favor, escolha outro.";
+    } else if (error.includes("autenticado") || error.includes("Unauthorized")) {
+        userFriendlyError = "Sua sessão expirou. Faça login novamente.";
+    }
+    return {
+        messages: [
+            `❌ Não foi possível agendar: ${userFriendlyError}`,
+            "Deseja tentar novamente?"
+        ],
+        context: {
+            ...context,
+            state: "ANYTHING_ELSE"
+        },
+        quickReplies: [
+            {
+                label: "Tentar novamente",
+                value: "agendar"
+            },
+            {
+                label: "Voltar ao menu",
+                value: "menu"
+            }
+        ]
     };
 }
 function handleAnythingElse(input, context) {
-    if (input === "sim" || input.includes("sim") || input.includes("ajuda")) {
-        return {
-            messages: [
-                "Como posso te ajudar?"
-            ],
-            context: {
-                ...context,
-                state: "MENU"
-            },
-            quickReplies: MENU_REPLIES
-        };
+    if (input === "sim" || input.includes("sim") || input.includes("ajuda") || input.includes("agendar")) {
+        return handleMenu("agendar", context);
     }
     if (input === "login" || input.includes("fazer login")) {
         return {
@@ -1050,83 +945,6 @@ function handleFarewell(context) {
                 value: "menu"
             }
         ]
-    };
-}
-function handleViewAppointments(context) {
-    if (!context.isAuthenticated) {
-        return {
-            messages: [
-                "Para ver seus agendamentos, você precisa estar logado.",
-                "Deseja fazer login agora?"
-            ],
-            context: {
-                ...context,
-                state: "LOGIN_EMAIL"
-            },
-            quickReplies: [
-                {
-                    label: "Sim, fazer login",
-                    value: "sim_login"
-                },
-                {
-                    label: "Voltar ao menu",
-                    value: "menu"
-                }
-            ]
-        };
-    }
-    return {
-        messages: [
-            "Você pode ver todos os seus agendamentos na área do paciente.",
-            "Acesse a página /paciente para ver suas consultas, cancelar ou agendar novas.",
-            "Posso ajudar com mais alguma coisa?"
-        ],
-        context: {
-            ...context,
-            state: "ANYTHING_ELSE"
-        },
-        quickReplies: ANYTHING_ELSE_REPLIES
-    };
-}
-function handleServicesInfo(context) {
-    return {
-        messages: [
-            "Nossos serviços incluem:",
-            "🩺 Nutrição Clínica — Avaliação completa, anamnese e plano alimentar personalizado.",
-            "🏋️ Nutrição Esportiva — Performance e periodização nutricional.",
-            "🥗 Reeducação Alimentar — Transforme sua relação com a comida.",
-            "✨ Nutrição Funcional — Abordagem integrativa para desequilíbrios nutricionais.",
-            "Gostaria de agendar uma consulta?"
-        ],
-        context: {
-            ...context,
-            state: "ANYTHING_ELSE"
-        },
-        quickReplies: [
-            {
-                label: "Agendar consulta",
-                value: "agendar"
-            },
-            {
-                label: "Voltar ao menu",
-                value: "menu"
-            }
-        ]
-    };
-}
-function handleContactInfo(context) {
-    return {
-        messages: [
-            "📞 Informações de contato:",
-            "Renan Martins — Nutricionista",
-            "Acesse a seção de contato no site para mais informações sobre telefone, endereço e horário de funcionamento.",
-            "Posso ajudar com mais alguma coisa?"
-        ],
-        context: {
-            ...context,
-            state: "ANYTHING_ELSE"
-        },
-        quickReplies: ANYTHING_ELSE_REPLIES
     };
 }
 function getGreetingResponse(context) {
@@ -1232,14 +1050,20 @@ function useMageBot() {
                     }
                     const saved = loadGuestSession();
                     if (saved && saved.messages.length > 0) {
-                        setMessages(saved.messages);
-                        setContext({
-                            ...saved.context,
-                            isAuthenticated: newContext.isAuthenticated,
-                            userId: newContext.userId,
-                            userName: newContext.userName
-                        });
-                        hasGreeted.current = true;
+                        const authChanged = newContext.isAuthenticated && !saved.context.isAuthenticated;
+                        if (authChanged) {
+                            sessionStorage.removeItem(SESSION_KEY);
+                            setContext(newContext);
+                        } else {
+                            setMessages(saved.messages);
+                            setContext({
+                                ...saved.context,
+                                isAuthenticated: newContext.isAuthenticated,
+                                userId: newContext.userId,
+                                userName: newContext.userName
+                            });
+                            hasGreeted.current = true;
+                        }
                     } else {
                         setContext(newContext);
                     }
@@ -1285,6 +1109,54 @@ function useMageBot() {
     }["useMageBot.useCallback[addBotMessages]"], [
         isOpen
     ]);
+    const performBooking = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "useMageBot.useCallback[performBooking]": async (ctx)=>{
+            if (!ctx.selectedDate || !ctx.selectedSlot || !ctx.appointmentType) {
+                const errorResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getBookingErrorResponse"])(ctx, "Dados incompletos.");
+                addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+                return;
+            }
+            try {
+                const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createClient"])();
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session?.access_token) {
+                    const errorResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getBookingErrorResponse"])(ctx, "Sua sessão expirou. Faça login novamente.");
+                    addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+                    return;
+                }
+                const res = await fetch("/api/patient/book", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify({
+                        date: ctx.selectedDate,
+                        start_time: ctx.selectedSlot.start_time,
+                        end_time: ctx.selectedSlot.end_time,
+                        type: ctx.appointmentType
+                    })
+                });
+                if (res.ok) {
+                    const successResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getBookingSuccessResponse"])(ctx);
+                    addBotMessages(successResponse.messages, successResponse.context, successResponse.quickReplies);
+                } else {
+                    let errorMsg = "Erro ao agendar.";
+                    try {
+                        const data = await res.json();
+                        errorMsg = data.error || errorMsg;
+                    } catch  {}
+                    const errorResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getBookingErrorResponse"])(ctx, errorMsg);
+                    addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+                }
+            } catch  {
+                const errorResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getBookingErrorResponse"])(ctx, "Erro de conexão. Verifique sua internet e tente novamente.");
+                addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+            }
+        }
+    }["useMageBot.useCallback[performBooking]"], [
+        addBotMessages
+    ]);
     const greet = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "useMageBot.useCallback[greet]": ()=>{
             if (hasGreeted.current) return;
@@ -1316,19 +1188,19 @@ function useMageBot() {
     }["useMageBot.useCallback[toggleOpen]"], [
         greet
     ]);
-    const setOpen = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
-        "useMageBot.useCallback[setOpen]": (open)=>{
+    const setOpenFn = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "useMageBot.useCallback[setOpenFn]": (open)=>{
             setIsOpen(open);
             if (open) {
                 setUnreadCount(0);
                 if (!hasGreeted.current) {
                     setTimeout({
-                        "useMageBot.useCallback[setOpen]": ()=>greet()
-                    }["useMageBot.useCallback[setOpen]"], 100);
+                        "useMageBot.useCallback[setOpenFn]": ()=>greet()
+                    }["useMageBot.useCallback[setOpenFn]"], 100);
                 }
             }
         }
-    }["useMageBot.useCallback[setOpen]"], [
+    }["useMageBot.useCallback[setOpenFn]"], [
         greet
     ]);
     const sendMessage = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
@@ -1383,6 +1255,15 @@ function useMageBot() {
             }
             try {
                 const response = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["processMessage"])(trimmed, context);
+                if (response.needsBooking) {
+                    addBotMessages(response.messages, response.context, response.quickReplies);
+                    setTimeout({
+                        "useMageBot.useCallback[sendMessage]": ()=>{
+                            performBooking(response.context);
+                        }
+                    }["useMageBot.useCallback[sendMessage]"], TYPING_DELAY + 100);
+                    return;
+                }
                 addBotMessages(response.messages, response.context, response.quickReplies);
             } catch  {
                 addBotMessages([
@@ -1400,7 +1281,8 @@ function useMageBot() {
         }
     }["useMageBot.useCallback[sendMessage]"], [
         context,
-        addBotMessages
+        addBotMessages,
+        performBooking
     ]);
     return {
         messages,
@@ -1411,10 +1293,10 @@ function useMageBot() {
         isPasswordMode: context.state === "LOGIN_PASSWORD",
         sendMessage,
         toggleOpen,
-        setOpen
+        setOpen: setOpenFn
     };
 }
-_s(useMageBot, "QERIwtF22m3LflkOCqVJtZ4W1ss=");
+_s(useMageBot, "hMDyIi8FRSlPxHihoJcRbTS71LQ=");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }

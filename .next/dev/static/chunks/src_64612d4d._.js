@@ -208,7 +208,7 @@ function SimpleCalendar({ selected, onSelect }) {
     const monthNames = [
         "Janeiro",
         "Fevereiro",
-        "Marco",
+        "Março",
         "Abril",
         "Maio",
         "Junho",
@@ -341,8 +341,8 @@ _c = SimpleCalendar;
 const stepLabels = [
     "Tipo",
     "Data",
-    "Horario",
-    "Confirmacao"
+    "Horário",
+    "Confirmação"
 ];
 function PatientBookingPage() {
     _s1();
@@ -656,7 +656,7 @@ function PatientBookingPage() {
                                                     hasActiveFirstVisit && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                         className: "text-xs text-red-500 mt-2",
                                                         "data-testid": "text-first-visit-disabled",
-                                                        children: "Voce ja tem uma consulta agendada"
+                                                        children: "Você já tem uma consulta agendada"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
                                                         lineNumber: 318,
@@ -739,7 +739,7 @@ function PatientBookingPage() {
                                                     canReturn && hasActiveReturn && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                         className: "text-xs text-red-500 mt-2",
                                                         "data-testid": "text-return-already-active",
-                                                        children: "Voce ja possui um retorno agendado"
+                                                        children: "Você já possui um retorno agendado"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
                                                         lineNumber: 358,
@@ -847,7 +847,7 @@ function PatientBookingPage() {
                     selectedDate && !loadingSlots && slots.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         className: "text-sm text-neutral-500 mb-6",
                         "data-testid": "text-no-slots-date",
-                        children: "Nenhum horario disponivel nesta data. Escolha outra data."
+                        children: "Nenhum horário disponível nesta data. Escolha outra data."
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
                         lineNumber: 398,
@@ -930,7 +930,7 @@ function PatientBookingPage() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                         className: "text-lg font-semibold text-neutral-900 mb-2",
                         "data-testid": "text-step3-title",
-                        children: "Escolha o horario"
+                        children: "Escolha o horário"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
                         lineNumber: 435,
@@ -985,7 +985,7 @@ function PatientBookingPage() {
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         className: "text-sm text-neutral-400 py-8 text-center",
                         "data-testid": "text-no-slots",
-                        children: "Nenhum horario disponivel nesta data."
+                        children: "Nenhum horário disponível nesta data."
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
                         lineNumber: 470,
@@ -1138,7 +1138,7 @@ function PatientBookingPage() {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             className: "text-sm text-neutral-500",
-                                            children: "Horario"
+                                            children: "Horário"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
                                             lineNumber: 524,

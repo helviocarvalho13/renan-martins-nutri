@@ -3,7 +3,14 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { ChatMessage, ChatContext, QuickReply } from "@/lib/chatbot/types";
 import { createInitialContext } from "@/lib/chatbot/types";
-import { processMessage, getGreetingResponse, getLoginSuccessResponse, getLoginFailureResponse } from "@/lib/chatbot/engine";
+import {
+  processMessage,
+  getGreetingResponse,
+  getLoginSuccessResponse,
+  getLoginFailureResponse,
+  getBookingSuccessResponse,
+  getBookingErrorResponse,
+} from "@/lib/chatbot/engine";
 import { createClient } from "@/lib/supabase/client";
 
 function generateId(): string {
@@ -88,14 +95,20 @@ export function useMageBot(): UseMageBotReturn {
 
       const saved = loadGuestSession();
       if (saved && saved.messages.length > 0) {
-        setMessages(saved.messages);
-        setContext({
-          ...saved.context,
-          isAuthenticated: newContext.isAuthenticated,
-          userId: newContext.userId,
-          userName: newContext.userName,
-        });
-        hasGreeted.current = true;
+        const authChanged = newContext.isAuthenticated && !saved.context.isAuthenticated;
+        if (authChanged) {
+          sessionStorage.removeItem(SESSION_KEY);
+          setContext(newContext);
+        } else {
+          setMessages(saved.messages);
+          setContext({
+            ...saved.context,
+            isAuthenticated: newContext.isAuthenticated,
+            userId: newContext.userId,
+            userName: newContext.userName,
+          });
+          hasGreeted.current = true;
+        }
       } else {
         setContext(newContext);
       }
@@ -132,6 +145,58 @@ export function useMageBot(): UseMageBotReturn {
     [isOpen]
   );
 
+  const performBooking = useCallback(
+    async (ctx: ChatContext) => {
+      if (!ctx.selectedDate || !ctx.selectedSlot || !ctx.appointmentType) {
+        const errorResponse = getBookingErrorResponse(ctx, "Dados incompletos.");
+        addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+        return;
+      }
+
+      try {
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session?.access_token) {
+          const errorResponse = getBookingErrorResponse(ctx, "Sua sessão expirou. Faça login novamente.");
+          addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+          return;
+        }
+
+        const res = await fetch("/api/patient/book", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            date: ctx.selectedDate,
+            start_time: ctx.selectedSlot.start_time,
+            end_time: ctx.selectedSlot.end_time,
+            type: ctx.appointmentType,
+          }),
+        });
+
+        if (res.ok) {
+          const successResponse = getBookingSuccessResponse(ctx);
+          addBotMessages(successResponse.messages, successResponse.context, successResponse.quickReplies);
+        } else {
+          let errorMsg = "Erro ao agendar.";
+          try {
+            const data = await res.json();
+            errorMsg = data.error || errorMsg;
+          } catch {}
+          const errorResponse = getBookingErrorResponse(ctx, errorMsg);
+          addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+        }
+      } catch {
+        const errorResponse = getBookingErrorResponse(ctx, "Erro de conexão. Verifique sua internet e tente novamente.");
+        addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+      }
+    },
+    [addBotMessages]
+  );
+
   const greet = useCallback(() => {
     if (hasGreeted.current) return;
     hasGreeted.current = true;
@@ -153,7 +218,7 @@ export function useMageBot(): UseMageBotReturn {
     });
   }, [greet]);
 
-  const setOpen = useCallback(
+  const setOpenFn = useCallback(
     (open: boolean) => {
       setIsOpen(open);
       if (open) {
@@ -227,6 +292,15 @@ export function useMageBot(): UseMageBotReturn {
 
       try {
         const response = await processMessage(trimmed, context);
+
+        if (response.needsBooking) {
+          addBotMessages(response.messages, response.context, response.quickReplies);
+          setTimeout(() => {
+            performBooking(response.context);
+          }, TYPING_DELAY + 100);
+          return;
+        }
+
         addBotMessages(response.messages, response.context, response.quickReplies);
       } catch {
         addBotMessages(
@@ -236,7 +310,7 @@ export function useMageBot(): UseMageBotReturn {
         );
       }
     },
-    [context, addBotMessages]
+    [context, addBotMessages, performBooking]
   );
 
   return {
@@ -248,6 +322,6 @@ export function useMageBot(): UseMageBotReturn {
     isPasswordMode: context.state === "LOGIN_PASSWORD",
     sendMessage,
     toggleOpen,
-    setOpen,
+    setOpen: setOpenFn,
   };
 }

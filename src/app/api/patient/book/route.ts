@@ -1,10 +1,28 @@
 import { NextResponse } from "next/server";
 import { createServerSupabaseClient, createServiceRoleClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import type { AppointmentType } from "@/lib/types";
 
 export async function POST(request: Request) {
+  let user = null;
+
   const serverClient = await createServerSupabaseClient();
-  const { data: { user } } = await serverClient.auth.getUser();
+  const { data: cookieAuth } = await serverClient.auth.getUser();
+  user = cookieAuth?.user || null;
+
+  if (!user) {
+    const authHeader = request.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.slice(7);
+      const supabaseWithToken = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        { global: { headers: { Authorization: `Bearer ${token}` } } }
+      );
+      const { data: tokenAuth } = await supabaseWithToken.auth.getUser(token);
+      user = tokenAuth?.user || null;
+    }
+  }
 
   if (!user) {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });

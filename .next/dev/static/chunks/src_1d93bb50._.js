@@ -510,7 +510,7 @@ const STATUS_LABELS = {
     CONFIRMED: "Confirmada",
     PENDING: "Pendente",
     CANCELLED: "Cancelada",
-    COMPLETED: "Concluida",
+    COMPLETED: "Concluída",
     NO_SHOW: "No-show"
 };
 const HOURS = Array.from({
@@ -1396,7 +1396,7 @@ function AgendaPage() {
                                             onClick: ()=>handleStatusChange("COMPLETED"),
                                             disabled: updating || selectedAppointment.status === "COMPLETED",
                                             "data-testid": "button-complete",
-                                            children: "Marcar Concluida"
+                                            children: "Marcar Concluída"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/agenda/page.tsx",
                                             lineNumber: 577,

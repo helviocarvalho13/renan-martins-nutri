@@ -85,14 +85,33 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/supabase/server.ts [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$supabase$2d$js$2f$dist$2f$index$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/@supabase/supabase-js/dist/index.mjs [app-route] (ecmascript) <locals>");
+;
 ;
 ;
 async function POST(request) {
+    let user = null;
     const serverClient = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServerSupabaseClient"])();
-    const { data: { user } } = await serverClient.auth.getUser();
+    const { data: cookieAuth } = await serverClient.auth.getUser();
+    user = cookieAuth?.user || null;
+    if (!user) {
+        const authHeader = request.headers.get("Authorization");
+        if (authHeader?.startsWith("Bearer ")) {
+            const token = authHeader.slice(7);
+            const supabaseWithToken = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$supabase$2d$js$2f$dist$2f$index$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["createClient"])(("TURBOPACK compile-time value", "https://dvrwltbunfwnymoqrqzg.supabase.co"), ("TURBOPACK compile-time value", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cndsdGJ1bmZ3bnltb3FycXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODA1OTYsImV4cCI6MjA4ODE1NjU5Nn0.dAOqu824PidFe-KtDxSPaMV42JUaziZII9BVNh5izDw"), {
+                global: {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            });
+            const { data: tokenAuth } = await supabaseWithToken.auth.getUser(token);
+            user = tokenAuth?.user || null;
+        }
+    }
     if (!user) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Nao autenticado"
+            error: "Não autenticado"
         }, {
             status: 401
         });
@@ -101,7 +120,7 @@ async function POST(request) {
     const { date, start_time, end_time, type } = body;
     if (!date || !start_time || !end_time || !type) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Campos obrigatorios faltando"
+            error: "Campos obrigatórios faltando"
         }, {
             status: 400
         });
@@ -112,7 +131,7 @@ async function POST(request) {
     ];
     if (!validTypes.includes(type)) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Tipo de consulta invalido"
+            error: "Tipo de consulta inválido"
         }, {
             status: 400
         });
@@ -121,7 +140,7 @@ async function POST(request) {
     const minAdvance = Date.now() + 24 * 60 * 60 * 1000;
     if (appointmentDateTime.getTime() < minAdvance) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Agendamentos devem ser feitos com pelo menos 24 horas de antecedencia."
+            error: "Agendamentos devem ser feitos com pelo menos 24 horas de antecedência."
         }, {
             status: 400
         });
@@ -154,14 +173,14 @@ async function POST(request) {
     const activeReturns = activeAppts.filter((a)=>a.type === "RETURN").length;
     if (type === "FIRST_VISIT" && activeFirstVisits >= 1) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Voce ja possui uma consulta agendada. Cancele a existente antes de agendar outra."
+            error: "Você já possui uma consulta agendada. Cancele a existente antes de agendar outra."
         }, {
             status: 409
         });
     }
     if (type === "RETURN" && activeReturns >= 1) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Voce ja possui um retorno agendado."
+            error: "Você já possui um retorno agendado."
         }, {
             status: 409
         });
@@ -170,7 +189,7 @@ async function POST(request) {
         const { data: completed } = await supabase.from("appointments").select("id, return_suggested_date").eq("patient_id", user.id).eq("status", "COMPLETED").not("return_suggested_date", "is", null).limit(1);
         if (!completed || completed.length === 0) {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                error: "Retornos so estao disponiveis apos uma consulta concluida com sugestao de data."
+                error: "Retornos só estão disponíveis após uma consulta concluída com sugestão de data."
             }, {
                 status: 403
             });
@@ -181,7 +200,7 @@ async function POST(request) {
         const existingAppt = existing[0];
         if (existingAppt.status === "PENDING" || existingAppt.status === "CONFIRMED") {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                error: "Este horario ja esta ocupado. Escolha outro horario."
+                error: "Este horário já está ocupado. Escolha outro horário."
             }, {
                 status: 409
             });
@@ -202,7 +221,7 @@ async function POST(request) {
         console.error("[patient/book] Insert error:", error.code, error.message, error.details);
         if (error.code === "23505") {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                error: "Este horario ja esta ocupado. Escolha outro horario."
+                error: "Este horário já está ocupado. Escolha outro horário."
             }, {
                 status: 409
             });

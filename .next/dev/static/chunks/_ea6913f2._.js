@@ -228,7 +228,7 @@ const statusLabels = {
     CONFIRMED: "Confirmada",
     PENDING: "Pendente",
     CANCELLED: "Cancelada",
-    COMPLETED: "Concluida",
+    COMPLETED: "Concluída",
     NO_SHOW: "No-show"
 };
 function AdminDashboardPage() {
@@ -810,7 +810,7 @@ function AdminDashboardPage() {
                                                         className: "text-sm font-medium text-yellow-900",
                                                         children: [
                                                             pendingCount,
-                                                            " aguardando confirmacao"
+                                                            " aguardando confirmação"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/(dashboard)/admin/page.tsx",
@@ -837,7 +837,7 @@ function AdminDashboardPage() {
                                                         className: "text-sm font-medium text-green-900",
                                                         children: [
                                                             freeSlots,
-                                                            " horarios disponiveis"
+                                                            " horários disponíveis"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/(dashboard)/admin/page.tsx",

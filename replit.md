@@ -83,12 +83,13 @@ user_role, appointment_type, appointment_status, notification_type
 
 ## MageBot Chatbot
 - Floating widget (bottom-right) on ALL pages via root layout dynamic import
-- State machine engine: GREETING → MENU → AUTH_CHECK → LOGIN_EMAIL → LOGIN_PASSWORD → SELECT_TYPE → SELECT_DATE → VALIDATE_DATE → SHOW_SLOTS → CONFIRM → BOOKING → ANYTHING_ELSE → FAREWELL
+- **Booking only** — single menu option: "Agendar consulta" (no Serviços, Contato, Ver agendamentos)
+- State machine engine: GREETING → MENU → LOGIN_EMAIL → LOGIN_PASSWORD → SELECT_TYPE → SELECT_DATE → SHOW_SLOTS → CONFIRM → BOOKING_READY → ANYTHING_ELSE → FAREWELL
 - In-chat login flow: collects email → password (masked input) → authenticates via Supabase → continues to booking
 - PT-BR date parser: handles "amanha", "proxima segunda", "dia 15", "15/03", "15 de marco", etc.
 - Conversational booking flow: checks auth → in-chat login if needed → selects type → parses date → fetches slots → confirms → books via /api/patient/book
-- Menu options: Agendar consulta, Ver agendamentos, Servicos, Contato
-- Session persistence: sessionStorage for guests
+- Booking uses Bearer token auth (access_token from Supabase session) to avoid cookie issues after in-chat login
+- Session persistence: sessionStorage for guests; auto-clears stale session when auth state changes (user logs in via website)
 - Files: src/lib/chatbot/ (engine.ts, dateParser.ts, types.ts), src/hooks/useMageBot.ts, src/components/chatbot/ (MageBotWidget.tsx, ChatWindow.tsx, MageBotLoader.tsx)
 
 ## Luna Tecnologia Badge

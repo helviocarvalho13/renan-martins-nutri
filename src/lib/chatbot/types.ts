@@ -19,20 +19,15 @@ export interface Slot {
 export type ChatStateKey =
   | "GREETING"
   | "MENU"
-  | "AUTH_CHECK"
   | "LOGIN_EMAIL"
   | "LOGIN_PASSWORD"
   | "SELECT_TYPE"
   | "SELECT_DATE"
-  | "VALIDATE_DATE"
   | "SHOW_SLOTS"
   | "CONFIRM"
-  | "BOOKING"
+  | "BOOKING_READY"
   | "ANYTHING_ELSE"
-  | "FAREWELL"
-  | "VIEW_APPOINTMENTS"
-  | "SERVICES_INFO"
-  | "CONTACT_INFO";
+  | "FAREWELL";
 
 export interface ChatContext {
   state: ChatStateKey;
@@ -50,6 +45,7 @@ export interface EngineResponse {
   messages: string[];
   context: ChatContext;
   quickReplies: QuickReply[];
+  needsBooking?: boolean;
 }
 
 export function createInitialContext(): ChatContext {
