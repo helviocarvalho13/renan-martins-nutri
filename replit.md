@@ -52,9 +52,21 @@ user_role, appointment_type, appointment_status, notification_type
 - `/cadastro` - Redirects to /register
 - `/forgot-password` - Password recovery email via Supabase Auth
 - `/update-password` - Set new password after reset link
-- `/admin` - Admin dashboard (role-gated)
+- `/admin` - Admin dashboard with sidebar layout (role-gated)
+- `/admin/agenda` - Full agenda: daily/weekly/monthly views, color-coded by status, appointment actions
+- `/admin/pacientes` - Patient list with search by name/CPF, pagination
+- `/admin/pacientes/[id]` - Individual patient profile + appointment history
+- `/admin/disponibilidade` - Schedule config per weekday + blocked slots management
+- `/admin/site` - Site content editor + testimonials management (approve/reject)
 - `/paciente` - Patient dashboard (role-gated)
 - `/setup` - Database setup helper (copy SQL for Supabase)
+
+## Admin Dashboard
+- Layout: fixed sidebar (desktop) / sheet drawer (mobile) with nav items
+- Header: page title, notification bell with real-time count, Renan's name
+- Sidebar items: Dashboard, Agenda, Pacientes, Site, Disponibilidade
+- Uses Supabase Realtime for live appointment and notification updates
+- Color coding: blue=confirmed, yellow=pending, red=cancelled, green=completed, gray=no-show
 
 ## Auth Pages Design
 All auth pages (login, register, forgot-password, update-password) use split-screen layout:

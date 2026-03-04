@@ -1,317 +1,264 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Leaf,
-  LogOut,
   CalendarDays,
   Clock,
-  CheckCircle2,
   AlertCircle,
-  BarChart3,
-  Calendar,
+  CheckCircle2,
+  Users,
+  ArrowRight,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import type { Appointment, AppointmentWithProfile, Profile } from "@/lib/types";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import type { Appointment, Profile, AppointmentStatus } from "@/lib/types/database";
 
-const statusMap: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  PENDING: { label: "Pendente", variant: "outline" },
-  CONFIRMED: { label: "Confirmado", variant: "default" },
-  CANCELLED: { label: "Cancelado", variant: "destructive" },
-  COMPLETED: { label: "Concluido", variant: "secondary" },
-  NO_SHOW: { label: "Nao compareceu", variant: "destructive" },
-};
-
-function AppointmentRow({
-  appointment,
-  profile,
-  onStatusChange,
-}: {
-  appointment: Appointment;
-  profile?: Profile;
-  onStatusChange: () => void;
-}) {
-  const [updating, setUpdating] = useState(false);
-  const status = statusMap[appointment.status] || statusMap.PENDING;
-
-  const handleStatusChange = async (newStatus: string) => {
-    setUpdating(true);
-    try {
-      const res = await fetch(`/api/appointments/${appointment.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (!res.ok) {
-        console.error("Failed to update status");
-      }
-    } catch (err) {
-      console.error("Error updating status:", err);
-    }
-    setUpdating(false);
-    onStatusChange();
-  };
-
-  const patientName = profile?.full_name || "Paciente";
-
-  return (
-    <div
-      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border rounded-md"
-      data-testid={`row-appointment-${appointment.id}`}
-    >
-      <div className="flex-1 min-w-0 space-y-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-medium text-sm truncate">{patientName}</span>
-          <Badge variant={status.variant}>{status.label}</Badge>
-          <Badge variant="secondary" className="text-xs">{appointment.type === "FIRST_VISIT" ? "1a Consulta" : "Retorno"}</Badge>
-        </div>
-        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <CalendarDays className="w-3 h-3" />
-            {format(new Date(appointment.date + "T00:00:00"), "dd/MM/yyyy")}
-          </span>
-          <span className="flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {appointment.start_time.slice(0, 5)} - {appointment.end_time.slice(0, 5)}
-          </span>
-        </div>
-        {profile?.phone && (
-          <p className="text-xs text-muted-foreground">{profile.phone}</p>
-        )}
-        {appointment.notes && (
-          <p className="text-xs text-muted-foreground italic">Obs: {appointment.notes}</p>
-        )}
-      </div>
-
-      <Select
-        value={appointment.status}
-        onValueChange={handleStatusChange}
-        disabled={updating}
-      >
-        <SelectTrigger className="w-[160px]" data-testid={`select-status-${appointment.id}`}>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="PENDING">Pendente</SelectItem>
-          <SelectItem value="CONFIRMED">Confirmado</SelectItem>
-          <SelectItem value="COMPLETED">Concluido</SelectItem>
-          <SelectItem value="CANCELLED">Cancelado</SelectItem>
-          <SelectItem value="NO_SHOW">Nao compareceu</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-  );
+interface AppointmentWithProfile extends Appointment {
+  profiles: Pick<Profile, "full_name" | "phone">;
 }
 
-export default function AdminDashboard() {
-  const router = useRouter();
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [profiles, setProfiles] = useState<Record<string, Profile>>({});
-  const [userName, setUserName] = useState("");
+const statusColors: Record<AppointmentStatus, string> = {
+  CONFIRMED: "bg-blue-100 text-blue-700",
+  PENDING: "bg-yellow-100 text-yellow-700",
+  CANCELLED: "bg-red-100 text-red-700",
+  COMPLETED: "bg-green-100 text-green-700",
+  NO_SHOW: "bg-neutral-200 text-neutral-600",
+};
+
+const statusLabels: Record<AppointmentStatus, string> = {
+  CONFIRMED: "Confirmada",
+  PENDING: "Pendente",
+  CANCELLED: "Cancelada",
+  COMPLETED: "Concluida",
+  NO_SHOW: "No-show",
+};
+
+export default function AdminDashboardPage() {
+  const [todayAppointments, setTodayAppointments] = useState<AppointmentWithProfile[]>([]);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [confirmedCount, setConfirmedCount] = useState(0);
+  const [totalPatients, setTotalPatients] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const supabase = createClient();
-
-  const loadData = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      router.push("/login");
-      return;
-    }
-    setUserName(user.user_metadata?.name || user.email || "Admin");
-
-    const { data: appts } = await supabase
-      .from("appointments")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    const appointmentsList = (appts || []) as Appointment[];
-    setAppointments(appointmentsList);
-
-    const patientIds = [...new Set(appointmentsList.map((a) => a.patient_id))];
-    if (patientIds.length > 0) {
-      const { data: profs } = await supabase
-        .from("profiles")
-        .select("*")
-        .in("id", patientIds);
-      const profileMap: Record<string, Profile> = {};
-      (profs || []).forEach((p) => {
-        profileMap[(p as Profile).id] = p as Profile;
-      });
-      setProfiles(profileMap);
-    }
-
-    setLoading(false);
-  };
+  const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    loadData();
-  }, []);
+    const supabase = createClient();
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
-  };
+    async function loadDashboard() {
+      const [appointmentsRes, pendingRes, confirmedRes, patientsRes] = await Promise.all([
+        supabase
+          .from("appointments")
+          .select("*, profiles!appointments_patient_id_fkey(full_name, phone)")
+          .eq("date", today)
+          .neq("status", "CANCELLED")
+          .order("start_time", { ascending: true }),
+        supabase
+          .from("appointments")
+          .select("id", { count: "exact" })
+          .eq("status", "PENDING")
+          .gte("date", today),
+        supabase
+          .from("appointments")
+          .select("id", { count: "exact" })
+          .eq("status", "CONFIRMED")
+          .eq("date", today),
+        supabase
+          .from("profiles")
+          .select("id", { count: "exact" })
+          .eq("role", "PATIENT")
+          .eq("is_active", true),
+      ]);
 
-  const todayStr = format(new Date(), "yyyy-MM-dd");
-  const todayAppointments = appointments.filter((a) => a.date === todayStr);
-  const pendingCount = appointments.filter((a) => a.status === "PENDING").length;
-  const confirmedCount = appointments.filter((a) => a.status === "CONFIRMED").length;
-  const upcomingAppointments = appointments.filter(
-    (a) => a.date >= todayStr && (a.status === "PENDING" || a.status === "CONFIRMED")
-  );
+      if (appointmentsRes.data) setTodayAppointments(appointmentsRes.data as AppointmentWithProfile[]);
+      setPendingCount(pendingRes.count || 0);
+      setConfirmedCount(confirmedRes.count || 0);
+      setTotalPatients(patientsRes.count || 0);
+      setLoading(false);
+    }
 
-  const stats = [
-    { label: "Hoje", value: todayAppointments.length, icon: Calendar, color: "text-primary" },
-    { label: "Pendentes", value: pendingCount, icon: AlertCircle, color: "text-yellow-600 dark:text-yellow-400" },
-    { label: "Confirmadas", value: confirmedCount, icon: CheckCircle2, color: "text-primary" },
-    { label: "Total", value: appointments.length, icon: BarChart3, color: "text-muted-foreground" },
-  ];
+    loadDashboard();
+
+    const channel = supabase
+      .channel("dashboard-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "appointments" },
+        () => { loadDashboard(); }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [today]);
+
+  const freeSlots = Math.max(0, 8 - todayAppointments.filter((a) => a.status !== "CANCELLED" && a.status !== "NO_SHOW").length);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="space-y-3 w-full max-w-md p-4">
-          <Skeleton className="h-8 w-1/2" />
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-32 w-full" />
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))}
         </div>
+        <Skeleton className="h-96 rounded-xl" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-4 h-16">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-md bg-primary flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-primary-foreground" />
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-neutral-200">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-neutral-500">Consultas Hoje</p>
+                <p className="text-3xl font-bold text-neutral-900 mt-1" data-testid="text-today-count">
+                  {todayAppointments.length}
+                </p>
               </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-sm leading-tight">Painel Admin</span>
-                <span className="text-[10px] text-muted-foreground leading-tight">Bem-vindo, {userName}</span>
+              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                <CalendarDays className="w-5 h-5 text-blue-600" />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Link href="/">
-                <Button variant="ghost" size="sm" data-testid="button-view-site">
-                  Ver Site
-                </Button>
-              </Link>
-              <Button variant="ghost" size="sm" onClick={handleLogout} data-testid="button-logout">
-                <LogOut className="w-4 h-4 mr-1" />
-                Sair
-              </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="border-neutral-200">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-neutral-500">Horarios Livres</p>
+                <p className="text-3xl font-bold text-neutral-900 mt-1" data-testid="text-free-slots">{freeSlots}</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
+                <Clock className="w-5 h-5 text-green-600" />
+              </div>
             </div>
-          </div>
-        </div>
-      </nav>
+          </CardContent>
+        </Card>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold tracking-tight mb-1" data-testid="text-dashboard-title">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            {format(new Date(), "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-          </p>
-        </div>
+        <Card className="border-neutral-200">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-neutral-500">Pendentes</p>
+                <p className="text-3xl font-bold text-neutral-900 mt-1" data-testid="text-pending-count">{pendingCount}</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-yellow-50 flex items-center justify-center">
+                <AlertCircle className="w-5 h-5 text-yellow-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {stats.map((stat) => (
-            <Card key={stat.label} data-testid={`card-stat-${stat.label.toLowerCase()}`}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between gap-1 mb-2">
-                  <span className="text-xs text-muted-foreground">{stat.label}</span>
-                  <stat.icon className={`w-4 h-4 ${stat.color}`} />
+        <Card className="border-neutral-200">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-neutral-500">Total Pacientes</p>
+                <p className="text-3xl font-bold text-neutral-900 mt-1" data-testid="text-total-patients">{totalPatients}</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-neutral-100 flex items-center justify-center">
+                <Users className="w-5 h-5 text-neutral-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <Card className="border-neutral-200">
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-neutral-900">Agenda do Dia</h2>
+                <Link href="/admin/agenda">
+                  <Button variant="ghost" size="sm" className="text-neutral-500 hover:text-neutral-900" data-testid="link-view-agenda">
+                    Ver agenda completa <ArrowRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+
+              {todayAppointments.length === 0 ? (
+                <div className="text-center py-12 text-neutral-400">
+                  <CalendarDays className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Nenhuma consulta agendada para hoje</p>
                 </div>
-                <p className="text-2xl font-bold">{stat.value}</p>
-              </CardContent>
-            </Card>
-          ))}
+              ) : (
+                <div className="space-y-2">
+                  {todayAppointments.map((apt) => (
+                    <div
+                      key={apt.id}
+                      className="flex items-center gap-4 p-3 rounded-lg hover:bg-neutral-50 transition-colors border border-neutral-100"
+                      data-testid={`appointment-item-${apt.id}`}
+                    >
+                      <div className="text-center min-w-[60px]">
+                        <p className="text-sm font-semibold text-neutral-900">{apt.start_time.slice(0, 5)}</p>
+                        <p className="text-[10px] text-neutral-400">{apt.end_time.slice(0, 5)}</p>
+                      </div>
+                      <div className="w-px h-10 bg-neutral-200" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-neutral-900 truncate">
+                          {apt.profiles?.full_name || "Paciente"}
+                        </p>
+                        <p className="text-xs text-neutral-400">
+                          {apt.type === "FIRST_VISIT" ? "Primeira consulta" : "Retorno"}
+                        </p>
+                      </div>
+                      <Badge className={`${statusColors[apt.status]} border-0 text-[11px]`}>
+                        {statusLabels[apt.status]}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
-        <Tabs defaultValue="today">
-          <TabsList>
-            <TabsTrigger value="today" data-testid="tab-today">
-              Hoje ({todayAppointments.length})
-            </TabsTrigger>
-            <TabsTrigger value="upcoming" data-testid="tab-upcoming">
-              Proximas ({upcomingAppointments.length})
-            </TabsTrigger>
-            <TabsTrigger value="all" data-testid="tab-all">
-              Todas ({appointments.length})
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="today" className="mt-4">
-            {todayAppointments.length === 0 ? (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <Calendar className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-muted-foreground" data-testid="text-no-today">Nenhuma consulta agendada para hoje.</p>
-                </CardContent>
-              </Card>
-            ) : (
+        <div>
+          <Card className="border-neutral-200">
+            <CardContent className="p-5">
+              <h2 className="font-semibold text-neutral-900 mb-4">Resumo Rapido</h2>
               <div className="space-y-3">
-                {todayAppointments.map((a) => (
-                  <AppointmentRow key={a.id} appointment={a} profile={profiles[a.patient_id]} onStatusChange={loadData} />
-                ))}
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50">
+                  <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                  <p className="text-sm font-medium text-blue-900">{confirmedCount} confirmadas hoje</p>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-yellow-50">
+                  <AlertCircle className="w-4 h-4 text-yellow-600" />
+                  <p className="text-sm font-medium text-yellow-900">{pendingCount} aguardando confirmacao</p>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-green-50">
+                  <Clock className="w-4 h-4 text-green-600" />
+                  <p className="text-sm font-medium text-green-900">{freeSlots} horarios disponiveis</p>
+                </div>
               </div>
-            )}
-          </TabsContent>
 
-          <TabsContent value="upcoming" className="mt-4">
-            {upcomingAppointments.length === 0 ? (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <CalendarDays className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-muted-foreground" data-testid="text-no-upcoming">Nenhuma consulta proxima.</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-3">
-                {upcomingAppointments.map((a) => (
-                  <AppointmentRow key={a.id} appointment={a} profile={profiles[a.patient_id]} onStatusChange={loadData} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
+              <Separator className="my-4" />
 
-          <TabsContent value="all" className="mt-4">
-            {appointments.length === 0 ? (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <BarChart3 className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-muted-foreground" data-testid="text-no-appointments">Nenhuma consulta registrada.</p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-3">
-                {appointments.map((a) => (
-                  <AppointmentRow key={a.id} appointment={a} profile={profiles[a.patient_id]} onStatusChange={loadData} />
-                ))}
+              <div className="space-y-2">
+                <Link href="/admin/agenda" className="block">
+                  <Button variant="outline" size="sm" className="w-full justify-start text-neutral-600 border-neutral-200" data-testid="link-manage-agenda">
+                    <CalendarDays className="w-4 h-4 mr-2" /> Gerenciar agenda
+                  </Button>
+                </Link>
+                <Link href="/admin/pacientes" className="block">
+                  <Button variant="outline" size="sm" className="w-full justify-start text-neutral-600 border-neutral-200" data-testid="link-manage-patients">
+                    <Users className="w-4 h-4 mr-2" /> Ver pacientes
+                  </Button>
+                </Link>
               </div>
-            )}
-          </TabsContent>
-        </Tabs>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
