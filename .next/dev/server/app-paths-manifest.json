@@ -1,9 +1,3 @@
 {
-  "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/(dashboard)/admin/agenda/page": "app/(dashboard)/admin/agenda/page.js",
-  "/(dashboard)/admin/page": "app/(dashboard)/admin/page.js",
-  "/api/auth/login/route": "app/api/auth/login/route.js",
-  "/api/available-slots/route": "app/api/available-slots/route.js",
-  "/api/patient/book/route": "app/api/patient/book/route.js",
   "/page": "app/page.js"
 }

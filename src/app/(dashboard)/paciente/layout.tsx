@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/NotificationBell";
 import { LogOut } from "lucide-react";
 
 export default function PatientLayout({ children }: { children: React.ReactNode }) {
@@ -45,6 +46,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
           </Link>
 
           <div className="flex items-center gap-3">
+            <NotificationBell />
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-neutral-900 flex items-center justify-center text-white text-xs font-bold">
                 {initials}

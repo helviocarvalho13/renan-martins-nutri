@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerSupabaseClient, createServiceRoleClient } from "@/lib/supabase/server";
+import { notifyAppointmentCancelledByPatient } from "@/lib/notifications";
+import { deleteCalendarEvent } from "@/lib/google-calendar";
 
 export async function POST(request: Request) {
   const serverClient = await createServerSupabaseClient();
@@ -13,7 +15,7 @@ export async function POST(request: Request) {
   const { appointment_id } = body;
 
   if (!appointment_id) {
-    return NextResponse.json({ error: "ID da consulta obrigatorio" }, { status: 400 });
+    return NextResponse.json({ error: "ID da consulta obrigatório" }, { status: 400 });
   }
 
   const supabase = createServiceRoleClient();
@@ -29,7 +31,7 @@ export async function POST(request: Request) {
   }
 
   if (appointment.patient_id !== user.id) {
-    return NextResponse.json({ error: "Sem permissao" }, { status: 403 });
+    return NextResponse.json({ error: "Sem permissão" }, { status: 403 });
   }
 
   if (!["PENDING", "CONFIRMED"].includes(appointment.status)) {
@@ -52,6 +54,15 @@ export async function POST(request: Request) {
 
   if (updateError) {
     return NextResponse.json({ error: "Erro ao cancelar consulta." }, { status: 500 });
+  }
+
+  try {
+    const dateFormatted = appointment.date;
+    const timeFormatted = appointment.start_time?.slice(0, 5);
+    await notifyAppointmentCancelledByPatient(user.id, dateFormatted, timeFormatted, appointment_id);
+    await deleteCalendarEvent(appointment_id);
+  } catch (notifError) {
+    console.error("[patient/cancel] Notification error:", notifError);
   }
 
   return NextResponse.json({ success: true });

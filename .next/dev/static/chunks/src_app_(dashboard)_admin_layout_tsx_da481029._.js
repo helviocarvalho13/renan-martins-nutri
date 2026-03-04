@@ -3,8 +3,8 @@
     chunks: [
   "static/chunks/node_modules_next_1c364755._.js",
   "static/chunks/node_modules_@supabase_auth-js_dist_module_e6c70351._.js",
-  "static/chunks/node_modules_a3d63ec9._.js",
-  "static/chunks/src_15f0bf6c._.js"
+  "static/chunks/node_modules_2ad0b207._.js",
+  "static/chunks/src_39408b8d._.js"
 ],
     source: "dynamic"
 });

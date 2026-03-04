@@ -104,14 +104,39 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 - Pill buttons (rounded-full, bg-neutral-900), neutral-200 borders on inputs
 - Admin sidebar also shows Team Mago logo (small, rounded)
 
+## Notifications System
+- **In-App**: Reusable `NotificationBell` component (src/components/NotificationBell.tsx) used in both admin and patient layouts
+  - Loads latest 10 notifications, unread count badge
+  - Supabase Realtime subscription filtered by user_id
+  - Mark individual notification as read on click, mark all as read button
+- **Triggers**: All status changes create notifications via `src/lib/notifications.ts`:
+  - New booking → admin notification + email
+  - Admin confirms → patient notification + email
+  - Admin cancels → patient notification + email
+  - Admin completes → patient notification
+  - Admin marks no-show → patient notification
+  - Patient cancels → admin notification + email to both
+  - Return suggestion → patient notification + email
+- **Email**: Resend API integration (src/lib/email/sender.ts + templates.ts)
+  - Professional HTML templates branded "Renan Martins Nutricionista"
+  - Gracefully skips if RESEND_API_KEY not configured
+- **24h Reminders**: Cron endpoint at GET /api/cron/reminders (secured by CRON_SECRET Bearer token)
+- **Realtime Agenda**: `useRealtimeAgenda` hook subscribes to INSERT/UPDATE/DELETE on appointments table
+
+## Google Calendar Integration
+- src/lib/google-calendar.ts — adds/updates/deletes events when appointments change
+- Requires: GOOGLE_CALENDAR_CLIENT_ID, GOOGLE_CALENDAR_CLIENT_SECRET, GOOGLE_CALENDAR_REFRESH_TOKEN, GOOGLE_CALENDAR_ID
+- Gracefully skips if credentials not configured
+
 ## API Routes
 - `GET /api/setup` - Returns combined SQL from /db folder
 - `POST /api/seed-admin` - Creates admin user (admin@admin.com / 123456) + seeds schedule_config defaults
 - `GET /api/available-slots?date=YYYY-MM-DD` - Public API returning available time slots (bypasses RLS via service role)
 - `POST /api/appointments` - Server-side booking with validation, double-booking prevention
-- `PATCH /api/appointments/[id]` - Admin-only status update
-- `POST /api/patient/book` - Authenticated patient booking (24h advance, max 1+1, return requires completed)
-- `POST /api/patient/cancel` - Authenticated patient cancellation (12h advance)
+- `PATCH /api/appointments/[id]` - Admin-only: status update, notes, return_suggested_date + triggers notifications/email/calendar
+- `POST /api/patient/book` - Authenticated patient booking (24h advance, max 1+1, return requires completed) + triggers notifications/email/calendar
+- `POST /api/patient/cancel` - Authenticated patient cancellation (12h advance) + triggers notifications/email/calendar
+- `GET /api/cron/reminders` - 24h appointment reminder emails + in-app notifications (secured by CRON_SECRET)
 
 ## Key Files
 - `db/` - Versioned SQL scripts (00001-00011 + seed.sql + README.md)
@@ -129,11 +154,23 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 - `src/lib/chatbot/types.ts` - Chatbot shared types
 - `src/components/chatbot/` - MageBot widget, chat window, loader
 - `src/components/site/` - Landing page sections (clean/minimal design)
+- `src/components/NotificationBell.tsx` - Reusable notification bell with realtime
+- `src/lib/notifications.ts` - Notification creation helpers + email integration
+- `src/lib/email/sender.ts` - Resend API email sender
+- `src/lib/email/templates.ts` - HTML email templates
+- `src/lib/google-calendar.ts` - Google Calendar API integration
+- `src/hooks/useRealtimeAgenda.ts` - Realtime subscription for agenda updates
 
 ## Environment Variables
 - `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
 - `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
+- `RESEND_API_KEY` - (Optional) Resend API key for email notifications
+- `CRON_SECRET` - (Optional) Secret for cron endpoint authentication
+- `GOOGLE_CALENDAR_CLIENT_ID` - (Optional) Google Calendar OAuth client ID
+- `GOOGLE_CALENDAR_CLIENT_SECRET` - (Optional) Google Calendar OAuth client secret
+- `GOOGLE_CALENDAR_REFRESH_TOKEN` - (Optional) Google Calendar OAuth refresh token
+- `GOOGLE_CALENDAR_ID` - (Optional) Google Calendar ID to add events to
 
 ## Port
 Runs on port 5000 (required for Replit webview).

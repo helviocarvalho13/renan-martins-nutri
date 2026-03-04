@@ -158,29 +158,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Erro ao criar agendamento." }, { status: 500 });
   }
 
-  const { data: admins } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("role", "ADMIN")
-    .limit(1);
+  try {
+    const { notifyNewAppointment, getAdminUserId, getPatientName } = await import("@/lib/notifications");
+    const { addCalendarEvent } = await import("@/lib/google-calendar");
 
-  if (admins && admins.length > 0) {
-    const { data: patientProfile } = await supabase
-      .from("profiles")
-      .select("full_name")
-      .eq("id", user.id)
-      .single();
+    const adminId = await getAdminUserId();
+    if (adminId) {
+      const patientName = await getPatientName(user.id);
+      await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, adminId);
+    }
 
-    const patientName = patientProfile?.full_name || user.email || "Paciente";
-    const typeLabel = type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
-
-    await supabase.from("notifications").insert({
-      user_id: admins[0].id,
-      type: "APPOINTMENT_CREATED",
-      title: "Nova consulta agendada",
-      message: `${patientName} agendou ${typeLabel} para ${date} as ${start_time.slice(0, 5)}`,
-      appointment_id: appointment.id,
-    });
+    await addCalendarEvent(appointment);
+  } catch (notifError) {
+    console.error("[patient/book] Notification/calendar error:", notifError);
   }
 
   return NextResponse.json({ appointment }, { status: 201 });

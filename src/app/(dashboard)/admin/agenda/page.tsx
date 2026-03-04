@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useRealtimeAgenda } from "@/hooks/useRealtimeAgenda";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -129,6 +130,8 @@ export default function AgendaPage() {
     fetchAppointments();
   }, [fetchAppointments]);
 
+  useRealtimeAgenda(fetchAppointments);
+
   const navigatePrev = () => {
     if (view === "daily") setCurrentDate((d) => addDays(d, -1));
     else if (view === "weekly") setCurrentDate((d) => subWeeks(d, 1));
@@ -150,27 +153,31 @@ export default function AgendaPage() {
     setDialogOpen(true);
   };
 
-  const updateAppointment = async (updates: Record<string, unknown>) => {
+  const updateAppointmentViaApi = async (updates: Record<string, unknown>) => {
     if (!selectedAppointment) return;
     setUpdating(true);
-    const { error } = await supabase
-      .from("appointments")
-      .update(updates)
-      .eq("id", selectedAppointment.id);
-
-    if (!error) {
-      await fetchAppointments();
-      setDialogOpen(false);
+    try {
+      const res = await fetch(`/api/appointments/${selectedAppointment.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+      if (res.ok) {
+        await fetchAppointments();
+        setDialogOpen(false);
+      }
+    } catch (err) {
+      console.error("Update error:", err);
     }
     setUpdating(false);
   };
 
   const handleStatusChange = (status: AppointmentStatus) => {
-    updateAppointment({ status });
+    updateAppointmentViaApi({ status });
   };
 
   const handleSaveNotes = () => {
-    updateAppointment({ notes, return_suggested_date: returnDate || null });
+    updateAppointmentViaApi({ notes, return_suggested_date: returnDate || null });
   };
 
   const getDateLabel = () => {

@@ -1,26 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { NotificationBell } from "@/components/NotificationBell";
 import {
   LayoutDashboard,
   CalendarDays,
   Users,
   Settings,
-  Bell,
   Menu,
   LogOut,
   ChevronRight,
 } from "lucide-react";
-import type { Notification } from "@/lib/types/database";
 
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -93,61 +90,6 @@ function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [showNotifications, setShowNotifications] = useState(false);
-
-  useEffect(() => {
-    const supabase = createClient();
-
-    async function loadNotifications() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, count } = await supabase
-        .from("notifications")
-        .select("*", { count: "exact" })
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(10);
-
-      if (data) {
-        setNotifications(data);
-        setUnreadCount(data.filter((n: Notification) => !n.is_read).length);
-      }
-    }
-
-    loadNotifications();
-
-    const channel = supabase
-      .channel("admin-notifications")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications" },
-        (payload) => {
-          setNotifications((prev) => [payload.new as Notification, ...prev].slice(0, 10));
-          setUnreadCount((prev) => prev + 1);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const markAllRead = async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    await supabase
-      .from("notifications")
-      .update({ is_read: true })
-      .eq("user_id", user.id)
-      .eq("is_read", false);
-    setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
-    setUnreadCount(0);
-  };
 
   const currentTitle = navItems.find(
     (item) => item.href === pathname || (item.href !== "/admin" && pathname.startsWith(item.href))
@@ -170,7 +112,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="w-64 p-0">
-                  <SheetTitle className="sr-only">Menu de Navegacao</SheetTitle>
+                  <SheetTitle className="sr-only">Menu de Navegação</SheetTitle>
                   <SidebarContent pathname={pathname} onNavigate={() => setMobileOpen(false)} />
                 </SheetContent>
               </Sheet>
@@ -178,68 +120,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
 
             <div className="flex items-center gap-2">
-              <div className="relative">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative"
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  data-testid="button-notifications"
-                >
-                  <Bell className="w-5 h-5 text-neutral-600" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                      {unreadCount > 9 ? "9+" : unreadCount}
-                    </span>
-                  )}
-                </Button>
-
-                {showNotifications && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)} />
-                    <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg border border-neutral-200 shadow-lg z-50">
-                      <div className="flex items-center justify-between p-3 border-b border-neutral-100">
-                        <span className="text-sm font-semibold text-neutral-900">Notificacoes</span>
-                        {unreadCount > 0 && (
-                          <button
-                            onClick={markAllRead}
-                            className="text-xs text-neutral-500 hover:text-neutral-900 transition-colors"
-                            data-testid="button-mark-all-read"
-                          >
-                            Marcar todas como lidas
-                          </button>
-                        )}
-                      </div>
-                      <ScrollArea className="max-h-72">
-                        {notifications.length === 0 ? (
-                          <p className="p-4 text-sm text-neutral-400 text-center">Nenhuma notificacao</p>
-                        ) : (
-                          notifications.map((n) => (
-                            <div
-                              key={n.id}
-                              className={`p-3 border-b border-neutral-50 last:border-0 ${
-                                !n.is_read ? "bg-blue-50/50" : ""
-                              }`}
-                              data-testid={`notification-item-${n.id}`}
-                            >
-                              <p className="text-sm font-medium text-neutral-800">{n.title}</p>
-                              <p className="text-xs text-neutral-500 mt-0.5">{n.message}</p>
-                              <p className="text-[10px] text-neutral-400 mt-1">
-                                {new Date(n.created_at).toLocaleDateString("pt-BR", {
-                                  day: "2-digit",
-                                  month: "short",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })}
-                              </p>
-                            </div>
-                          ))
-                        )}
-                      </ScrollArea>
-                    </div>
-                  </>
-                )}
-              </div>
+              <NotificationBell />
 
               <Separator orientation="vertical" className="h-6 mx-1 hidden sm:block" />
               <div className="hidden sm:flex items-center gap-2">
