@@ -1,7 +1,7 @@
 # Renan Martins Nutricionista
 
 ## Overview
-Platform for nutritionist Renan Martins with appointment scheduling, institutional website, admin dashboard, and future MageBot chatbot.
+Platform for nutritionist Renan Martins with appointment scheduling, institutional website, admin dashboard, MageBot chatbot, and patient area.
 
 ## Architecture
 - **Framework**: Next.js 16 (App Router) + TypeScript
@@ -58,10 +58,8 @@ user_role, appointment_type, appointment_status, notification_type
 - `/admin/pacientes/[id]` - Individual patient profile + appointment history
 - `/admin/disponibilidade` - Schedule config per weekday + blocked slots management
 - `/admin/site` - Site content editor + testimonials management (approve/reject)
-- `/paciente` - Patient dashboard with next appointment, return suggestions, quick actions
+- `/paciente` - Single-page patient panel: booking card, upcoming appointments (with cancel), return suggestions, appointment history
 - `/paciente/agendar` - 4-step booking wizard: Tipo → Data → Horário → Confirmação
-- `/paciente/consultas` - Upcoming appointments (with cancel) + history + return suggestions
-- `/paciente/perfil` - Profile editing (name, phone, CPF, date of birth)
 - `/setup` - Database setup helper (copy SQL for Supabase)
 
 ## Admin Dashboard
@@ -72,8 +70,8 @@ user_role, appointment_type, appointment_status, notification_type
 - Color coding: blue=confirmed, yellow=pending, red=cancelled, green=completed, gray=no-show
 
 ## Patient Area
-- Layout: fixed sidebar (desktop) / sheet drawer (mobile) matching admin style with Team Mago logo
-- Sidebar items: Painel, Agendar, Consultas, Perfil
+- Layout: simple top header (no sidebar) with Team Mago logo, user name, logout button
+- Single page: booking card, upcoming appointments (with cancel), return suggestions per completed first visit, appointment history
 - Business rules:
   - 24h minimum advance for booking
   - 12h minimum advance for cancellation
@@ -81,6 +79,16 @@ user_role, appointment_type, appointment_status, notification_type
   - Returns only available after a COMPLETED appointment with return_suggested_date set
 - Booking wizard: 4-step flow (Tipo → Data → Horário → Confirmação)
 - APIs use service role client for database operations, server client for auth
+- Auto-creates profile if missing (handles cases where trigger didn't fire)
+
+## MageBot Chatbot
+- Floating widget (bottom-right) on ALL pages via root layout dynamic import
+- State machine engine: GREETING → MENU → AUTH_CHECK → SELECT_TYPE → SELECT_DATE → VALIDATE_DATE → SHOW_SLOTS → CONFIRM → BOOKING → ANYTHING_ELSE → FAREWELL
+- PT-BR date parser: handles "amanha", "proxima segunda", "dia 15", "15/03", "15 de marco", etc.
+- Conversational booking flow: checks auth → selects type → parses date → fetches slots → confirms → books via /api/patient/book
+- Menu options: Agendar consulta, Ver agendamentos, Servicos, Contato
+- Session persistence: sessionStorage for guests
+- Files: src/lib/chatbot/ (engine.ts, dateParser.ts, types.ts), src/hooks/useMageBot.ts, src/components/chatbot/ (MageBotWidget.tsx, ChatWindow.tsx, MageBotLoader.tsx)
 
 ## Auth Pages Design
 All auth pages (login, register, forgot-password, update-password) use split-screen layout:
@@ -108,6 +116,11 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 - `src/lib/supabase/middleware.ts` - Auth + role-based routing middleware
 - `src/hooks/useAuth.ts` - Client-side auth hook
 - `src/hooks/useAvailableSlots.ts` - Hook to fetch available time slots for a date
+- `src/hooks/useMageBot.ts` - MageBot conversation state management hook
+- `src/lib/chatbot/engine.ts` - MageBot state machine engine
+- `src/lib/chatbot/dateParser.ts` - PT-BR date parser
+- `src/lib/chatbot/types.ts` - Chatbot shared types
+- `src/components/chatbot/` - MageBot widget, chat window, loader
 - `src/components/site/` - Landing page sections (clean/minimal design)
 
 ## Environment Variables

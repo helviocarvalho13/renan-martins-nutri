@@ -226,7 +226,7 @@ export default function PatientBookingPage() {
           {selectedDateObj && format(selectedDateObj, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} as{" "}
           {selectedSlot?.start_time.slice(0, 5)} - {selectedSlot?.end_time.slice(0, 5)}
         </p>
-        <Link href="/paciente/consultas">
+        <Link href="/paciente">
           <Button className="rounded-full px-6 bg-neutral-900 text-white" data-testid="button-go-to-appointments">
             Ver minhas consultas
             <ArrowRight className="w-4 h-4 ml-1" />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import MageBotLoader from "@/components/chatbot/MageBotLoader";
 
 export const metadata: Metadata = {
   title: "Renan Martins - Nutricionista | Agende sua Consulta",
@@ -50,7 +51,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {children}
+        <MageBotLoader />
+      </body>
     </html>
   );
 }
