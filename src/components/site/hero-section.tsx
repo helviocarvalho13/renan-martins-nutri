@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Users, Star, Heart } from "lucide-react";
 import { motion } from "framer-motion";
+import { useMounted } from "@/hooks/useMounted";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -26,6 +27,7 @@ const imageVariants = {
 };
 
 export function HeroSection() {
+  const mounted = useMounted();
   return (
     <section className="relative overflow-hidden min-h-[90vh] flex items-center">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/20" />
@@ -36,7 +38,7 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <motion.div
             variants={containerVariants}
-            initial="hidden"
+            initial={mounted ? "hidden" : false}
             animate="visible"
           >
             <motion.div variants={itemVariants}>
@@ -124,7 +126,7 @@ export function HeroSection() {
           <motion.div
             className="relative hidden lg:block"
             variants={imageVariants}
-            initial="hidden"
+            initial={mounted ? "hidden" : false}
             animate="visible"
           >
             <div className="relative w-full aspect-[3/4] max-w-md mx-auto">

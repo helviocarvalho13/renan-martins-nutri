@@ -4,6 +4,7 @@ import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
+import { useMounted } from "@/hooks/useMounted";
 
 function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -40,6 +41,7 @@ const fadeInUp = {
 };
 
 export function AboutSection() {
+  const mounted = useMounted();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -48,7 +50,7 @@ export function AboutSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" ref={ref}>
         <motion.div
           className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center"
-          initial="hidden"
+          initial={mounted ? "hidden" : false}
           animate={isInView ? "visible" : "hidden"}
           variants={{ visible: { transition: { staggerChildren: 0.15 } } }}
         >

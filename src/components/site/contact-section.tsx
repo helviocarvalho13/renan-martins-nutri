@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Phone, Mail, MapPin, Calendar, ArrowRight, Instagram, Clock } from "lucide-react";
 import { motion, useInView } from "framer-motion";
+import { useMounted } from "@/hooks/useMounted";
 
 const fadeInUp = {
   hidden: { y: 40, opacity: 0 },
@@ -13,6 +14,7 @@ const fadeInUp = {
 };
 
 export function ContactSection() {
+  const mounted = useMounted();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -21,7 +23,7 @@ export function ContactSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" ref={ref}>
         <motion.div
           className="text-center mb-14"
-          initial={{ y: 30, opacity: 0 }}
+          initial={mounted ? { y: 30, opacity: 0 } : false}
           animate={isInView ? { y: 0, opacity: 1 } : {}}
           transition={{ duration: 0.6 }}
         >
@@ -41,7 +43,7 @@ export function ContactSection() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           <motion.div
             className="space-y-6"
-            initial="hidden"
+            initial={mounted ? "hidden" : false}
             animate={isInView ? "visible" : "hidden"}
             variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
           >
@@ -123,7 +125,7 @@ export function ContactSection() {
           </motion.div>
 
           <motion.div
-            initial={{ y: 40, opacity: 0 }}
+            initial={mounted ? { y: 40, opacity: 0 } : false}
             animate={isInView ? { y: 0, opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
           >

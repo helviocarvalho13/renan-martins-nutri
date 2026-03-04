@@ -13,6 +13,7 @@ import {
   Salad,
   Sparkles,
 } from "lucide-react";
+import { useMounted } from "@/hooks/useMounted";
 
 const services = [
   {
@@ -59,6 +60,7 @@ const cardVariants = {
 };
 
 export function ServicesSection() {
+  const mounted = useMounted();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -89,7 +91,7 @@ export function ServicesSection() {
                 key={index}
                 custom={index}
                 variants={cardVariants}
-                initial="hidden"
+                initial={mounted ? "hidden" : false}
                 animate={isInView ? "visible" : "hidden"}
               >
                 <Card className="h-full group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50" data-testid={`card-service-${index}`}>

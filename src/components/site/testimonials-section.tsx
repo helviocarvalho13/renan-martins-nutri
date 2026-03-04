@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { motion, useInView } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
+import { useMounted } from "@/hooks/useMounted";
 
 interface Testimonial {
   id: string;
@@ -38,6 +39,7 @@ const fallbackTestimonials: Testimonial[] = [
 export function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
   const [current, setCurrent] = useState(0);
+  const mounted = useMounted();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -73,7 +75,7 @@ export function TestimonialsSection() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" ref={ref}>
         <motion.div
           className="text-center mb-14"
-          initial={{ y: 30, opacity: 0 }}
+          initial={mounted ? { y: 30, opacity: 0 } : false}
           animate={isInView ? { y: 0, opacity: 1 } : {}}
           transition={{ duration: 0.6 }}
         >
@@ -93,7 +95,7 @@ export function TestimonialsSection() {
           {testimonials.slice(0, 3).map((t, i) => (
             <motion.div
               key={t.id}
-              initial={{ y: 40, opacity: 0 }}
+              initial={mounted ? { y: 40, opacity: 0 } : false}
               animate={isInView ? { y: 0, opacity: 1 } : {}}
               transition={{ duration: 0.5, delay: i * 0.15 }}
             >
