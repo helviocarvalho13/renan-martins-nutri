@@ -13,28 +13,20 @@ import { useAnimateIn } from "@/hooks/useAnimateIn";
 
 const services = [
   {
-    name: "Nutrição Clínica",
-    description:
-      "Avaliação completa do estado nutricional e elaboração do plano alimentar personalizado.",
+    name: "Acompanhamento Indivual",
+    description: "Seu corpo precisa operar no mesmo nível da sua ambição.",
     icon: Stethoscope,
+    actionLabel: "Agendar",
+    href: "/paciente/agendar",
   },
   {
-    name: "Nutrição Esportiva",
+    name: "Treinamento para Lutadores",
     description:
-      "Plano alimentar focado em performance com estratégias de periodização nutricional.",
+      "O código nutricional dos campeões, adaptado para lutadores de todas as modalidades.",
     icon: Dumbbell,
-  },
-  {
-    name: "Reeducação Alimentar",
-    description:
-      "Programa para transformar sua relação com a comida com resultados duradouros.",
-    icon: Salad,
-  },
-  {
-    name: "Nutrição Funcional",
-    description:
-      "Abordagem integrativa que trata a causa raiz dos desequilíbrios nutricionais.",
-    icon: Sparkles,
+    actionLabel: "Faça sua inscrição",
+    href: "https://nutrirenanmartins.com.br/codigo-do-lutador",
+    external: true,
   },
 ];
 
@@ -63,7 +55,9 @@ export function ServicesSection() {
               <div
                 key={index}
                 className={`transition-all duration-500 ease-out ${
-                  visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  visible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-8"
                 }`}
                 style={{ transitionDelay: visible ? `${index * 80}ms` : "0ms" }}
               >
@@ -74,7 +68,9 @@ export function ServicesSection() {
                   <div className="w-11 h-11 rounded-lg bg-neutral-100 flex items-center justify-center mb-5">
                     <IconComponent className="w-5 h-5 text-neutral-700" />
                   </div>
-                  <h3 className="font-semibold text-neutral-900 mb-2">{service.name}</h3>
+                  <h3 className="font-semibold text-neutral-900 mb-2">
+                    {service.name}
+                  </h3>
                   <p className="text-sm text-neutral-500 leading-relaxed flex-grow mb-5">
                     {service.description}
                   </p>
@@ -84,10 +80,17 @@ export function ServicesSection() {
                     data-testid={`button-book-${index}`}
                     asChild
                   >
-                    <Link href="/paciente/agendar">
-                      Agendar
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
+                    {service.external ? (
+                      <a href={service.href} target="_blank" rel="noopener noreferrer">
+                        {service.actionLabel}
+                        <ArrowRight className="w-4 h-4" />
+                      </a>
+                    ) : (
+                      <Link href={service.href}>
+                        {service.actionLabel}
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    )}
                   </Button>
                 </div>
               </div>

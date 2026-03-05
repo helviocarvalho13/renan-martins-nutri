@@ -35,7 +35,7 @@ export function AboutSection() {
               className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900"
               data-testid="text-about-title"
             >
-              Nutrição com ciência e acolhimento
+              DESTRAVE O PRÓXIMO NÍVEL
             </h2>
             <p className="text-neutral-500 leading-relaxed" data-testid="text-about-desc">
               Sou o Renan Martins, nutricionista clínico com mais de 8 anos de experiência. Acredito que a nutrição vai além de uma dieta — é sobre construir uma relação saudável com a comida e alcançar qualidade de vida.
@@ -43,21 +43,6 @@ export function AboutSection() {
             <p className="text-neutral-500 leading-relaxed">
               Minha abordagem é baseada em evidências científicas e personalizada para cada paciente, considerando objetivos, rotina e preferências alimentares.
             </p>
-
-            <div className="grid grid-cols-3 gap-6 pt-6 border-t border-neutral-100">
-              <div data-testid="counter-experience">
-                <p className="text-3xl font-bold text-neutral-900">8+</p>
-                <p className="text-sm text-neutral-400 mt-1">Anos</p>
-              </div>
-              <div data-testid="counter-patients">
-                <p className="text-3xl font-bold text-neutral-900">500+</p>
-                <p className="text-sm text-neutral-400 mt-1">Pacientes</p>
-              </div>
-              <div data-testid="counter-rating">
-                <p className="text-3xl font-bold text-neutral-900">4.9</p>
-                <p className="text-sm text-neutral-400 mt-1">Avaliação</p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
