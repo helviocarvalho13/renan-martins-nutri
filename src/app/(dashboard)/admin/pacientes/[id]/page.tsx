@@ -32,7 +32,7 @@ const statusLabels: Record<AppointmentStatus, string> = {
 };
 
 const typeLabels: Record<string, string> = {
-  FIRST_VISIT: "Primeira Consulta",
+  FIRST_VISIT: "Consulta",
   RETURN: "Retorno",
 };
 

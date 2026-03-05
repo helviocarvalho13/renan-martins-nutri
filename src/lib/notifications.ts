@@ -3,6 +3,13 @@ import type { NotificationType } from "@/lib/types/database";
 import { sendEmail, getPatientEmail, getAdminEmail } from "@/lib/email/sender";
 import * as templates from "@/lib/email/templates";
 
+function formatDateBR(date: string): string {
+  if (!date) return date;
+  const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (match) return match[3] + "/" + match[2] + "/" + match[1];
+  return date;
+}
+
 interface CreateNotificationParams {
   userId: string;
   type: NotificationType;
@@ -67,14 +74,14 @@ export async function notifyNewAppointment(
     userId: adminId,
     type: "APPOINTMENT_CREATED",
     title: "Nova consulta agendada",
-    message: `${patientName} agendou ${type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno"} para ${date} às ${time}`,
+    message: `${patientName} agendou ${type === "FIRST_VISIT" ? "Consulta" : "Retorno"} para ${formatDateBR(date)} às ${time}`,
     appointmentId,
   });
 
   try {
     const adminEmail = await getAdminEmail();
     if (adminEmail) {
-      const { subject, html } = templates.newAppointmentAdmin(patientName, date, time, type);
+      const { subject, html } = templates.newAppointmentAdmin(patientName, formatDateBR(date), time, type);
       await sendEmail(adminEmail, subject, html);
     }
   } catch (e) {
@@ -95,14 +102,14 @@ export async function notifyAppointmentConfirmed(
     userId: patientId,
     type: "APPOINTMENT_CONFIRMED",
     title: "Consulta confirmada",
-    message: `Sua consulta do dia ${date} às ${time} foi confirmada!`,
+    message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi confirmada!`,
     appointmentId,
   });
 
   try {
     const email = await getPatientEmail(patientId);
     if (email) {
-      const { subject, html } = templates.appointmentConfirmedPatient(patientName, date, time, type);
+      const { subject, html } = templates.appointmentConfirmedPatient(patientName, formatDateBR(date), time, type);
       await sendEmail(email, subject, html);
     }
   } catch (e) {
@@ -122,14 +129,14 @@ export async function notifyAppointmentCancelledByAdmin(
     userId: patientId,
     type: "APPOINTMENT_CANCELLED",
     title: "Consulta cancelada",
-    message: `Sua consulta do dia ${date} às ${time} foi cancelada.`,
+    message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi cancelada.`,
     appointmentId,
   });
 
   try {
     const email = await getPatientEmail(patientId);
     if (email) {
-      const { subject, html } = templates.appointmentCancelledPatient(patientName, date, time);
+      const { subject, html } = templates.appointmentCancelledPatient(patientName, formatDateBR(date), time);
       await sendEmail(email, subject, html);
     }
   } catch (e) {
@@ -151,7 +158,7 @@ export async function notifyAppointmentCancelledByPatient(
       userId: adminId,
       type: "APPOINTMENT_CANCELLED",
       title: "Consulta cancelada pelo paciente",
-      message: `${patientName} cancelou a consulta do dia ${date} às ${time}.`,
+      message: `${patientName} cancelou a consulta do dia ${formatDateBR(date)} às ${time}.`,
       appointmentId,
     });
   }
@@ -159,13 +166,13 @@ export async function notifyAppointmentCancelledByPatient(
   try {
     const adminEmail = await getAdminEmail();
     if (adminEmail) {
-      const { subject, html } = templates.appointmentCancelledAdmin(patientName, date, time);
+      const { subject, html } = templates.appointmentCancelledAdmin(patientName, formatDateBR(date), time);
       await sendEmail(adminEmail, subject, html);
     }
 
     const patientEmail = await getPatientEmail(patientId);
     if (patientEmail) {
-      const { subject, html } = templates.appointmentCancelledPatient(patientName, date, time);
+      const { subject, html } = templates.appointmentCancelledPatient(patientName, formatDateBR(date), time);
       await sendEmail(patientEmail, subject, html);
     }
   } catch (e) {
@@ -184,7 +191,7 @@ export async function notifyAppointmentCompleted(
     userId: patientId,
     type: "APPOINTMENT_COMPLETED",
     title: "Consulta concluída",
-    message: `Sua consulta do dia ${date} às ${time} foi concluída. Obrigado!`,
+    message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi concluída. Obrigado!`,
     appointmentId,
   });
 }
@@ -199,7 +206,7 @@ export async function notifyNoShow(
     userId: patientId,
     type: "GENERAL",
     title: "Falta registrada",
-    message: `Você não compareceu à consulta do dia ${date} às ${time}.`,
+    message: `Você não compareceu à consulta do dia ${formatDateBR(date)} às ${time}.`,
     appointmentId,
   });
 }
@@ -214,16 +221,31 @@ export async function notifyReturnSuggestion(
     userId: patientId,
     type: "APPOINTMENT_REMINDER",
     title: "Sugestão de retorno",
-    message: `O nutricionista sugeriu um retorno para ${suggestedDate}. Agende pelo painel do paciente.`,
+    message: `O nutricionista sugeriu um retorno para ${formatDateBR(suggestedDate)}. Agende pelo painel do paciente.`,
   });
 
   try {
     const email = await getPatientEmail(patientId);
     if (email) {
-      const { subject, html } = templates.returnSuggestion(patientName, suggestedDate);
+      const { subject, html } = templates.returnSuggestion(patientName, formatDateBR(suggestedDate));
       await sendEmail(email, subject, html);
     }
   } catch (e) {
     console.error("[notifyReturnSuggestion] Email error:", e);
   }
+}
+
+export async function notifyAppointmentRescheduled(
+  patientId: string,
+  newDate: string,
+  newTime: string,
+  appointmentId: string
+) {
+  await createNotification({
+    userId: patientId,
+    type: "APPOINTMENT_CONFIRMED",
+    title: "Consulta remarcada",
+    message: `Sua consulta foi remarcada para ${formatDateBR(newDate)} às ${newTime}.`,
+    appointmentId,
+  });
 }

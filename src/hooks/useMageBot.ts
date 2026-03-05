@@ -26,6 +26,7 @@ interface UseMageBotReturn {
   isOpen: boolean;
   unreadCount: number;
   isPasswordMode: boolean;
+  chatState: string;
   sendMessage: (text: string) => void;
   toggleOpen: () => void;
   setOpen: (open: boolean) => void;
@@ -279,6 +280,7 @@ export function useMageBot(): UseMageBotReturn {
     isOpen,
     unreadCount,
     isPasswordMode: context.state === "LOGIN_PASSWORD",
+    chatState: context.state,
     sendMessage,
     toggleOpen,
     setOpen: setOpenFn,

@@ -130,7 +130,7 @@ export default function UpdatePasswordPage() {
     <div className="min-h-screen flex">
       <div className="hidden lg:flex lg:w-1/2 relative bg-neutral-900 items-center justify-center">
         <Image
-          src="/images/team-mago.jpg"
+          src="/images/team-mago-circle.png"
           alt="Team Mago - Renan Martins Nutricionista"
           width={400}
           height={400}
@@ -143,7 +143,7 @@ export default function UpdatePasswordPage() {
         <div className="w-full max-w-sm space-y-8">
           <div>
             <Link href="/" className="inline-block mb-8">
-              <span className="font-semibold text-neutral-900">Renan Martins</span>
+              <Image src="/images/renan-martins-logo.png" alt="Renan Martins" width={120} height={40} className="object-contain" />
             </Link>
             <h1 className="text-2xl font-bold tracking-tight text-neutral-900" data-testid="text-update-password-title">
               Nova Senha

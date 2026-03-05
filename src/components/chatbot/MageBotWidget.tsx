@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
+import Image from "next/image";
 import { useMageBot } from "@/hooks/useMageBot";
 import ChatWindow from "./ChatWindow";
 
@@ -12,6 +12,7 @@ export default function MageBotWidget() {
     isOpen,
     unreadCount,
     isPasswordMode,
+    chatState,
     sendMessage,
     toggleOpen,
     setOpen,
@@ -25,6 +26,7 @@ export default function MageBotWidget() {
           quickReplies={quickReplies}
           isTyping={isTyping}
           isPasswordMode={isPasswordMode}
+          chatState={chatState}
           onSend={sendMessage}
           onClose={() => setOpen(false)}
         />
@@ -36,7 +38,7 @@ export default function MageBotWidget() {
         data-testid="button-magebot-widget"
         aria-label="Abrir chat"
       >
-        <MessageCircle className="w-6 h-6" />
+        <Image src="/images/team-mago-circle.png" alt="MageBot" width={36} height={36} className="rounded-full" />
         {unreadCount > 0 && (
           <span
             className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center"

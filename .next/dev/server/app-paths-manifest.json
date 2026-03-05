@@ -1,3 +1,5 @@
 {
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/apple-icon/route": "app/apple-icon/route.js",
   "/page": "app/page.js"
 }

@@ -41,7 +41,7 @@ function baseTemplate(content: string): string {
 }
 
 function appointmentBlock(date: string, time: string, type: string): string {
-  const typeLabel = type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+  const typeLabel = type === "FIRST_VISIT" ? "Consulta" : "Retorno";
   return `
     <div style="background-color:#f8f9fa;border-radius:8px;padding:16px;margin:16px 0;border-left:4px solid ${ACCENT_COLOR};">
       <p style="margin:0 0 4px;font-size:14px;color:#666;">📅 <strong>${date}</strong> às <strong>${time}</strong></p>

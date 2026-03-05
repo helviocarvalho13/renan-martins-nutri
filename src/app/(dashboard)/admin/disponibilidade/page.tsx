@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Clock, Trash2, Plus, Save, CalendarOff } from "lucide-react";
+import { Clock, Trash2, Plus, Save, CalendarOff, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const DAYS_OF_WEEK = [
@@ -53,6 +53,9 @@ export default function DisponibilidadePage() {
   const [addingBlock, setAddingBlock] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [returnWindowDays, setReturnWindowDays] = useState(30);
+  const [savingReturnWindow, setSavingReturnWindow] = useState(false);
+
   const [newBlock, setNewBlock] = useState({
     date: "",
     start_time: "",
@@ -64,7 +67,7 @@ export default function DisponibilidadePage() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [configRes, blockedRes] = await Promise.all([
+      const [configRes, blockedRes, settingsRes] = await Promise.all([
         supabase
           .from("schedule_config")
           .select("*")
@@ -73,7 +76,12 @@ export default function DisponibilidadePage() {
           .from("blocked_slots")
           .select("*")
           .order("date", { ascending: true }),
+        fetch("/api/settings").then(r => r.json()).catch(() => null),
       ]);
+
+      if (settingsRes?.return_window_days) {
+        setReturnWindowDays(settingsRes.return_window_days);
+      }
 
       const existingConfigs = (configRes.data || []) as ScheduleConfig[];
       const dayConfigs: DayConfig[] = DAYS_OF_WEEK.map((_, index) => {
@@ -194,6 +202,26 @@ export default function DisponibilidadePage() {
     } finally {
       setAddingBlock(false);
     }
+  };
+
+  const handleSaveReturnWindow = async () => {
+    setSavingReturnWindow(true);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ return_window_days: returnWindowDays }),
+      });
+      if (res.ok) {
+        toast({ title: "Configuração salva", description: "Janela de retorno atualizada com sucesso." });
+      } else {
+        const data = await res.json().catch(() => null);
+        toast({ title: "Erro ao salvar", description: data?.error || "Não foi possível salvar.", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Erro ao salvar", description: "Erro de conexão.", variant: "destructive" });
+    }
+    setSavingReturnWindow(false);
   };
 
   const handleDeleteBlock = async (id: string) => {
@@ -506,6 +534,41 @@ export default function DisponibilidadePage() {
               </div>
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <RotateCcw className="w-5 h-5" />
+            Janela de Retorno
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Após uma consulta concluída, o paciente pode agendar um retorno dentro desta janela de dias. Após esse período, será necessário agendar uma consulta regular.
+          </p>
+          <div className="flex items-center gap-3">
+            <Label className="text-sm whitespace-nowrap">Dias para retorno</Label>
+            <Input
+              type="number"
+              value={returnWindowDays}
+              onChange={(e) => setReturnWindowDays(parseInt(e.target.value) || 30)}
+              min={1}
+              max={365}
+              className="w-24"
+              data-testid="input-return-window-days"
+            />
+            <span className="text-sm text-muted-foreground">dias</span>
+          </div>
+          <Button
+            onClick={handleSaveReturnWindow}
+            disabled={savingReturnWindow}
+            data-testid="button-save-return-window"
+          >
+            <Save className="w-4 h-4" />
+            {savingReturnWindow ? "Salvando..." : "Salvar"}
+          </Button>
         </CardContent>
       </Card>
     </div>

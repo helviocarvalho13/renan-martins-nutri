@@ -56,7 +56,7 @@ user_role, appointment_type, appointment_status, notification_type
 - `/admin/agenda` - Full agenda: daily/weekly/monthly views, color-coded by status, appointment actions
 - `/admin/pacientes` - Patient list with search by name/CPF, pagination
 - `/admin/pacientes/[id]` - Individual patient profile + appointment history
-- `/admin/disponibilidade` - Schedule config per weekday + blocked slots management
+- `/admin/disponibilidade` - Schedule config per weekday + blocked slots management + return window setting
 - `/admin/site` - Site content editor + testimonials management (approve/reject)
 - `/paciente` - Single-page patient panel: booking card, upcoming appointments (with cancel), return suggestions, appointment history
 - `/paciente/agendar` - 4-step booking wizard: Tipo → Data → Horário → Confirmação
@@ -135,8 +135,12 @@ All auth pages (login, register, forgot-password, update-password) use split-scr
 - `POST /api/seed-admin` - Creates admin user (renanmartinsnutri@gmail.com / 123456) + seeds schedule_config defaults
 - `GET /api/available-slots?date=YYYY-MM-DD` - Public API returning available time slots (bypasses RLS via service role)
 - `POST /api/appointments` - Server-side booking with validation, double-booking prevention
-- `PATCH /api/appointments/[id]` - Admin-only: status update, notes, return_suggested_date + triggers notifications/email/calendar
-- `POST /api/patient/book` - Authenticated patient booking (24h advance, max 1+1, return requires completed) + triggers notifications/email/calendar
+- `PATCH /api/appointments/[id]` - Admin-only: status update, notes, return_suggested_date, reschedule (date/start_time/end_time) + triggers notifications/email/calendar
+- `POST /api/patient/book` - Authenticated patient booking (24h advance, max 1+1, return requires completed within configurable window) + triggers notifications/email/calendar
+- `GET /api/patient/return-eligibility` - Check if patient can book a return (window check, active return check)
+- `GET/PUT /api/settings` - Admin settings (return_window_days stored in site_content table)
+- `GET /api/admin/patients/search?q=term` - Search patients by name or CPF
+- `POST /api/admin/appointments` - Admin-created bookings (status=CONFIRMED)
 - `POST /api/patient/cancel` - Authenticated patient cancellation (12h advance) + triggers notifications/email/calendar
 - `GET /api/cron/reminders` - 24h appointment reminder emails + in-app notifications (secured by CRON_SECRET)
 

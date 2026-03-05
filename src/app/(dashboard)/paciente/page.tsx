@@ -31,7 +31,7 @@ const statusMap: Record<string, { label: string; class: string }> = {
 };
 
 function formatTypeLabel(type: string) {
-  return type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+  return type === "FIRST_VISIT" ? "Consulta" : "Retorno";
 }
 
 export default function PatientDashboard() {

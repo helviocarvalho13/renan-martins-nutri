@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ChatMessage, QuickReply } from "@/lib/chatbot/types";
@@ -10,6 +11,7 @@ interface ChatWindowProps {
   quickReplies: QuickReply[];
   isTyping: boolean;
   isPasswordMode?: boolean;
+  chatState?: string;
   onSend: (text: string) => void;
   onClose: () => void;
 }
@@ -62,12 +64,30 @@ export default function ChatWindow({
   quickReplies,
   isTyping,
   isPasswordMode,
+  chatState,
   onSend,
   onClose,
 }: ChatWindowProps) {
   const [input, setInput] = useState("");
+  const [dateValue, setDateValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const showTextInput = chatState === "LOGIN_EMAIL" || chatState === "LOGIN_PASSWORD";
+  const showDatePicker = chatState === "SELECT_DATE";
+
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split("T")[0];
+  };
+
+  const handleDateSearch = () => {
+    if (!dateValue) return;
+    const [year, month, day] = dateValue.split("-");
+    onSend(`${day}/${month}/${year}`);
+    setDateValue("");
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -91,9 +111,7 @@ export default function ChatWindow({
     >
       <div className="flex items-center justify-between gap-2 px-4 py-3 bg-neutral-900 text-white rounded-t-md">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold">
-            M
-          </div>
+          <Image src="/images/team-mago-circle.png" alt="MageBot" width={32} height={32} className="rounded-full" />
           <div>
             <h3 className="text-sm font-semibold" data-testid="text-chatbot-name">MageBot</h3>
             <p className="text-[11px] text-white/70">Assistente Virtual</p>
@@ -134,29 +152,51 @@ export default function ChatWindow({
         </div>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        className="flex items-center gap-2 px-3 py-2 border-t border-border"
-        data-testid="chat-input-form"
-      >
-        <input
-          ref={inputRef}
-          type={isPasswordMode ? "password" : "text"}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder={isPasswordMode ? "Digite sua senha..." : "Digite sua mensagem..."}
-          className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none h-9 px-3 border border-input rounded-md"
-          data-testid="input-chat-message"
-        />
-        <Button
-          type="submit"
-          size="icon"
-          disabled={!input.trim()}
-          data-testid="button-send-message"
+      {showDatePicker && (
+        <div className="flex items-center gap-2 px-3 py-2 border-t border-border">
+          <input
+            type="date"
+            value={dateValue}
+            onChange={(e) => setDateValue(e.target.value)}
+            min={getTomorrowDate()}
+            className="flex-1 bg-transparent text-sm text-foreground outline-none h-9 px-3 border border-input rounded-md"
+            data-testid="input-date-picker"
+          />
+          <Button
+            onClick={handleDateSearch}
+            disabled={!dateValue}
+            data-testid="button-search-slots"
+          >
+            Buscar horários
+          </Button>
+        </div>
+      )}
+
+      {showTextInput && (
+        <form
+          onSubmit={handleSubmit}
+          className="flex items-center gap-2 px-3 py-2 border-t border-border"
+          data-testid="chat-input-form"
         >
-          <Send className="w-4 h-4" />
-        </Button>
-      </form>
+          <input
+            ref={inputRef}
+            type={isPasswordMode ? "password" : "text"}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={isPasswordMode ? "Digite sua senha..." : "Digite sua mensagem..."}
+            className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none h-9 px-3 border border-input rounded-md"
+            data-testid="input-chat-message"
+          />
+          <Button
+            type="submit"
+            size="icon"
+            disabled={!input.trim()}
+            data-testid="button-send-message"
+          >
+            <Send className="w-4 h-4" />
+          </Button>
+        </form>
+      )}
     </div>
   );
 }

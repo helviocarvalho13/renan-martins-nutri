@@ -27,7 +27,7 @@ const ANYTHING_ELSE_REPLIES: QuickReply[] = [
 ];
 
 const TYPE_REPLIES: QuickReply[] = [
-  { label: "Primeira Consulta", value: "FIRST_VISIT" },
+  { label: "Consulta", value: "FIRST_VISIT" },
   { label: "Retorno", value: "RETURN" },
 ];
 
@@ -205,10 +205,10 @@ export function getLoginFailureResponse(context: ChatContext, error?: string): E
 }
 
 function handleSelectType(input: string, context: ChatContext): EngineResponse {
-  if (input === "first_visit" || input.includes("primeira")) {
+  if (input === "first_visit" || input.includes("consulta")) {
     return {
       messages: [
-        "Primeira consulta selecionada! ✅",
+        "Consulta selecionada! ✅",
         "Para qual data você gostaria de agendar? Você pode digitar: 'amanhã', 'próxima segunda', 'dia 15', '15/03', etc.",
       ],
       context: { ...context, state: "SELECT_DATE", appointmentType: "FIRST_VISIT" },
@@ -382,18 +382,14 @@ function handleShowSlots(input: string, context: ChatContext): EngineResponse {
     };
   }
 
-  const typeLabel = context.appointmentType === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+  const typeLabel = context.appointmentType === "FIRST_VISIT" ? "Consulta" : "Retorno";
   const dateFormatted = context.selectedDate
     ? formatDatePtBr(new Date(context.selectedDate + "T12:00:00"))
     : "";
 
   return {
     messages: [
-      "📋 Por favor, confirme os dados do agendamento:",
-      `Tipo: ${typeLabel}`,
-      `Data: ${dateFormatted}`,
-      `Horário: ${formatSlotTime(matchedSlot.start_time)} - ${formatSlotTime(matchedSlot.end_time)}`,
-      "Deseja confirmar?",
+      "📋 Confirme: " + typeLabel + ", em " + dateFormatted + ", às " + formatSlotTime(matchedSlot.start_time) + " até " + formatSlotTime(matchedSlot.end_time) + ". Deseja confirmar?"
     ],
     context: { ...context, state: "CONFIRM", selectedSlot: matchedSlot },
     quickReplies: [

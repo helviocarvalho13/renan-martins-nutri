@@ -96,7 +96,7 @@ export async function addCalendarEvent(
       : "Paciente";
 
     const typeLabel =
-      appointment.type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+      appointment.type === "FIRST_VISIT" ? "Consulta" : "Retorno";
 
     const response = await calendar.events.insert({
       calendarId: "primary",
@@ -182,7 +182,7 @@ export async function updateCalendarEvent(
       ? await getPatientNameForEvent(appointment.patient_id)
       : "Paciente";
     const typeLabel =
-      appointment.type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+      appointment.type === "FIRST_VISIT" ? "Consulta" : "Retorno";
 
     await calendar.events.patch({
       calendarId: "primary",

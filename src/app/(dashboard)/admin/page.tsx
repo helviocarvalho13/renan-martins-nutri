@@ -209,7 +209,7 @@ export default function AdminDashboardPage() {
                           {apt.profiles?.full_name || "Paciente"}
                         </p>
                         <p className="text-xs text-neutral-400">
-                          {apt.type === "FIRST_VISIT" ? "Primeira consulta" : "Retorno"}
+                          {apt.type === "FIRST_VISIT" ? "Consulta" : "Retorno"}
                         </p>
                       </div>
                       <Badge className={`${statusColors[apt.status]} border-0 text-[11px]`}>

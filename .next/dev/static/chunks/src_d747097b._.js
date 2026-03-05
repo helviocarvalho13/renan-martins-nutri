@@ -234,7 +234,7 @@ const ANYTHING_ELSE_REPLIES = [
 ];
 const TYPE_REPLIES = [
     {
-        label: "Primeira Consulta",
+        label: "Consulta",
         value: "FIRST_VISIT"
     },
     {
@@ -452,10 +452,10 @@ function getLoginFailureResponse(context, error) {
     };
 }
 function handleSelectType(input, context) {
-    if (input === "first_visit" || input.includes("primeira")) {
+    if (input === "first_visit" || input.includes("consulta")) {
         return {
             messages: [
-                "Primeira consulta selecionada! ✅",
+                "Consulta selecionada! ✅",
                 "Para qual data você gostaria de agendar? Você pode digitar: 'amanhã', 'próxima segunda', 'dia 15', '15/03', etc."
             ],
             context: {
@@ -706,15 +706,11 @@ function handleShowSlots(input, context) {
                 }))
         };
     }
-    const typeLabel = context.appointmentType === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+    const typeLabel = context.appointmentType === "FIRST_VISIT" ? "Consulta" : "Retorno";
     const dateFormatted = context.selectedDate ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(context.selectedDate + "T12:00:00")) : "";
     return {
         messages: [
-            "📋 Por favor, confirme os dados do agendamento:",
-            `Tipo: ${typeLabel}`,
-            `Data: ${dateFormatted}`,
-            `Horário: ${formatSlotTime(matchedSlot.start_time)} - ${formatSlotTime(matchedSlot.end_time)}`,
-            "Deseja confirmar?"
+            "📋 Confirme: " + typeLabel + ", em " + dateFormatted + ", às " + formatSlotTime(matchedSlot.start_time) + " até " + formatSlotTime(matchedSlot.end_time) + ". Deseja confirmar?"
         ],
         context: {
             ...context,
@@ -1253,6 +1249,7 @@ function useMageBot() {
         isOpen,
         unreadCount,
         isPasswordMode: context.state === "LOGIN_PASSWORD",
+        chatState: context.state,
         sendMessage,
         toggleOpen,
         setOpen: setOpenFn
@@ -1340,12 +1337,14 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/x.js [app-client] (ecmascript) <export default as X>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$send$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Send$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/send.js [app-client] (ecmascript) <export default as Send>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/button.tsx [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
+;
 ;
 ;
 ;
@@ -1363,7 +1362,7 @@ function TypingIndicator() {
                     }
                 }, void 0, false, {
                     fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                    lineNumber: 21,
+                    lineNumber: 23,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1373,7 +1372,7 @@ function TypingIndicator() {
                     }
                 }, void 0, false, {
                     fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                    lineNumber: 22,
+                    lineNumber: 24,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1383,18 +1382,18 @@ function TypingIndicator() {
                     }
                 }, void 0, false, {
                     fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                    lineNumber: 23,
+                    lineNumber: 25,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-            lineNumber: 20,
+            lineNumber: 22,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-        lineNumber: 19,
+        lineNumber: 21,
         columnNumber: 5
     }, this);
 }
@@ -1416,7 +1415,7 @@ function MessageBubble({ message }) {
                     children: message.text
                 }, void 0, false, {
                     fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                    lineNumber: 47,
+                    lineNumber: 49,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1424,27 +1423,41 @@ function MessageBubble({ message }) {
                     children: time
                 }, void 0, false, {
                     fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                    lineNumber: 48,
+                    lineNumber: 50,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-            lineNumber: 40,
+            lineNumber: 42,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-        lineNumber: 36,
+        lineNumber: 38,
         columnNumber: 5
     }, this);
 }
 _c1 = MessageBubble;
-function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, onSend, onClose }) {
+function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, chatState, onSend, onClose }) {
     _s();
     const [input, setInput] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [dateValue, setDateValue] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     const messagesEndRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const inputRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const showTextInput = chatState === "LOGIN_EMAIL" || chatState === "LOGIN_PASSWORD";
+    const showDatePicker = chatState === "SELECT_DATE";
+    const getTomorrowDate = ()=>{
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow.toISOString().split("T")[0];
+    };
+    const handleDateSearch = ()=>{
+        if (!dateValue) return;
+        const [year, month, day] = dateValue.split("-");
+        onSend(`${day}/${month}/${year}`);
+        setDateValue("");
+    };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "ChatWindow.useEffect": ()=>{
             messagesEndRef.current?.scrollIntoView({
@@ -1474,12 +1487,15 @@ function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, onSend, 
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex items-center gap-2",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold",
-                                children: "M"
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                src: "/images/team-mago-circle.png",
+                                alt: "MageBot",
+                                width: 32,
+                                height: 32,
+                                className: "rounded-full"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                                lineNumber: 94,
+                                lineNumber: 114,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1490,7 +1506,7 @@ function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, onSend, 
                                         children: "MageBot"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                                        lineNumber: 98,
+                                        lineNumber: 116,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1498,19 +1514,19 @@ function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, onSend, 
                                         children: "Assistente Virtual"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                                        lineNumber: 99,
+                                        lineNumber: 117,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                                lineNumber: 97,
+                                lineNumber: 115,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                        lineNumber: 93,
+                        lineNumber: 113,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1523,18 +1539,18 @@ function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, onSend, 
                             className: "w-4 h-4"
                         }, void 0, false, {
                             fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                            lineNumber: 109,
+                            lineNumber: 127,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                        lineNumber: 102,
+                        lineNumber: 120,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                lineNumber: 92,
+                lineNumber: 112,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1544,25 +1560,25 @@ function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, onSend, 
                             message: msg
                         }, msg.id, false, {
                             fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                            lineNumber: 115,
+                            lineNumber: 133,
                             columnNumber: 11
                         }, this)),
                     isTyping && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(TypingIndicator, {}, void 0, false, {
                         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                        lineNumber: 117,
+                        lineNumber: 135,
                         columnNumber: 22
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         ref: messagesEndRef
                     }, void 0, false, {
                         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                        lineNumber: 118,
+                        lineNumber: 136,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                lineNumber: 113,
+                lineNumber: 131,
                 columnNumber: 7
             }, this),
             quickReplies.length > 0 && !isTyping && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1576,15 +1592,46 @@ function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, onSend, 
                         children: reply.label
                     }, reply.value, false, {
                         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                        lineNumber: 124,
+                        lineNumber: 142,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                lineNumber: 122,
+                lineNumber: 140,
                 columnNumber: 9
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
+            showDatePicker && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "flex items-center gap-2 px-3 py-2 border-t border-border",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                        type: "date",
+                        value: dateValue,
+                        onChange: (e)=>setDateValue(e.target.value),
+                        min: getTomorrowDate(),
+                        className: "flex-1 bg-transparent text-sm text-foreground outline-none h-9 px-3 border border-input rounded-md",
+                        "data-testid": "input-date-picker"
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 157,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                        onClick: handleDateSearch,
+                        disabled: !dateValue,
+                        "data-testid": "button-search-slots",
+                        children: "Buscar horários"
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 165,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                lineNumber: 156,
+                columnNumber: 9
+            }, this),
+            showTextInput && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                 onSubmit: handleSubmit,
                 className: "flex items-center gap-2 px-3 py-2 border-t border-border",
                 "data-testid": "chat-input-form",
@@ -1599,8 +1646,8 @@ function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, onSend, 
                         "data-testid": "input-chat-message"
                     }, void 0, false, {
                         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                        lineNumber: 142,
-                        columnNumber: 9
+                        lineNumber: 181,
+                        columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                         type: "submit",
@@ -1611,28 +1658,28 @@ function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, onSend, 
                             className: "w-4 h-4"
                         }, void 0, false, {
                             fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                            lineNumber: 157,
-                            columnNumber: 11
+                            lineNumber: 196,
+                            columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                        lineNumber: 151,
-                        columnNumber: 9
+                        lineNumber: 190,
+                        columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-                lineNumber: 137,
-                columnNumber: 7
+                lineNumber: 176,
+                columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
-        lineNumber: 88,
+        lineNumber: 108,
         columnNumber: 5
     }, this);
 }
-_s(ChatWindow, "z+8YXE0r4x0YDACvmHFK3txB7x0=");
+_s(ChatWindow, "OOGGOTFFcXPw82aS2A/Xtim7VWc=");
 _c2 = ChatWindow;
 var _c, _c1, _c2;
 __turbopack_context__.k.register(_c, "TypingIndicator");
@@ -1650,7 +1697,7 @@ __turbopack_context__.s([
     ()=>MageBotWidget
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$message$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__MessageCircle$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/message-circle.js [app-client] (ecmascript) <export default as MessageCircle>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useMageBot$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/hooks/useMageBot.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$chatbot$2f$ChatWindow$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/chatbot/ChatWindow.tsx [app-client] (ecmascript)");
 ;
@@ -1661,7 +1708,7 @@ var _s = __turbopack_context__.k.signature();
 ;
 function MageBotWidget() {
     _s();
-    const { messages, quickReplies, isTyping, isOpen, unreadCount, isPasswordMode, sendMessage, toggleOpen, setOpen } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useMageBot$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMageBot"])();
+    const { messages, quickReplies, isTyping, isOpen, unreadCount, isPasswordMode, chatState, sendMessage, toggleOpen, setOpen } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useMageBot$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMageBot"])();
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
         children: [
             isOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$chatbot$2f$ChatWindow$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1669,11 +1716,12 @@ function MageBotWidget() {
                 quickReplies: quickReplies,
                 isTyping: isTyping,
                 isPasswordMode: isPasswordMode,
+                chatState: chatState,
                 onSend: sendMessage,
                 onClose: ()=>setOpen(false)
             }, void 0, false, {
                 fileName: "[project]/src/components/chatbot/MageBotWidget.tsx",
-                lineNumber: 23,
+                lineNumber: 24,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1682,11 +1730,15 @@ function MageBotWidget() {
                 "data-testid": "button-magebot-widget",
                 "aria-label": "Abrir chat",
                 children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$message$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__MessageCircle$3e$__["MessageCircle"], {
-                        className: "w-6 h-6"
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                        src: "/images/team-mago-circle.png",
+                        alt: "MageBot",
+                        width: 36,
+                        height: 36,
+                        className: "rounded-full"
                     }, void 0, false, {
                         fileName: "[project]/src/components/chatbot/MageBotWidget.tsx",
-                        lineNumber: 39,
+                        lineNumber: 41,
                         columnNumber: 9
                     }, this),
                     unreadCount > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1695,19 +1747,19 @@ function MageBotWidget() {
                         children: unreadCount > 9 ? "9+" : unreadCount
                     }, void 0, false, {
                         fileName: "[project]/src/components/chatbot/MageBotWidget.tsx",
-                        lineNumber: 41,
+                        lineNumber: 43,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/chatbot/MageBotWidget.tsx",
-                lineNumber: 33,
+                lineNumber: 35,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true);
 }
-_s(MageBotWidget, "vUeKlBgSQBTZSy6TIv3ub7+zJUE=", false, function() {
+_s(MageBotWidget, "wNZ61A1hW4h2oOAwm9qqHSEUCbk=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useMageBot$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMageBot"]
     ];

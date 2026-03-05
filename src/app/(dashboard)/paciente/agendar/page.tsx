@@ -132,27 +132,32 @@ export default function PatientBookingPage() {
 
   const [canReturn, setCanReturn] = useState(false);
   const [returnDate, setReturnDate] = useState<string | null>(null);
+  const [returnDaysRemaining, setReturnDaysRemaining] = useState<number | null>(null);
   const [hasActiveFirstVisit, setHasActiveFirstVisit] = useState(false);
   const [hasActiveReturn, setHasActiveReturn] = useState(false);
   const [loadingInfo, setLoadingInfo] = useState(true);
+  const [returnWindowExpired, setReturnWindowExpired] = useState(false);
 
   const { slots, loading: loadingSlots } = useAvailableSlots(selectedDate);
 
   useEffect(() => {
-    const supabase = createClient();
     async function fetchPatientInfo() {
       try {
+        const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
         const today = new Date().toISOString().split("T")[0];
 
-        const { data: appointments, error } = await supabase
-          .from("appointments")
-          .select("*")
-          .eq("patient_id", user.id);
+        const [apptRes, eligibilityRes] = await Promise.all([
+          supabase
+            .from("appointments")
+            .select("*")
+            .eq("patient_id", user.id),
+          fetch("/api/patient/return-eligibility").then(r => r.json()).catch(() => null),
+        ]);
 
-        if (error) {
+        if (apptRes.error) {
           toast({
             title: "Erro ao carregar dados",
             description: "Não foi possível carregar suas informações. Tente novamente.",
@@ -160,7 +165,7 @@ export default function PatientBookingPage() {
           });
         }
 
-        const allAppts = (appointments || []) as Appointment[];
+        const allAppts = (apptRes.data || []) as Appointment[];
 
         const futureActive = allAppts.filter(
           (a) => a.date >= today && (a.status === "PENDING" || a.status === "CONFIRMED")
@@ -169,15 +174,16 @@ export default function PatientBookingPage() {
         setHasActiveFirstVisit(futureActive.some((a) => a.type === "FIRST_VISIT"));
         setHasActiveReturn(futureActive.some((a) => a.type === "RETURN"));
 
-        const completedWithReturn = allAppts.filter(
-          (a) => a.status === "COMPLETED" && a.return_suggested_date
-        );
-
-        const hasPendingReturn = futureActive.some((a) => a.type === "RETURN");
-
-        if (completedWithReturn.length > 0 && !hasPendingReturn) {
-          setCanReturn(true);
-          setReturnDate(completedWithReturn[0].return_suggested_date);
+        if (eligibilityRes) {
+          if (eligibilityRes.eligible) {
+            setCanReturn(true);
+            setReturnDate(eligibilityRes.return_suggested_date || null);
+            setReturnDaysRemaining(eligibilityRes.days_remaining || null);
+          } else if (eligibilityRes.reason === "window_expired") {
+            setReturnWindowExpired(true);
+          } else if (eligibilityRes.reason === "active_return_exists") {
+            setHasActiveReturn(true);
+          }
         }
       } catch {
         toast({
@@ -256,7 +262,7 @@ export default function PatientBookingPage() {
           Sua consulta foi agendada!
         </h2>
         <p className="text-neutral-500 mb-2">
-          {selectedType === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno"} agendada com sucesso.
+          {selectedType === "FIRST_VISIT" ? "Consulta" : "Retorno"} agendada com sucesso.
         </p>
         <p className="text-sm text-neutral-400 mb-10">
           {selectedDateObj && format(selectedDateObj, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} as{" "}
@@ -346,7 +352,7 @@ export default function PatientBookingPage() {
                     <UserPlus className="w-5 h-5 text-neutral-700" />
                   </div>
                   <div>
-                    <p className="font-medium text-neutral-900 mb-1">Primeira Consulta</p>
+                    <p className="font-medium text-neutral-900 mb-1">Consulta</p>
                     <p className="text-xs text-neutral-500">
                       Sua primeira consulta com o nutricionista
                     </p>
@@ -385,9 +391,14 @@ export default function PatientBookingPage() {
                     <p className="text-xs text-neutral-500">
                       Consulta de acompanhamento
                     </p>
-                    {!canReturn && (
+                    {!canReturn && !returnWindowExpired && (
                       <p className="text-xs text-red-500 mt-2" data-testid="text-return-disabled-reason">
-                        Disponivel apos uma consulta concluida
+                        Disponível após uma consulta concluída
+                      </p>
+                    )}
+                    {returnWindowExpired && (
+                      <p className="text-xs text-red-500 mt-2" data-testid="text-return-window-expired">
+                        Janela de retorno expirou. Agende uma consulta regular.
                       </p>
                     )}
                     {canReturn && hasActiveReturn && (
@@ -395,10 +406,19 @@ export default function PatientBookingPage() {
                         Você já possui um retorno agendado
                       </p>
                     )}
-                    {canReturn && !hasActiveReturn && returnDate && (
-                      <p className="text-xs text-neutral-500 mt-2" data-testid="text-return-suggested-date">
-                        Retorno sugerido para {format(new Date(returnDate + "T12:00:00"), "dd/MM/yyyy")}
-                      </p>
+                    {canReturn && !hasActiveReturn && (
+                      <div className="mt-2 space-y-0.5">
+                        {returnDate && (
+                          <p className="text-xs text-neutral-500" data-testid="text-return-suggested-date">
+                            Retorno sugerido para {format(new Date(returnDate + "T12:00:00"), "dd/MM/yyyy")}
+                          </p>
+                        )}
+                        {returnDaysRemaining !== null && (
+                          <p className="text-xs text-neutral-400" data-testid="text-return-days-remaining">
+                            {returnDaysRemaining} dias restantes na janela de retorno
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -545,7 +565,7 @@ export default function PatientBookingPage() {
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="text-sm text-neutral-500">Tipo</span>
                 <span className="text-sm font-medium text-neutral-900" data-testid="text-confirm-type">
-                  {selectedType === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno"}
+                  {selectedType === "FIRST_VISIT" ? "Consulta" : "Retorno"}
                 </span>
               </div>
               <div className="h-px bg-neutral-100" />

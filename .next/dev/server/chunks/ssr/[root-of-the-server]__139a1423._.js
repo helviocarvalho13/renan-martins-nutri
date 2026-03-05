@@ -220,9 +220,11 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$x$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__XCircle$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/circle-x.js [app-ssr] (ecmascript) <export default as XCircle>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$rotate$2d$ccw$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RotateCcw$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/rotate-ccw.js [app-ssr] (ecmascript) <export default as RotateCcw>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/supabase/client.ts [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/hooks/use-toast.ts [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/date-fns/format.mjs [app-ssr] (ecmascript) <locals>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$locale$2f$pt$2d$BR$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/locale/pt-BR.mjs [app-ssr] (ecmascript)");
 "use client";
+;
 ;
 ;
 ;
@@ -250,36 +252,53 @@ const statusMap = {
         class: "bg-red-100 text-red-700"
     },
     COMPLETED: {
-        label: "Concluida",
+        label: "Concluída",
         class: "bg-green-100 text-green-700"
     },
     NO_SHOW: {
-        label: "Nao compareceu",
+        label: "Não compareceu",
         class: "bg-neutral-200 text-neutral-600"
     }
 };
 function formatTypeLabel(type) {
-    return type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+    return type === "FIRST_VISIT" ? "Consulta" : "Retorno";
 }
 function PatientDashboard() {
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
+    const { toast } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useToast"])();
     const [appointments, setAppointments] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [userName, setUserName] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const [cancellingId, setCancellingId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createClient"])();
     const fetchData = async ()=>{
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            router.push("/login");
-            return;
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                router.push("/login");
+                return;
+            }
+            setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Paciente");
+            const { data: appts, error } = await supabase.from("appointments").select("*").eq("patient_id", user.id).order("date", {
+                ascending: true
+            });
+            if (error) {
+                toast({
+                    title: "Erro ao carregar consultas",
+                    description: "Não foi possível carregar suas consultas. Tente novamente.",
+                    variant: "destructive"
+                });
+            }
+            setAppointments(appts || []);
+        } catch  {
+            toast({
+                title: "Erro ao carregar consultas",
+                description: "Ocorreu um erro inesperado. Tente novamente.",
+                variant: "destructive"
+            });
+        } finally{
+            setLoading(false);
         }
-        setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Paciente");
-        const { data: appts } = await supabase.from("appointments").select("*").eq("patient_id", user.id).order("date", {
-            ascending: true
-        });
-        setAppointments(appts || []);
-        setLoading(false);
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         fetchData();
@@ -309,12 +328,24 @@ function PatientDashboard() {
             });
             const data = await res.json();
             if (res.ok) {
+                toast({
+                    title: "Consulta cancelada",
+                    description: "Sua consulta foi cancelada com sucesso."
+                });
                 await fetchData();
             } else {
-                alert(data.error || "Erro ao cancelar consulta.");
+                toast({
+                    title: "Erro ao cancelar",
+                    description: data.error || "Não foi possível cancelar a consulta.",
+                    variant: "destructive"
+                });
             }
         } catch  {
-            alert("Erro ao cancelar consulta.");
+            toast({
+                title: "Erro ao cancelar",
+                description: "Ocorreu um erro inesperado. Tente novamente.",
+                variant: "destructive"
+            });
         } finally{
             setCancellingId(null);
         }
@@ -327,34 +358,34 @@ function PatientDashboard() {
                     className: "h-8 w-48"
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                    lineNumber: 132,
+                    lineNumber: 163,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
                     className: "h-28 w-full"
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                    lineNumber: 133,
+                    lineNumber: 164,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
                     className: "h-40 w-full"
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                    lineNumber: 134,
+                    lineNumber: 165,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
                     className: "h-40 w-full"
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                    lineNumber: 135,
+                    lineNumber: 166,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-            lineNumber: 131,
+            lineNumber: 162,
             columnNumber: 7
         }, this);
     }
@@ -365,12 +396,12 @@ function PatientDashboard() {
                 className: "text-2xl font-bold tracking-tight text-neutral-900",
                 "data-testid": "text-dashboard-title",
                 children: [
-                    "Ola, ",
+                    "Olá, ",
                     userName.split(" ")[0]
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                lineNumber: 142,
+                lineNumber: 173,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -387,12 +418,12 @@ function PatientDashboard() {
                                     className: "w-6 h-6 text-white"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                    lineNumber: 150,
+                                    lineNumber: 181,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                lineNumber: 149,
+                                lineNumber: 180,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -403,7 +434,7 @@ function PatientDashboard() {
                                         children: "Agendar Consulta"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                        lineNumber: 153,
+                                        lineNumber: 184,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -411,29 +442,29 @@ function PatientDashboard() {
                                         children: "Marque uma nova consulta com o nutricionista"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                        lineNumber: 154,
+                                        lineNumber: 185,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                lineNumber: 152,
+                                lineNumber: 183,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                        lineNumber: 148,
+                        lineNumber: 179,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                    lineNumber: 147,
+                    lineNumber: 178,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                lineNumber: 146,
+                lineNumber: 177,
                 columnNumber: 7
             }, this),
             !hasActiveReturn && completedFirstVisitsWithReturn.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -451,7 +482,7 @@ function PatientDashboard() {
                                             className: "w-5 h-5 text-blue-600 shrink-0"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                            lineNumber: 166,
+                                            lineNumber: 197,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -466,73 +497,74 @@ function PatientDashboard() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                    lineNumber: 168,
+                                                    lineNumber: 199,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                     className: "text-xs text-blue-700 mt-0.5",
                                                     children: [
                                                         formatTypeLabel(a.type),
-                                                        " concluida em",
+                                                        " concluída em",
                                                         " ",
                                                         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(new Date(a.date + "T12:00:00"), "dd/MM/yyyy")
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                    lineNumber: 172,
+                                                    lineNumber: 203,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                            lineNumber: 167,
+                                            lineNumber: 198,
                                             columnNumber: 19
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                    lineNumber: 165,
+                                    lineNumber: 196,
                                     columnNumber: 17
                                 }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                                    href: "/paciente/agendar?type=RETURN",
-                                    "data-testid": `link-schedule-return-${a.id}`,
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
-                                        size: "sm",
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                                    size: "sm",
+                                    asChild: true,
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                        href: "/paciente/agendar?type=RETURN",
+                                        "data-testid": `link-schedule-return-${a.id}`,
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$rotate$2d$ccw$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__RotateCcw$3e$__["RotateCcw"], {
                                                 className: "w-4 h-4 mr-1"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                lineNumber: 180,
+                                                lineNumber: 211,
                                                 columnNumber: 21
                                             }, this),
                                             "Agendar Retorno"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                        lineNumber: 179,
+                                        lineNumber: 210,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                    lineNumber: 178,
+                                    lineNumber: 209,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                            lineNumber: 164,
+                            lineNumber: 195,
                             columnNumber: 15
                         }, this)
                     }, a.id, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                        lineNumber: 163,
+                        lineNumber: 194,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                lineNumber: 161,
+                lineNumber: 192,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -540,10 +572,10 @@ function PatientDashboard() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                         className: "text-base font-semibold text-neutral-900 mb-4",
                         "data-testid": "text-upcoming-title",
-                        children: "Proximas Consultas"
+                        children: "Próximas Consultas"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                        lineNumber: 191,
+                        lineNumber: 222,
                         columnNumber: 9
                     }, this),
                     upcoming.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -555,26 +587,26 @@ function PatientDashboard() {
                                     className: "w-10 h-10 text-neutral-300 mx-auto mb-3"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                    lineNumber: 197,
+                                    lineNumber: 228,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-sm text-neutral-500",
-                                    children: "Voce nao tem consultas agendadas"
+                                    children: "Você não tem consultas agendadas"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                    lineNumber: 198,
+                                    lineNumber: 229,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                            lineNumber: 196,
+                            lineNumber: 227,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                        lineNumber: 195,
+                        lineNumber: 226,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "space-y-3",
@@ -596,7 +628,7 @@ function PatientDashboard() {
                                                                 children: formatTypeLabel(apt.type)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                                lineNumber: 211,
+                                                                lineNumber: 242,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -605,13 +637,13 @@ function PatientDashboard() {
                                                                 children: statusMap[apt.status]?.label || apt.status
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                                lineNumber: 214,
+                                                                lineNumber: 245,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                        lineNumber: 210,
+                                                        lineNumber: 241,
                                                         columnNumber: 23
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -625,7 +657,7 @@ function PatientDashboard() {
                                                                         className: "w-3.5 h-3.5"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                                        lineNumber: 223,
+                                                                        lineNumber: 254,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(new Date(apt.date + "T12:00:00"), "dd 'de' MMMM 'de' yyyy", {
@@ -634,7 +666,7 @@ function PatientDashboard() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                                lineNumber: 222,
+                                                                lineNumber: 253,
                                                                 columnNumber: 25
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -645,7 +677,7 @@ function PatientDashboard() {
                                                                         className: "w-3.5 h-3.5"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                                        lineNumber: 229,
+                                                                        lineNumber: 260,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     apt.start_time.slice(0, 5),
@@ -654,19 +686,19 @@ function PatientDashboard() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                                lineNumber: 228,
+                                                                lineNumber: 259,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                        lineNumber: 221,
+                                                        lineNumber: 252,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                lineNumber: 209,
+                                                lineNumber: 240,
                                                 columnNumber: 21
                                             }, this),
                                             canCancel(apt) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -683,14 +715,14 @@ function PatientDashboard() {
                                                             className: "w-3 h-3 border-2 border-red-300 border-t-red-600 rounded-full animate-spin"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                            lineNumber: 245,
+                                                            lineNumber: 276,
                                                             columnNumber: 29
                                                         }, this),
                                                         "Cancelando..."
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                    lineNumber: 244,
+                                                    lineNumber: 275,
                                                     columnNumber: 27
                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                                     children: [
@@ -698,7 +730,7 @@ function PatientDashboard() {
                                                             className: "w-4 h-4 mr-1"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                            lineNumber: 250,
+                                                            lineNumber: 281,
                                                             columnNumber: 29
                                                         }, this),
                                                         "Cancelar"
@@ -706,39 +738,39 @@ function PatientDashboard() {
                                                 }, void 0, true)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                lineNumber: 235,
+                                                lineNumber: 266,
                                                 columnNumber: 23
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                        lineNumber: 208,
+                                        lineNumber: 239,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                    lineNumber: 207,
+                                    lineNumber: 238,
                                     columnNumber: 17
                                 }, this)
                             }, apt.id, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                lineNumber: 206,
+                                lineNumber: 237,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                        lineNumber: 204,
+                        lineNumber: 235,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                lineNumber: 190,
+                lineNumber: 221,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$separator$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Separator"], {}, void 0, false, {
                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                lineNumber: 264,
+                lineNumber: 295,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -746,10 +778,10 @@ function PatientDashboard() {
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                         className: "text-base font-semibold text-neutral-900 mb-4",
                         "data-testid": "text-history-title",
-                        children: "Historico de Consultas"
+                        children: "Histórico de Consultas"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                        lineNumber: 267,
+                        lineNumber: 298,
                         columnNumber: 9
                     }, this),
                     history.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -758,20 +790,20 @@ function PatientDashboard() {
                             className: "p-6 text-center",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-sm text-neutral-500",
-                                children: "Nenhuma consulta no historico"
+                                children: "Nenhuma consulta no histórico"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                lineNumber: 273,
+                                lineNumber: 304,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                            lineNumber: 272,
+                            lineNumber: 303,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                        lineNumber: 271,
+                        lineNumber: 302,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "space-y-3",
@@ -794,7 +826,7 @@ function PatientDashboard() {
                                                             children: formatTypeLabel(apt.type)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                            lineNumber: 288,
+                                                            lineNumber: 319,
                                                             columnNumber: 27
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -803,13 +835,13 @@ function PatientDashboard() {
                                                             children: status.label
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                            lineNumber: 291,
+                                                            lineNumber: 322,
                                                             columnNumber: 27
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                    lineNumber: 287,
+                                                    lineNumber: 318,
                                                     columnNumber: 25
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -822,7 +854,7 @@ function PatientDashboard() {
                                                                     className: "w-3.5 h-3.5"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                                    lineNumber: 300,
+                                                                    lineNumber: 331,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(new Date(apt.date + "T12:00:00"), "dd 'de' MMMM 'de' yyyy", {
@@ -831,7 +863,7 @@ function PatientDashboard() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                            lineNumber: 299,
+                                                            lineNumber: 330,
                                                             columnNumber: 27
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -841,7 +873,7 @@ function PatientDashboard() {
                                                                     className: "w-3.5 h-3.5"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                                    lineNumber: 306,
+                                                                    lineNumber: 337,
                                                                     columnNumber: 29
                                                                 }, this),
                                                                 apt.start_time.slice(0, 5),
@@ -850,13 +882,13 @@ function PatientDashboard() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                            lineNumber: 305,
+                                                            lineNumber: 336,
                                                             columnNumber: 27
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                    lineNumber: 298,
+                                                    lineNumber: 329,
                                                     columnNumber: 25
                                                 }, this),
                                                 apt.notes && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -864,40 +896,40 @@ function PatientDashboard() {
                                                     children: apt.notes
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                                    lineNumber: 311,
+                                                    lineNumber: 342,
                                                     columnNumber: 27
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                            lineNumber: 286,
+                                            lineNumber: 317,
                                             columnNumber: 23
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                        lineNumber: 285,
+                                        lineNumber: 316,
                                         columnNumber: 21
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                    lineNumber: 284,
+                                    lineNumber: 315,
                                     columnNumber: 19
                                 }, this)
                             }, apt.id, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                lineNumber: 283,
+                                lineNumber: 314,
                                 columnNumber: 17
                             }, this);
                         })
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                        lineNumber: 279,
+                        lineNumber: 310,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                lineNumber: 266,
+                lineNumber: 297,
                 columnNumber: 7
             }, this),
             upcoming.length === 0 && history.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -909,7 +941,7 @@ function PatientDashboard() {
                             className: "w-10 h-10 text-neutral-300 mx-auto mb-3"
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                            lineNumber: 328,
+                            lineNumber: 359,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -918,7 +950,7 @@ function PatientDashboard() {
                             children: "Nenhuma consulta ainda"
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                            lineNumber: 329,
+                            lineNumber: 360,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -927,48 +959,49 @@ function PatientDashboard() {
                             children: "Agende sua primeira consulta com o nutricionista."
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                            lineNumber: 332,
+                            lineNumber: 363,
                             columnNumber: 13
                         }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                            href: "/paciente/agendar",
-                            "data-testid": "link-schedule-first",
-                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                            asChild: true,
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                href: "/paciente/agendar",
+                                "data-testid": "link-schedule-first",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$calendar$2d$plus$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__CalendarPlus$3e$__["CalendarPlus"], {
                                         className: "w-4 h-4 mr-1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                        lineNumber: 337,
+                                        lineNumber: 368,
                                         columnNumber: 17
                                     }, this),
                                     "Agendar primeira consulta"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                                lineNumber: 336,
+                                lineNumber: 367,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                            lineNumber: 335,
+                            lineNumber: 366,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                    lineNumber: 327,
+                    lineNumber: 358,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-                lineNumber: 326,
+                lineNumber: 357,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/(dashboard)/paciente/page.tsx",
-        lineNumber: 141,
+        lineNumber: 172,
         columnNumber: 5
     }, this);
 }

@@ -3,7 +3,7 @@
 
 __turbopack_context__.v((parentImport) => {
     return Promise.all([
-  "static/chunks/node_modules_9acd2968._.js",
+  "static/chunks/node_modules_77a67a3f._.js",
   "static/chunks/src_d747097b._.js",
   "static/chunks/src_components_chatbot_MageBotWidget_tsx_f77a8aca._.js"
 ].map((chunk) => __turbopack_context__.l(chunk))).then(() => {

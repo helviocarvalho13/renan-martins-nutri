@@ -32,11 +32,11 @@ function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate
       <div className="p-6">
         <Link href="/admin" onClick={onNavigate} className="flex items-center gap-3" data-testid="text-admin-brand">
           <Image
-            src="/images/team-mago.jpg"
-            alt="Team Mago"
+            src="/images/renan-martins-logo.png"
+            alt="Renan Martins"
             width={40}
             height={40}
-            className="rounded-full"
+            className="object-contain"
           />
           <div>
             <h2 className="font-bold text-sm text-neutral-900">Renan Martins</h2>
@@ -67,23 +67,6 @@ function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate
           );
         })}
       </nav>
-      <Separator />
-      <div className="p-3">
-        <button
-          onClick={() => {
-            const supabase = createClient();
-            supabase.auth.signOut().then(() => {
-              window.location.href = "/login";
-            });
-          }}
-          aria-label="Sair da conta"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-500 hover:bg-red-50 hover:text-red-600 transition-colors w-full"
-          data-testid="button-logout"
-        >
-          <LogOut className="w-4 h-4" />
-          Sair
-        </button>
-      </div>
     </div>
   );
 }
@@ -129,6 +112,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   RM
                 </div>
                 <span className="text-sm font-medium text-neutral-700" data-testid="text-admin-name">Renan Martins</span>
+                <Button variant="ghost" size="icon" aria-label="Sair da conta" onClick={() => { const supabase = createClient(); supabase.auth.signOut().then(() => { window.location.href = "/login"; }); }} data-testid="button-logout"><LogOut className="w-4 h-4 text-neutral-500" /></Button>
               </div>
             </div>
           </div>

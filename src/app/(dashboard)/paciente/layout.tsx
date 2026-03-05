@@ -33,8 +33,8 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
         <div className="flex items-center justify-between gap-3 h-16 px-4 lg:px-6 max-w-5xl mx-auto w-full">
           <Link href="/" className="flex items-center gap-3" data-testid="link-patient-home">
             <Image
-              src="/images/team-mago.jpg"
-              alt="Team Mago"
+              src="/images/renan-martins-logo.png"
+              alt="Renan Martins"
               width={36}
               height={36}
               className="rounded-full"

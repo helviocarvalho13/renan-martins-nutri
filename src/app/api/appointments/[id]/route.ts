@@ -7,6 +7,7 @@ import {
   notifyAppointmentCompleted,
   notifyNoShow,
   notifyReturnSuggestion,
+  notifyAppointmentRescheduled,
 } from "@/lib/notifications";
 import { addCalendarEvent, updateCalendarEvent, deleteCalendarEvent } from "@/lib/google-calendar";
 
@@ -30,7 +31,7 @@ export async function PATCH(
   }
 
   const body = await request.json();
-  const { status, notes, return_suggested_date } = body;
+  const { status, notes, return_suggested_date, date, start_time, end_time } = body;
 
   const validStatuses: AppointmentStatus[] = ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED", "NO_SHOW"];
   if (status && !validStatuses.includes(status)) {
@@ -42,10 +43,28 @@ export async function PATCH(
 
   const supabase = createServiceRoleClient();
 
+  if (date && start_time && end_time) {
+    const { data: conflict } = await supabase
+      .from("appointments")
+      .select("id")
+      .eq("date", date)
+      .eq("start_time", start_time)
+      .in("status", ["PENDING", "CONFIRMED"])
+      .neq("id", id)
+      .limit(1);
+
+    if (conflict && conflict.length > 0) {
+      return NextResponse.json({ error: "Este horário já está ocupado." }, { status: 409 });
+    }
+  }
+
   const updateFields: Record<string, unknown> = {};
   if (status) updateFields.status = status;
   if (notes !== undefined) updateFields.notes = notes;
   if (return_suggested_date !== undefined) updateFields.return_suggested_date = return_suggested_date;
+  if (date) updateFields.date = date;
+  if (start_time) updateFields.start_time = start_time;
+  if (end_time) updateFields.end_time = end_time;
 
   if (Object.keys(updateFields).length === 0) {
     return NextResponse.json({ error: "Nenhum campo para atualizar" }, { status: 400 });
@@ -86,6 +105,11 @@ export async function PATCH(
     } else if (status === "NO_SHOW") {
       await notifyNoShow(patientId, dateFormatted, timeFormatted, id);
       await deleteCalendarEvent(id);
+    }
+
+    if (date && start_time && !status) {
+      await notifyAppointmentRescheduled(patientId, data.date, data.start_time?.slice(0, 5), id);
+      await updateCalendarEvent(data);
     }
 
     if (!status && return_suggested_date) {
