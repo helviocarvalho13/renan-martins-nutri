@@ -197,7 +197,7 @@ function baseTemplate(content) {
 </html>`;
 }
 function appointmentBlock(date, time, type) {
-    const typeLabel = type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+    const typeLabel = type === "FIRST_VISIT" ? "Consulta" : "Retorno";
     return `
     <div style="background-color:#f8f9fa;border-radius:8px;padding:16px;margin:16px 0;border-left:4px solid ${ACCENT_COLOR};">
       <p style="margin:0 0 4px;font-size:14px;color:#666;">📅 <strong>${date}</strong> às <strong>${time}</strong></p>
@@ -313,6 +313,8 @@ __turbopack_context__.s([
     ()=>notifyAppointmentCompleted,
     "notifyAppointmentConfirmed",
     ()=>notifyAppointmentConfirmed,
+    "notifyAppointmentRescheduled",
+    ()=>notifyAppointmentRescheduled,
     "notifyNewAppointment",
     ()=>notifyNewAppointment,
     "notifyNoShow",
@@ -326,6 +328,12 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templ
 ;
 ;
 ;
+function formatDateBR(date) {
+    if (!date) return date;
+    const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (match) return match[3] + "/" + match[2] + "/" + match[1];
+    return date;
+}
 async function createNotification({ userId, type, title, message, appointmentId }) {
     const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServiceRoleClient"])();
     const { error } = await supabase.from("notifications").insert({
@@ -354,13 +362,13 @@ async function notifyNewAppointment(patientName, date, time, type, appointmentId
         userId: adminId,
         type: "APPOINTMENT_CREATED",
         title: "Nova consulta agendada",
-        message: `${patientName} agendou ${type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno"} para ${date} às ${time}`,
+        message: `${patientName} agendou ${type === "FIRST_VISIT" ? "Consulta" : "Retorno"} para ${formatDateBR(date)} às ${time}`,
         appointmentId
     });
     try {
         const adminEmail = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getAdminEmail"])();
         if (adminEmail) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["newAppointmentAdmin"](patientName, date, time, type);
+            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["newAppointmentAdmin"](patientName, formatDateBR(date), time, type);
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(adminEmail, subject, html);
         }
     } catch (e) {
@@ -373,13 +381,13 @@ async function notifyAppointmentConfirmed(patientId, date, time, type, appointme
         userId: patientId,
         type: "APPOINTMENT_CONFIRMED",
         title: "Consulta confirmada",
-        message: `Sua consulta do dia ${date} às ${time} foi confirmada!`,
+        message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi confirmada!`,
         appointmentId
     });
     try {
         const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
         if (email) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentConfirmedPatient"](patientName, date, time, type);
+            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentConfirmedPatient"](patientName, formatDateBR(date), time, type);
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
         }
     } catch (e) {
@@ -392,13 +400,13 @@ async function notifyAppointmentCancelledByAdmin(patientId, date, time, appointm
         userId: patientId,
         type: "APPOINTMENT_CANCELLED",
         title: "Consulta cancelada",
-        message: `Sua consulta do dia ${date} às ${time} foi cancelada.`,
+        message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi cancelada.`,
         appointmentId
     });
     try {
         const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
         if (email) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledPatient"](patientName, date, time);
+            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledPatient"](patientName, formatDateBR(date), time);
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
         }
     } catch (e) {
@@ -413,19 +421,19 @@ async function notifyAppointmentCancelledByPatient(patientId, date, time, appoin
             userId: adminId,
             type: "APPOINTMENT_CANCELLED",
             title: "Consulta cancelada pelo paciente",
-            message: `${patientName} cancelou a consulta do dia ${date} às ${time}.`,
+            message: `${patientName} cancelou a consulta do dia ${formatDateBR(date)} às ${time}.`,
             appointmentId
         });
     }
     try {
         const adminEmail = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getAdminEmail"])();
         if (adminEmail) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledAdmin"](patientName, date, time);
+            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledAdmin"](patientName, formatDateBR(date), time);
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(adminEmail, subject, html);
         }
         const patientEmail = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
         if (patientEmail) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledPatient"](patientName, date, time);
+            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledPatient"](patientName, formatDateBR(date), time);
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(patientEmail, subject, html);
         }
     } catch (e) {
@@ -437,7 +445,7 @@ async function notifyAppointmentCompleted(patientId, date, time, type, appointme
         userId: patientId,
         type: "APPOINTMENT_COMPLETED",
         title: "Consulta concluída",
-        message: `Sua consulta do dia ${date} às ${time} foi concluída. Obrigado!`,
+        message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi concluída. Obrigado!`,
         appointmentId
     });
 }
@@ -446,7 +454,7 @@ async function notifyNoShow(patientId, date, time, appointmentId) {
         userId: patientId,
         type: "GENERAL",
         title: "Falta registrada",
-        message: `Você não compareceu à consulta do dia ${date} às ${time}.`,
+        message: `Você não compareceu à consulta do dia ${formatDateBR(date)} às ${time}.`,
         appointmentId
     });
 }
@@ -456,17 +464,26 @@ async function notifyReturnSuggestion(patientId, suggestedDate) {
         userId: patientId,
         type: "APPOINTMENT_REMINDER",
         title: "Sugestão de retorno",
-        message: `O nutricionista sugeriu um retorno para ${suggestedDate}. Agende pelo painel do paciente.`
+        message: `O nutricionista sugeriu um retorno para ${formatDateBR(suggestedDate)}. Agende pelo painel do paciente.`
     });
     try {
         const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
         if (email) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["returnSuggestion"](patientName, suggestedDate);
+            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["returnSuggestion"](patientName, formatDateBR(suggestedDate));
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
         }
     } catch (e) {
         console.error("[notifyReturnSuggestion] Email error:", e);
     }
+}
+async function notifyAppointmentRescheduled(patientId, newDate, newTime, appointmentId) {
+    await createNotification({
+        userId: patientId,
+        type: "APPOINTMENT_CONFIRMED",
+        title: "Consulta remarcada",
+        message: `Sua consulta foi remarcada para ${formatDateBR(newDate)} às ${newTime}.`,
+        appointmentId
+    });
 }
 }),
 "[externals]/child_process [external] (child_process, cjs)", ((__turbopack_context__, module, exports) => {
@@ -679,7 +696,7 @@ async function addCalendarEvent(appointment) {
     try {
         const calendar = await getCalendarClient();
         const patientName = appointment.patient_id ? await getPatientNameForEvent(appointment.patient_id) : "Paciente";
-        const typeLabel = appointment.type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+        const typeLabel = appointment.type === "FIRST_VISIT" ? "Consulta" : "Retorno";
         const response = await calendar.events.insert({
             calendarId: "primary",
             requestBody: {
@@ -742,7 +759,7 @@ async function updateCalendarEvent(appointment) {
         const calendar = await getCalendarClient();
         const statusLabel = appointment.status === "COMPLETED" ? " [CONCLUÍDA]" : "";
         const patientName = appointment.patient_id ? await getPatientNameForEvent(appointment.patient_id) : "Paciente";
-        const typeLabel = appointment.type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+        const typeLabel = appointment.type === "FIRST_VISIT" ? "Consulta" : "Retorno";
         await calendar.events.patch({
             calendarId: "primary",
             eventId,
@@ -819,7 +836,7 @@ async function PATCH(request, { params }) {
         });
     }
     const body = await request.json();
-    const { status, notes, return_suggested_date } = body;
+    const { status, notes, return_suggested_date, date, start_time, end_time } = body;
     const validStatuses = [
         "PENDING",
         "CONFIRMED",
@@ -835,10 +852,26 @@ async function PATCH(request, { params }) {
         });
     }
     const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServiceRoleClient"])();
+    if (date && start_time && end_time) {
+        const { data: conflict } = await supabase.from("appointments").select("id").eq("date", date).eq("start_time", start_time).in("status", [
+            "PENDING",
+            "CONFIRMED"
+        ]).neq("id", id).limit(1);
+        if (conflict && conflict.length > 0) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                error: "Este horário já está ocupado."
+            }, {
+                status: 409
+            });
+        }
+    }
     const updateFields = {};
     if (status) updateFields.status = status;
     if (notes !== undefined) updateFields.notes = notes;
     if (return_suggested_date !== undefined) updateFields.return_suggested_date = return_suggested_date;
+    if (date) updateFields.date = date;
+    if (start_time) updateFields.start_time = start_time;
+    if (end_time) updateFields.end_time = end_time;
     if (Object.keys(updateFields).length === 0) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             error: "Nenhum campo para atualizar"
@@ -874,6 +907,10 @@ async function PATCH(request, { params }) {
         } else if (status === "NO_SHOW") {
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$notifications$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["notifyNoShow"])(patientId, dateFormatted, timeFormatted, id);
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$google$2d$calendar$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["deleteCalendarEvent"])(id);
+        }
+        if (date && start_time && !status) {
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$notifications$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["notifyAppointmentRescheduled"])(patientId, data.date, data.start_time?.slice(0, 5), id);
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$google$2d$calendar$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["updateCalendarEvent"])(data);
         }
         if (!status && return_suggested_date) {
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$notifications$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["notifyReturnSuggestion"])(data.patient_id, return_suggested_date);

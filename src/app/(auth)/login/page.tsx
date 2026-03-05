@@ -57,9 +57,9 @@ export default function LoginPage() {
 
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white">
         <div className="w-full max-w-sm space-y-8">
-          <div>
+          <div className="text-center">
             <Link href="/" className="inline-block mb-8">
-              <Image src="/images/renan-martins-logo.png" alt="Renan Martins" width={120} height={40} className="object-contain" />
+              <Image src="/images/renan-martins-logo.png" alt="Renan Martins" width={120} height={40} className="object-contain mx-auto" />
             </Link>
             <h1 className="text-2xl font-bold tracking-tight text-neutral-900" data-testid="text-login-title">
               Bem-vindo de volta

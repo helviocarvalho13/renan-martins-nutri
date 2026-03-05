@@ -219,7 +219,7 @@ function formatSlotTime(time) {
 const MENU_REPLIES = [
     {
         label: "📅 Agendar consulta",
-        value: "agendar"
+        value: "Agendar"
     }
 ];
 const ANYTHING_ELSE_REPLIES = [
@@ -229,17 +229,17 @@ const ANYTHING_ELSE_REPLIES = [
     },
     {
         label: "Não, obrigado",
-        value: "nao"
+        value: "Não"
     }
 ];
 const TYPE_REPLIES = [
     {
         label: "Consulta",
-        value: "FIRST_VISIT"
+        value: "Consulta"
     },
     {
         label: "Retorno",
-        value: "RETURN"
+        value: "Retorno"
     }
 ];
 async function processMessage(input, context) {
@@ -305,7 +305,7 @@ async function processMessage(input, context) {
     }
 }
 function handleGreeting(context) {
-    const greeting = context.userName ? `Olá, ${context.userName}! Eu sou o MageBot, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!` : "Olá! Eu sou o MageBot, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!";
+    const greeting = context.userName ? `Olá, ${context.userName}! Eu sou o Team Mago, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!` : "Olá! Eu sou o Team Mago, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!";
     return {
         messages: [
             greeting
@@ -336,7 +336,7 @@ function handleMenu(input, context) {
                     },
                     {
                         label: "Voltar ao menu",
-                        value: "menu"
+                        value: "Menu"
                     }
                 ]
             };
@@ -403,7 +403,7 @@ function handleLoginEmail(input, context) {
         quickReplies: [
             {
                 label: "Voltar ao menu",
-                value: "menu"
+                value: "Menu"
             }
         ]
     };
@@ -446,7 +446,7 @@ function getLoginFailureResponse(context, error) {
         quickReplies: [
             {
                 label: "Voltar ao menu",
-                value: "menu"
+                value: "Menu"
             }
         ]
     };
@@ -456,7 +456,7 @@ function handleSelectType(input, context) {
         return {
             messages: [
                 "Consulta selecionada! ✅",
-                "Para qual data você gostaria de agendar? Você pode digitar: 'amanhã', 'próxima segunda', 'dia 15', '15/03', etc."
+                "Para qual data você gostaria de agendar? Selecione a data no calendário"
             ],
             context: {
                 ...context,
@@ -487,7 +487,7 @@ function handleSelectType(input, context) {
         return {
             messages: [
                 "Retorno selecionado! ✅",
-                "Para qual data você gostaria de agendar o retorno? Você pode digitar: 'amanhã', 'próxima segunda', 'dia 15', '15/03', etc."
+                "Para qual data você gostaria de agendar o retorno? Selecione a data no calendário"
             ],
             context: {
                 ...context,
@@ -548,7 +548,7 @@ async function handleSelectDate(input, context) {
                 },
                 {
                     label: "Voltar ao menu",
-                    value: "menu"
+                    value: "Menu"
                 }
             ]
         };
@@ -596,7 +596,7 @@ async function handleSelectDate(input, context) {
                 },
                 {
                     label: "Voltar ao menu",
-                    value: "menu"
+                    value: "Menu"
                 }
             ]
         };
@@ -685,7 +685,7 @@ function handleShowSlots(input, context) {
                 },
                 {
                     label: "Voltar ao menu",
-                    value: "menu"
+                    value: "Menu"
                 }
             ]
         };
@@ -728,7 +728,7 @@ function handleShowSlots(input, context) {
             },
             {
                 label: "Cancelar",
-                value: "cancelar"
+                value: "Cancelar"
             }
         ]
     };
@@ -766,7 +766,7 @@ function handleConfirm(input, context) {
                 quickReplies: [
                     {
                         label: "Voltar ao menu",
-                        value: "menu"
+                        value: "Menu"
                     }
                 ]
             };
@@ -850,7 +850,7 @@ function handleConfirm(input, context) {
             },
             {
                 label: "Cancelar",
-                value: "cancelar"
+                value: "Cancelar"
             }
         ]
     };
@@ -902,7 +902,7 @@ function getBookingErrorResponse(context, error) {
             },
             {
                 label: "Voltar ao menu",
-                value: "menu"
+                value: "Menu"
             }
         ]
     };
@@ -930,7 +930,7 @@ function handleAnythingElse(input, context) {
 function handleFarewell(context) {
     return {
         messages: [
-            "Obrigado por usar o MageBot! Até a próxima! Se precisar de algo, é só me chamar. 👋"
+            "Obrigado por usar o Team Mago! Até a próxima! Se precisar de algo, é só me chamar. 👋"
         ],
         context: {
             ...context,
@@ -939,7 +939,7 @@ function handleFarewell(context) {
         quickReplies: [
             {
                 label: "Voltar ao menu",
-                value: "menu"
+                value: "Menu"
             }
         ]
     };
@@ -1489,7 +1489,7 @@ function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, chatStat
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                                 src: "/images/team-mago-circle.png",
-                                alt: "MageBot",
+                                alt: "Team Mago",
                                 width: 32,
                                 height: 32,
                                 className: "rounded-full"
@@ -1503,7 +1503,7 @@ function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, chatStat
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                         className: "text-sm font-semibold",
                                         "data-testid": "text-chatbot-name",
-                                        children: "MageBot"
+                                        children: "Team Mago"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
                                         lineNumber: 116,
@@ -1732,7 +1732,7 @@ function MageBotWidget() {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
                         src: "/images/team-mago-circle.png",
-                        alt: "MageBot",
+                        alt: "Team Mago",
                         width: 36,
                         height: 36,
                         className: "rounded-full"

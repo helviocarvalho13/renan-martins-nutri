@@ -186,10 +186,29 @@ async function POST(request) {
         });
     }
     if (type === "RETURN") {
-        const { data: completed } = await supabase.from("appointments").select("id, return_suggested_date").eq("patient_id", user.id).eq("status", "COMPLETED").not("return_suggested_date", "is", null).limit(1);
+        const { data: completed } = await supabase.from("appointments").select("id, date, return_suggested_date").eq("patient_id", user.id).eq("status", "COMPLETED").order("date", {
+            ascending: false
+        }).limit(1);
         if (!completed || completed.length === 0) {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                error: "Retornos só estão disponíveis após uma consulta concluída com sugestão de data."
+                error: "Retornos só estão disponíveis após uma consulta concluída."
+            }, {
+                status: 403
+            });
+        }
+        let returnWindowDays = 30;
+        try {
+            const { data: settings } = await supabase.from("site_content").select("content").eq("section", "settings").eq("title", "return_window").single();
+            if (settings?.content?.return_window_days) {
+                returnWindowDays = settings.content.return_window_days;
+            }
+        } catch  {}
+        const lastCompleted = completed[0];
+        const completedDate = new Date(lastCompleted.date + "T12:00:00");
+        const daysSinceCompleted = Math.floor((Date.now() - completedDate.getTime()) / (1000 * 60 * 60 * 24));
+        if (daysSinceCompleted > returnWindowDays) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                error: `A janela de retorno de ${returnWindowDays} dias expirou. Agende uma consulta regular.`
             }, {
                 status: 403
             });

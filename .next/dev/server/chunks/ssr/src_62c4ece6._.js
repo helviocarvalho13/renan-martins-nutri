@@ -205,7 +205,7 @@ const statusLabels = {
     NO_SHOW: "No-show"
 };
 const typeLabels = {
-    FIRST_VISIT: "Primeira Consulta",
+    FIRST_VISIT: "Consulta",
     RETURN: "Retorno"
 };
 function PacienteDetailPage() {

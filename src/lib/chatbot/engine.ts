@@ -18,17 +18,17 @@ function formatSlotTime(time: string): string {
 }
 
 const MENU_REPLIES: QuickReply[] = [
-  { label: "📅 Agendar consulta", value: "agendar" },
+  { label: "📅 Agendar consulta", value: "Agendar" },
 ];
 
 const ANYTHING_ELSE_REPLIES: QuickReply[] = [
   { label: "Sim, agendar outra", value: "sim" },
-  { label: "Não, obrigado", value: "nao" },
+  { label: "Não, obrigado", value: "Não" },
 ];
 
 const TYPE_REPLIES: QuickReply[] = [
-  { label: "Consulta", value: "FIRST_VISIT" },
-  { label: "Retorno", value: "RETURN" },
+  { label: "Consulta", value: "Consulta" },
+  { label: "Retorno", value: "Retorno" },
 ];
 
 export async function processMessage(
@@ -101,8 +101,8 @@ export async function processMessage(
 
 function handleGreeting(context: ChatContext): EngineResponse {
   const greeting = context.userName
-    ? `Olá, ${context.userName}! Eu sou o MageBot, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!`
-    : "Olá! Eu sou o MageBot, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!";
+    ? `Olá, ${context.userName}! Eu sou o Team Mago, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!`
+    : "Olá! Eu sou o Team Mago, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!";
 
   return {
     messages: [greeting],
@@ -122,7 +122,7 @@ function handleMenu(input: string, context: ChatContext): EngineResponse {
         context: { ...context, state: "LOGIN_EMAIL" },
         quickReplies: [
           { label: "Sim, fazer login", value: "sim_login" },
-          { label: "Voltar ao menu", value: "menu" },
+          { label: "Voltar ao menu", value: "Menu" },
         ],
       };
     }
@@ -166,7 +166,7 @@ function handleLoginEmail(input: string, context: ChatContext): EngineResponse {
   return {
     messages: ["Por favor, digite um e-mail válido:"],
     context: { ...context, state: "LOGIN_EMAIL" },
-    quickReplies: [{ label: "Voltar ao menu", value: "menu" }],
+    quickReplies: [{ label: "Voltar ao menu", value: "Menu" }],
   };
 }
 
@@ -200,7 +200,7 @@ export function getLoginFailureResponse(context: ChatContext, error?: string): E
       "Tente novamente. Digite seu e-mail:",
     ],
     context: { ...context, state: "LOGIN_EMAIL", loginEmail: null },
-    quickReplies: [{ label: "Voltar ao menu", value: "menu" }],
+    quickReplies: [{ label: "Voltar ao menu", value: "Menu" }],
   };
 }
 
@@ -209,7 +209,7 @@ function handleSelectType(input: string, context: ChatContext): EngineResponse {
     return {
       messages: [
         "Consulta selecionada! ✅",
-        "Para qual data você gostaria de agendar? Você pode digitar: 'amanhã', 'próxima segunda', 'dia 15', '15/03', etc.",
+        "Para qual data você gostaria de agendar? Selecione a data no calendário",
       ],
       context: { ...context, state: "SELECT_DATE", appointmentType: "FIRST_VISIT" },
       quickReplies: [
@@ -225,7 +225,7 @@ function handleSelectType(input: string, context: ChatContext): EngineResponse {
     return {
       messages: [
         "Retorno selecionado! ✅",
-        "Para qual data você gostaria de agendar o retorno? Você pode digitar: 'amanhã', 'próxima segunda', 'dia 15', '15/03', etc.",
+        "Para qual data você gostaria de agendar o retorno? Selecione a data no calendário",
       ],
       context: { ...context, state: "SELECT_DATE", appointmentType: "RETURN" },
       quickReplies: [
@@ -256,7 +256,7 @@ async function handleSelectDate(input: string, context: ChatContext): Promise<En
       quickReplies: [
         { label: "Amanhã", value: "amanha" },
         { label: "Próxima segunda", value: "proxima segunda" },
-        { label: "Voltar ao menu", value: "menu" },
+        { label: "Voltar ao menu", value: "Menu" },
       ],
     };
   }
@@ -287,7 +287,7 @@ async function handleSelectDate(input: string, context: ChatContext): Promise<En
       context: { ...context, state: "SELECT_DATE" },
       quickReplies: [
         { label: "Tentar novamente", value: input },
-        { label: "Voltar ao menu", value: "menu" },
+        { label: "Voltar ao menu", value: "Menu" },
       ],
     };
   }
@@ -362,7 +362,7 @@ function handleShowSlots(input: string, context: ChatContext): EngineResponse {
       quickReplies: [
         { label: "Amanhã", value: "amanha" },
         { label: "Próxima segunda", value: "proxima segunda" },
-        { label: "Voltar ao menu", value: "menu" },
+        { label: "Voltar ao menu", value: "Menu" },
       ],
     };
   }
@@ -395,7 +395,7 @@ function handleShowSlots(input: string, context: ChatContext): EngineResponse {
     quickReplies: [
       { label: "✅ Confirmar", value: "sim" },
       { label: "Escolher outro horário", value: "outro_horario" },
-      { label: "Cancelar", value: "cancelar" },
+      { label: "Cancelar", value: "Cancelar" },
     ],
   };
 }
@@ -420,7 +420,7 @@ function handleConfirm(input: string, context: ChatContext): EngineResponse {
           "Digite seu e-mail:",
         ],
         context: { ...context, state: "LOGIN_EMAIL", loginEmail: null },
-        quickReplies: [{ label: "Voltar ao menu", value: "menu" }],
+        quickReplies: [{ label: "Voltar ao menu", value: "Menu" }],
       };
     }
 
@@ -476,7 +476,7 @@ function handleConfirm(input: string, context: ChatContext): EngineResponse {
     context,
     quickReplies: [
       { label: "✅ Confirmar", value: "sim" },
-      { label: "Cancelar", value: "cancelar" },
+      { label: "Cancelar", value: "Cancelar" },
     ],
   };
 }
@@ -527,7 +527,7 @@ export function getBookingErrorResponse(context: ChatContext, error: string): En
     context: { ...context, state: "ANYTHING_ELSE" },
     quickReplies: [
       { label: "Tentar novamente", value: "agendar" },
-      { label: "Voltar ao menu", value: "menu" },
+      { label: "Voltar ao menu", value: "Menu" },
     ],
   };
 }
@@ -554,10 +554,10 @@ function handleAnythingElse(input: string, context: ChatContext): EngineResponse
 function handleFarewell(context: ChatContext): EngineResponse {
   return {
     messages: [
-      "Obrigado por usar o MageBot! Até a próxima! Se precisar de algo, é só me chamar. 👋",
+      "Obrigado por usar o Team Mago! Até a próxima! Se precisar de algo, é só me chamar. 👋",
     ],
     context: { ...context, state: "FAREWELL" },
-    quickReplies: [{ label: "Voltar ao menu", value: "menu" }],
+    quickReplies: [{ label: "Voltar ao menu", value: "Menu" }],
   };
 }
 

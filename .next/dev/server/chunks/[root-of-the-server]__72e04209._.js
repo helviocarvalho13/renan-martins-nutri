@@ -209,7 +209,7 @@ async function addCalendarEvent(appointment) {
     try {
         const calendar = await getCalendarClient();
         const patientName = appointment.patient_id ? await getPatientNameForEvent(appointment.patient_id) : "Paciente";
-        const typeLabel = appointment.type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+        const typeLabel = appointment.type === "FIRST_VISIT" ? "Consulta" : "Retorno";
         const response = await calendar.events.insert({
             calendarId: "primary",
             requestBody: {
@@ -272,7 +272,7 @@ async function updateCalendarEvent(appointment) {
         const calendar = await getCalendarClient();
         const statusLabel = appointment.status === "COMPLETED" ? " [CONCLUÍDA]" : "";
         const patientName = appointment.patient_id ? await getPatientNameForEvent(appointment.patient_id) : "Paciente";
-        const typeLabel = appointment.type === "FIRST_VISIT" ? "Primeira Consulta" : "Retorno";
+        const typeLabel = appointment.type === "FIRST_VISIT" ? "Consulta" : "Retorno";
         await calendar.events.patch({
             calendarId: "primary",
             eventId,

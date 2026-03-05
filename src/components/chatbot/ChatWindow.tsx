@@ -111,9 +111,9 @@ export default function ChatWindow({
     >
       <div className="flex items-center justify-between gap-2 px-4 py-3 bg-neutral-900 text-white rounded-t-md">
         <div className="flex items-center gap-2">
-          <Image src="/images/team-mago-circle.png" alt="MageBot" width={32} height={32} className="rounded-full" />
+          <Image src="/images/team-mago-circle.png" alt="Team Mago" width={32} height={32} className="rounded-full" />
           <div>
-            <h3 className="text-sm font-semibold" data-testid="text-chatbot-name">MageBot</h3>
+            <h3 className="text-sm font-semibold" data-testid="text-chatbot-name">Team Mago</h3>
             <p className="text-[11px] text-white/70">Assistente Virtual</p>
           </div>
         </div>

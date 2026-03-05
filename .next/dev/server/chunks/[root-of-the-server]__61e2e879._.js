@@ -105,7 +105,7 @@ async function GET() {
             returnWindowDays = settings.content.return_window_days;
         }
     } catch  {}
-    const { data: completed } = await supabase.from("appointments").select("id, updated_at, return_suggested_date").eq("patient_id", user.id).eq("status", "COMPLETED").order("updated_at", {
+    const { data: completed } = await supabase.from("appointments").select("id, date, return_suggested_date").eq("patient_id", user.id).eq("status", "COMPLETED").order("date", {
         ascending: false
     }).limit(1);
     if (!completed || completed.length === 0) {
@@ -116,7 +116,7 @@ async function GET() {
         });
     }
     const lastCompleted = completed[0];
-    const completedDate = new Date(lastCompleted.updated_at);
+    const completedDate = new Date(lastCompleted.date + "T12:00:00");
     const daysSinceCompleted = Math.floor((Date.now() - completedDate.getTime()) / (1000 * 60 * 60 * 24));
     if (daysSinceCompleted > returnWindowDays) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({

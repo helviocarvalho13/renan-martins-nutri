@@ -81,13 +81,14 @@ user_role, appointment_type, appointment_status, notification_type
 - APIs use service role client for database operations, server client for auth
 - Auto-creates profile if missing (handles cases where trigger didn't fire)
 
-## MageBot Chatbot
+## Team Mago Chatbot (formerly MageBot)
 - Floating widget (bottom-right) on ALL pages via root layout dynamic import
 - **Booking only** — single menu option: "Agendar consulta" (no Serviços, Contato, Ver agendamentos)
+- UI name: "Team Mago" (header, greeting, farewell). Internal code still uses MageBot naming.
+- Button-only mode: text input shown only for LOGIN_EMAIL/LOGIN_PASSWORD states; calendar date picker for SELECT_DATE
 - State machine engine: GREETING → MENU → LOGIN_EMAIL → LOGIN_PASSWORD → SELECT_TYPE → SELECT_DATE → SHOW_SLOTS → CONFIRM → BOOKING_READY → ANYTHING_ELSE → FAREWELL
 - In-chat login flow: collects email → password (masked input) → authenticates via Supabase → continues to booking
-- PT-BR date parser: handles "amanha", "proxima segunda", "dia 15", "15/03", "15 de marco", etc.
-- Conversational booking flow: checks auth → in-chat login if needed → selects type → parses date → fetches slots → confirms → books via /api/patient/book
+- Conversational booking flow: checks auth → in-chat login if needed → selects type → calendar date picker → fetches slots → confirms → books via /api/patient/book
 - Booking uses Bearer token auth (access_token from Supabase session) to avoid cookie issues after in-chat login
 - Session persistence: sessionStorage for guests; auto-clears stale session when auth state changes (user logs in via website)
 - Files: src/lib/chatbot/ (engine.ts, dateParser.ts, types.ts), src/hooks/useMageBot.ts, src/components/chatbot/ (MageBotWidget.tsx, ChatWindow.tsx, MageBotLoader.tsx)

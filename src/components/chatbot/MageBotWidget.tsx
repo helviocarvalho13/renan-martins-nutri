@@ -38,7 +38,7 @@ export default function MageBotWidget() {
         data-testid="button-magebot-widget"
         aria-label="Abrir chat"
       >
-        <Image src="/images/team-mago-circle.png" alt="MageBot" width={36} height={36} className="rounded-full" />
+        <Image src="/images/team-mago-circle.png" alt="Team Mago" width={36} height={36} className="rounded-full" />
         {unreadCount > 0 && (
           <span
             className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center"

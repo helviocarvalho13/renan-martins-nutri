@@ -262,7 +262,7 @@ export default function PatientBookingPage() {
           Sua consulta foi agendada!
         </h2>
         <p className="text-neutral-500 mb-2">
-          {selectedType === "FIRST_VISIT" ? "Consulta" : "Retorno"} agendada com sucesso.
+          {selectedType === "FIRST_VISIT" ? "Consulta agendada" : "Retorno agendado"} com sucesso.
         </p>
         <p className="text-sm text-neutral-400 mb-10">
           {selectedDateObj && format(selectedDateObj, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} as{" "}
