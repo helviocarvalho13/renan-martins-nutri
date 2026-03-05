@@ -24,7 +24,8 @@ export function ContactSection() {
     {
       icon: MapPin,
       label: "Endereço",
-      value: "Av. dos Holandeses, Marcus Barbosa | Intelligent Office, 6916 - Calhau, São Luís - MA, 65071-380",
+      value:
+        "Av. dos Holandeses, Marcus Barbosa | Intelligent Office, 6916 - Calhau, São Luís - MA.",
       href: "https://maps.app.goo.gl/JDwrkfuehQcBwfP68",
       testId: "contact-address",
     },
@@ -56,7 +57,8 @@ export function ContactSection() {
               Entre em contato
             </h2>
             <p className="text-neutral-500">
-              Ficou com alguma dúvida? Entre em contato ou agende sua consulta diretamente.
+              Ficou com alguma dúvida? Entre em contato ou agende sua consulta
+              diretamente.
             </p>
           </div>
 
@@ -66,7 +68,11 @@ export function ContactSection() {
                 key={item.testId}
                 href={item.href}
                 target={item.href.startsWith("http") ? "_blank" : undefined}
-                rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                rel={
+                  item.href.startsWith("http")
+                    ? "noopener noreferrer"
+                    : undefined
+                }
                 className="flex items-center gap-4 p-4 rounded-xl bg-white border border-neutral-100 hover:border-neutral-200 transition-colors group"
                 data-testid={item.testId}
               >
@@ -75,7 +81,9 @@ export function ContactSection() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs text-neutral-400">{item.label}</p>
-                  <p className="font-medium text-sm text-neutral-700 truncate">{item.value}</p>
+                  <p className="font-medium text-sm text-neutral-700 truncate">
+                    {item.value}
+                  </p>
                 </div>
               </a>
             ))}
