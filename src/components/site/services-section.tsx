@@ -8,6 +8,7 @@ import {
   Dumbbell,
   Salad,
   Sparkles,
+  Trophy,
 } from "lucide-react";
 import { useAnimateIn } from "@/hooks/useAnimateIn";
 
@@ -23,7 +24,7 @@ const services = [
     name: "Treinamento para Lutadores",
     description:
       "O código nutricional dos campeões, adaptado para lutadores de todas as modalidades.",
-    icon: Dumbbell,
+    icon: Trophy,
     actionLabel: "Faça sua inscrição",
     href: "https://nutrirenanmartins.com.br/codigo-do-lutador",
     external: true,
@@ -48,7 +49,7 @@ export function ServicesSection() {
           </h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (
@@ -81,7 +82,11 @@ export function ServicesSection() {
                     asChild
                   >
                     {service.external ? (
-                      <a href={service.href} target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={service.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {service.actionLabel}
                         <ArrowRight className="w-4 h-4" />
                       </a>
