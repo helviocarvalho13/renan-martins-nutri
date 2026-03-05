@@ -1,6 +1,6 @@
 "use client";
 
-import { Phone, Mail, MapPin, Instagram } from "lucide-react";
+import { Phone, Mail, MapPin, Instagram, LucideInstagram } from "lucide-react";
 import { useAnimateIn } from "@/hooks/useAnimateIn";
 
 export function ContactSection() {
@@ -10,8 +10,8 @@ export function ContactSection() {
     {
       icon: Phone,
       label: "WhatsApp",
-      value: "(11) 99999-9999",
-      href: "https://wa.me/5511999999999",
+      value: "(98) 98831-8881",
+      href: "https://wa.me/5598988318881",
       testId: "contact-phone",
     },
     {
