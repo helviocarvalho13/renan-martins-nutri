@@ -93,7 +93,9 @@ export async function notifyNewAppointment(
     try {
       const { sendWhatsApp, getPatientPhone } = await import("@/lib/whatsapp/sender");
       const phone = await getPatientPhone(patientId);
-      if (phone) {
+      if (!phone) {
+        console.warn("[notifyNewAppointment] Patient has no phone saved, skipping WhatsApp:", patientId);
+      } else if (phone) {
         const typeLabel = type === "FIRST_VISIT" ? "Consulta" : "Retorno";
         const msg = `Olá, ${patientName}! Sua ${typeLabel} com o nutricionista Renan Martins foi agendada para ${formatDateBR(date)} às ${time}. Aguardamos você!`;
         await sendWhatsApp(phone, msg);
