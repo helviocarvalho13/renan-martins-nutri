@@ -53,22 +53,34 @@ export async function POST(request: Request) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id")
+    .select("id, phone")
     .eq("id", user.id)
     .single();
 
   if (!profile) {
+    const phone = user.user_metadata?.phone || null;
+    if (!phone || phone.replace(/\D/g, "").length < 10) {
+      return NextResponse.json(
+        { error: "Número de WhatsApp obrigatório. Atualize seu perfil antes de agendar." },
+        { status: 400 }
+      );
+    }
     const { error: profileError } = await supabase.from("profiles").insert({
       id: user.id,
       role: "PATIENT",
       full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || null,
-      phone: user.user_metadata?.phone || null,
+      phone,
       is_active: true,
     });
     if (profileError) {
       console.error("[patient/book] Profile creation error:", profileError.message);
       return NextResponse.json({ error: "Erro ao preparar perfil do paciente." }, { status: 500 });
     }
+  } else if (!profile.phone || profile.phone.replace(/\D/g, "").length < 10) {
+    return NextResponse.json(
+      { error: "Número de WhatsApp obrigatório. Atualize seu perfil antes de agendar." },
+      { status: 400 }
+    );
   }
 
   const today = new Date().toISOString().split("T")[0];

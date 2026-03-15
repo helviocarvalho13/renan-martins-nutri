@@ -26,3 +26,14 @@ Core features include:
 - **Resend API**: For sending professional HTML email notifications.
 - **Twilio API**: For sending WhatsApp notifications, including appointment confirmations.
 - **Google Calendar API**: Integrated via Replit Google Calendar Connector for managing calendar events related to appointments.
+
+## Environment Variables
+- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
+- `RESEND_API_KEY` - (Optional) Resend API key for email notifications
+- `TWILIO_ACCOUNT_SID` - (Optional) Twilio Account SID for WhatsApp notifications
+- `TWILIO_AUTH_TOKEN` - (Optional) Twilio Auth Token for WhatsApp notifications
+- `TWILIO_WHATSAPP_FROM` - (Optional) Twilio WhatsApp sender number (e.g. +14155238886 for sandbox, or whatsapp:+14155238886)
+- `CRON_SECRET` - (Optional) Secret for cron endpoint authentication
+- `REPLIT_CONNECTORS_HOSTNAME` - (Auto) Replit connector host for Google Calendar OAuth

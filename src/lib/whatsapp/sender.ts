@@ -35,8 +35,10 @@ export async function sendWhatsApp(phone: string, message: string): Promise<bool
   const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
   const credentials = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
 
+  const fromFormatted = fromNumber.startsWith("whatsapp:") ? fromNumber : `whatsapp:${fromNumber}`;
+
   const body = new URLSearchParams({
-    From: `whatsapp:${fromNumber}`,
+    From: fromFormatted,
     To: `whatsapp:${normalizedPhone}`,
     Body: message,
   });
