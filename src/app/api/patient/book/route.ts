@@ -62,6 +62,7 @@ export async function POST(request: Request) {
       id: user.id,
       role: "PATIENT",
       full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || null,
+      phone: user.user_metadata?.phone || null,
       is_active: true,
     });
     if (profileError) {
@@ -189,7 +190,7 @@ export async function POST(request: Request) {
     const adminId = await getAdminUserId();
     if (adminId) {
       const patientName = await getPatientName(user.id);
-      await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, adminId);
+      await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, adminId, user.id);
     }
 
     await addCalendarEvent(appointment);

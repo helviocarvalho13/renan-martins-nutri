@@ -1,20 +1,5 @@
 {
-  "/(auth)/forgot-password/page": "app/(auth)/forgot-password/page.js",
   "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/(auth)/register/page": "app/(auth)/register/page.js",
-  "/(dashboard)/admin/agenda/page": "app/(dashboard)/admin/agenda/page.js",
-  "/(dashboard)/admin/disponibilidade/page": "app/(dashboard)/admin/disponibilidade/page.js",
-  "/(dashboard)/admin/pacientes/[id]/page": "app/(dashboard)/admin/pacientes/[id]/page.js",
-  "/(dashboard)/admin/pacientes/page": "app/(dashboard)/admin/pacientes/page.js",
-  "/(dashboard)/admin/page": "app/(dashboard)/admin/page.js",
-  "/(dashboard)/paciente/agendar/page": "app/(dashboard)/paciente/agendar/page.js",
-  "/(dashboard)/paciente/page": "app/(dashboard)/paciente/page.js",
-  "/api/appointments/[id]/route": "app/api/appointments/[id]/route.js",
-  "/api/auth/login/route": "app/api/auth/login/route.js",
-  "/api/available-slots/route": "app/api/available-slots/route.js",
-  "/api/patient/book/route": "app/api/patient/book/route.js",
-  "/api/patient/return-eligibility/route": "app/api/patient/return-eligibility/route.js",
-  "/api/settings/route": "app/api/settings/route.js",
   "/apple-icon/route": "app/apple-icon/route.js",
   "/page": "app/page.js"
 }

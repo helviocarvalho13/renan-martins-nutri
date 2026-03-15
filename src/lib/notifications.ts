@@ -68,7 +68,8 @@ export async function notifyNewAppointment(
   time: string,
   type: string,
   appointmentId: string,
-  adminId: string
+  adminId: string,
+  patientId?: string
 ) {
   await createNotification({
     userId: adminId,
@@ -86,6 +87,20 @@ export async function notifyNewAppointment(
     }
   } catch (e) {
     console.error("[notifyNewAppointment] Email error:", e);
+  }
+
+  if (patientId) {
+    try {
+      const { sendWhatsApp, getPatientPhone } = await import("@/lib/whatsapp/sender");
+      const phone = await getPatientPhone(patientId);
+      if (phone) {
+        const typeLabel = type === "FIRST_VISIT" ? "Consulta" : "Retorno";
+        const msg = `Olá, ${patientName}! Sua ${typeLabel} com o nutricionista Renan Martins foi agendada para ${formatDateBR(date)} às ${time}. Aguardamos você!`;
+        await sendWhatsApp(phone, msg);
+      }
+    } catch (e) {
+      console.error("[notifyNewAppointment] WhatsApp error:", e);
+    }
   }
 }
 

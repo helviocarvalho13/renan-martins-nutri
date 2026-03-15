@@ -74,6 +74,12 @@ export default function RegisterPage() {
       return;
     }
 
+    const phoneDigits = phone.replace(/\D/g, "");
+    if (phoneDigits.length < 10) {
+      setError("Informe um número de WhatsApp válido com DDD (mínimo 10 dígitos).");
+      return;
+    }
+
     const cpfDigits = cpf.replace(/\D/g, "");
     if (cpfDigits.length > 0 && !validateCPF(cpf)) {
       setError("CPF inválido. Verifique o número informado.");
@@ -89,7 +95,7 @@ export default function RegisterPage() {
       options: {
         data: {
           full_name: fullName.trim(),
-          phone: phone.replace(/\D/g, "") || null,
+          phone: phone.replace(/\D/g, ""),
           cpf: cpfDigits || null,
           date_of_birth: dateOfBirth || null,
           role: "PATIENT",
@@ -198,30 +204,31 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="text-neutral-700 text-sm">Telefone</Label>
-                <Input
-                  id="phone"
-                  placeholder="(11) 99999-9999"
-                  value={phone}
-                  onChange={(e) => setPhone(formatPhone(e.target.value))}
-                  autoComplete="tel"
-                  className="border-neutral-200 focus:border-neutral-400 rounded-lg"
-                  data-testid="input-phone"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cpf" className="text-neutral-700 text-sm">CPF</Label>
-                <Input
-                  id="cpf"
-                  placeholder="000.000.000-00"
-                  value={cpf}
-                  onChange={(e) => setCpf(formatCPF(e.target.value))}
-                  className="border-neutral-200 focus:border-neutral-400 rounded-lg"
-                  data-testid="input-cpf"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-neutral-700 text-sm">WhatsApp *</Label>
+              <Input
+                id="phone"
+                placeholder="(11) 99999-9999"
+                value={phone}
+                onChange={(e) => setPhone(formatPhone(e.target.value))}
+                required
+                autoComplete="tel"
+                className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                data-testid="input-phone"
+              />
+              <p className="text-xs text-neutral-400">Número que você usa no WhatsApp</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="cpf" className="text-neutral-700 text-sm">CPF</Label>
+              <Input
+                id="cpf"
+                placeholder="000.000.000-00"
+                value={cpf}
+                onChange={(e) => setCpf(formatCPF(e.target.value))}
+                className="border-neutral-200 focus:border-neutral-400 rounded-lg"
+                data-testid="input-cpf"
+              />
             </div>
 
             <div className="space-y-2">

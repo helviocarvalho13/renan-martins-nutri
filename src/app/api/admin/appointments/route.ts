@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     const { addCalendarEvent } = await import("@/lib/google-calendar");
 
     const patientName = await getPatientName(patient_id);
-    await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, user.id);
+    await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, user.id, patient_id);
     await addCalendarEvent(appointment);
   } catch (notifError) {
     console.error("[admin/appointments] Notification/calendar error:", notifError);
