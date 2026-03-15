@@ -1,3 +1,39 @@
+const DEFAULT_TEMPLATE =
+  "Olá, {nome}! Sua {tipo} com o nutricionista Renan Martins foi agendada para {data} às {horário}. Aguardamos você!";
+
+export async function buildWhatsAppMessage(
+  patientName: string,
+  type: string,
+  date: string,
+  time: string
+): Promise<string> {
+  let template = DEFAULT_TEMPLATE;
+
+  try {
+    const { createServiceRoleClient } = await import("@/lib/supabase/server");
+    const supabase = createServiceRoleClient();
+    const { data } = await supabase
+      .from("site_content")
+      .select("content")
+      .eq("section", "settings")
+      .eq("title", "whatsapp_template")
+      .maybeSingle();
+    if (data?.content?.template) {
+      template = data.content.template;
+    }
+  } catch {
+    // Fall back to default template
+  }
+
+  const typeLabel = type === "FIRST_VISIT" ? "Consulta" : "Retorno";
+  return template
+    .replace(/\{nome\}/g, patientName)
+    .replace(/\{tipo\}/g, typeLabel)
+    .replace(/\{data\}/g, date)
+    .replace(/\{horário\}/g, time)
+    .replace(/\{horario\}/g, time);
+}
+
 function normalizePhoneToE164(phone: string): string | null {
   let digits = phone.replace(/\D/g, "");
 

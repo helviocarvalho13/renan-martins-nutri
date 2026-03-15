@@ -80,6 +80,8 @@ function createServiceRoleClient() {
 "use strict";
 
 __turbopack_context__.s([
+    "DEFAULT_WHATSAPP_TEMPLATE",
+    ()=>DEFAULT_WHATSAPP_TEMPLATE,
     "GET",
     ()=>GET,
     "PUT",
@@ -89,12 +91,36 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$serv
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/supabase/server.ts [app-route] (ecmascript)");
 ;
 ;
+const DEFAULT_WHATSAPP_TEMPLATE = "Olá, {nome}! Sua {tipo} com o nutricionista Renan Martins foi agendada para {data} às {horário}. Aguardamos você!";
+async function getSettingsRow(supabase, title) {
+    const { data } = await supabase.from("site_content").select("id, content").eq("section", "settings").eq("title", title).maybeSingle();
+    return data;
+}
+async function upsertSettingsRow(supabase, title, content) {
+    const existing = await getSettingsRow(supabase, title);
+    if (existing) {
+        await supabase.from("site_content").update({
+            content
+        }).eq("id", existing.id);
+    } else {
+        await supabase.from("site_content").insert({
+            section: "settings",
+            title,
+            content,
+            is_active: true,
+            sort_order: 0
+        });
+    }
+}
 async function GET() {
     const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServiceRoleClient"])();
-    const { data } = await supabase.from("site_content").select("content").eq("section", "settings").eq("title", "return_window").maybeSingle();
-    const returnWindowDays = data?.content?.return_window_days ?? 30;
+    const [returnWindowRow, whatsappRow] = await Promise.all([
+        getSettingsRow(supabase, "return_window"),
+        getSettingsRow(supabase, "whatsapp_template")
+    ]);
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-        return_window_days: returnWindowDays
+        return_window_days: returnWindowRow?.content?.return_window_days ?? 30,
+        whatsapp_template: whatsappRow?.content?.template ?? DEFAULT_WHATSAPP_TEMPLATE
     });
 }
 async function PUT(request) {
@@ -115,35 +141,43 @@ async function PUT(request) {
         });
     }
     const body = await request.json();
-    const { return_window_days } = body;
-    if (typeof return_window_days !== "number" || return_window_days < 1 || return_window_days > 365) {
+    const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServiceRoleClient"])();
+    if ("return_window_days" in body) {
+        const { return_window_days } = body;
+        if (typeof return_window_days !== "number" || return_window_days < 1 || return_window_days > 365) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                error: "Valor inválido (1-365 dias)"
+            }, {
+                status: 400
+            });
+        }
+        await upsertSettingsRow(supabase, "return_window", {
+            return_window_days
+        });
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: "Valor inválido (1-365 dias)"
-        }, {
-            status: 400
+            return_window_days
         });
     }
-    const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServiceRoleClient"])();
-    const { data: existing } = await supabase.from("site_content").select("id").eq("section", "settings").eq("title", "return_window").maybeSingle();
-    if (existing) {
-        await supabase.from("site_content").update({
-            content: {
-                return_window_days
-            }
-        }).eq("id", existing.id);
-    } else {
-        await supabase.from("site_content").insert({
-            section: "settings",
-            title: "return_window",
-            content: {
-                return_window_days
-            },
-            is_active: true,
-            sort_order: 0
+    if ("whatsapp_template" in body) {
+        const { whatsapp_template } = body;
+        if (typeof whatsapp_template !== "string" || whatsapp_template.trim().length < 10) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                error: "Template muito curto (mínimo 10 caracteres)"
+            }, {
+                status: 400
+            });
+        }
+        await upsertSettingsRow(supabase, "whatsapp_template", {
+            template: whatsapp_template.trim()
+        });
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            whatsapp_template: whatsapp_template.trim()
         });
     }
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-        return_window_days
+        error: "Campo não reconhecido"
+    }, {
+        status: 400
     });
 }
 }),

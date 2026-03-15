@@ -91,13 +91,12 @@ export async function notifyNewAppointment(
 
   if (patientId) {
     try {
-      const { sendWhatsApp, getPatientPhone } = await import("@/lib/whatsapp/sender");
+      const { sendWhatsApp, getPatientPhone, buildWhatsAppMessage } = await import("@/lib/whatsapp/sender");
       const phone = await getPatientPhone(patientId);
       if (!phone) {
         console.warn("[notifyNewAppointment] Patient has no phone saved, skipping WhatsApp:", patientId);
-      } else if (phone) {
-        const typeLabel = type === "FIRST_VISIT" ? "Consulta" : "Retorno";
-        const msg = `Olá, ${patientName}! Sua ${typeLabel} com o nutricionista Renan Martins foi agendada para ${formatDateBR(date)} às ${time}. Aguardamos você!`;
+      } else {
+        const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time);
         await sendWhatsApp(phone, msg);
       }
     } catch (e) {

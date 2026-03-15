@@ -11,7 +11,8 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Clock, Trash2, Plus, Save, CalendarOff, RotateCcw } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Clock, Trash2, Plus, Save, CalendarOff, RotateCcw, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const DAYS_OF_WEEK = [
@@ -56,6 +57,11 @@ export default function DisponibilidadePage() {
   const [returnWindowDays, setReturnWindowDays] = useState(30);
   const [savingReturnWindow, setSavingReturnWindow] = useState(false);
 
+  const DEFAULT_WHATSAPP_TEMPLATE =
+    "Olá, {nome}! Sua {tipo} com o nutricionista Renan Martins foi agendada para {data} às {horário}. Aguardamos você!";
+  const [whatsappTemplate, setWhatsappTemplate] = useState(DEFAULT_WHATSAPP_TEMPLATE);
+  const [savingWhatsappTemplate, setSavingWhatsappTemplate] = useState(false);
+
   const [newBlock, setNewBlock] = useState({
     date: "",
     start_time: "",
@@ -81,6 +87,9 @@ export default function DisponibilidadePage() {
 
       if (settingsRes?.return_window_days) {
         setReturnWindowDays(settingsRes.return_window_days);
+      }
+      if (settingsRes?.whatsapp_template) {
+        setWhatsappTemplate(settingsRes.whatsapp_template);
       }
 
       const existingConfigs = (configRes.data || []) as ScheduleConfig[];
@@ -222,6 +231,26 @@ export default function DisponibilidadePage() {
       toast({ title: "Erro ao salvar", description: "Erro de conexão.", variant: "destructive" });
     }
     setSavingReturnWindow(false);
+  };
+
+  const handleSaveWhatsappTemplate = async () => {
+    setSavingWhatsappTemplate(true);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ whatsapp_template: whatsappTemplate }),
+      });
+      if (res.ok) {
+        toast({ title: "Template salvo", description: "Mensagem WhatsApp atualizada com sucesso." });
+      } else {
+        const data = await res.json().catch(() => null);
+        toast({ title: "Erro ao salvar", description: data?.error || "Não foi possível salvar.", variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "Erro ao salvar", description: "Erro de conexão.", variant: "destructive" });
+    }
+    setSavingWhatsappTemplate(false);
   };
 
   const handleDeleteBlock = async (id: string) => {
@@ -569,6 +598,54 @@ export default function DisponibilidadePage() {
             <Save className="w-4 h-4" />
             {savingReturnWindow ? "Salvando..." : "Salvar"}
           </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <MessageSquare className="w-5 h-5" />
+            Mensagem WhatsApp
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Personalize a mensagem enviada ao paciente quando uma consulta é agendada. Use as variáveis abaixo para inserir dados dinâmicos.
+          </p>
+          <div className="flex flex-wrap gap-2 text-xs">
+            {["{nome}", "{tipo}", "{data}", "{horário}"].map((v) => (
+              <span key={v} className="bg-muted px-2 py-1 rounded font-mono border">{v}</span>
+            ))}
+          </div>
+          <div className="space-y-2">
+            <Label className="text-sm">Mensagem</Label>
+            <Textarea
+              value={whatsappTemplate}
+              onChange={(e) => setWhatsappTemplate(e.target.value)}
+              rows={4}
+              className="resize-none font-mono text-sm"
+              placeholder="Olá, {nome}! Sua {tipo} foi agendada para {data} às {horário}."
+              data-testid="textarea-whatsapp-template"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={handleSaveWhatsappTemplate}
+              disabled={savingWhatsappTemplate}
+              data-testid="button-save-whatsapp-template"
+            >
+              <Save className="w-4 h-4" />
+              {savingWhatsappTemplate ? "Salvando..." : "Salvar"}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setWhatsappTemplate(DEFAULT_WHATSAPP_TEMPLATE)}
+              data-testid="button-reset-whatsapp-template"
+            >
+              Restaurar padrão
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
