@@ -3,7 +3,7 @@ module.exports = [
 
 __turbopack_context__.v((parentImport) => {
     return Promise.all([
-  "server/chunks/src_lib_supabase_server_ts_945294b5._.js",
+  "server/chunks/src_lib_c868651e._.js",
   "server/chunks/src_lib_fa2cb485._.js"
 ].map((chunk) => __turbopack_context__.l(chunk))).then(() => {
         return parentImport("[project]/src/lib/notifications.ts [app-route] (ecmascript)");

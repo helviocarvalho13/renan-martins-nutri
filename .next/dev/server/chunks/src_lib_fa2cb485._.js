@@ -280,7 +280,7 @@ async function getPatientName(patientId) {
     const { data } = await supabase.from("profiles").select("full_name").eq("id", patientId).single();
     return data?.full_name || "Paciente";
 }
-async function notifyNewAppointment(patientName, date, time, type, appointmentId, adminId) {
+async function notifyNewAppointment(patientName, date, time, type, appointmentId, adminId, patientId) {
     await createNotification({
         userId: adminId,
         type: "APPOINTMENT_CREATED",
@@ -296,6 +296,20 @@ async function notifyNewAppointment(patientName, date, time, type, appointmentId
         }
     } catch (e) {
         console.error("[notifyNewAppointment] Email error:", e);
+    }
+    if (patientId) {
+        try {
+            const { sendWhatsApp, getPatientPhone, buildWhatsAppMessage } = await __turbopack_context__.A("[project]/src/lib/whatsapp/sender.ts [app-route] (ecmascript, async loader)");
+            const phone = await getPatientPhone(patientId);
+            if (!phone) {
+                console.warn("[notifyNewAppointment] Patient has no phone saved, skipping WhatsApp:", patientId);
+            } else {
+                const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time);
+                await sendWhatsApp(phone, msg);
+            }
+        } catch (e) {
+            console.error("[notifyNewAppointment] WhatsApp error:", e);
+        }
     }
 }
 async function notifyAppointmentConfirmed(patientId, date, time, type, appointmentId) {

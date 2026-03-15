@@ -23,24 +23,36 @@ export default function UpdatePasswordPage() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setHasSession(!!session);
-      setChecking(false);
-    });
+    let resolved = false;
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        if (event === "PASSWORD_RECOVERY") {
+        if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && session)) {
+          resolved = true;
           setHasSession(true);
           setChecking(false);
-        } else if (session) {
-          setHasSession(true);
+        } else if (event === "INITIAL_SESSION") {
+          if (session) {
+            resolved = true;
+            setHasSession(true);
+          }
           setChecking(false);
         }
       }
     );
 
-    return () => subscription.unsubscribe();
+    // Fallback: if no auth event fires within 3s, declare link invalid
+    const timeout = setTimeout(() => {
+      if (!resolved) {
+        setHasSession(false);
+        setChecking(false);
+      }
+    }, 3000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

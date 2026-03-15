@@ -6,7 +6,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
-import { LogOut } from "lucide-react";
+import { LogOut, UserCog } from "lucide-react";
 
 export default function PatientLayout({ children }: { children: React.ReactNode }) {
   const [userName, setUserName] = useState("");
@@ -45,16 +45,33 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
             </div>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <NotificationBell />
-            <div className="flex items-center gap-2">
+            <Link
+              href="/paciente/perfil"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              data-testid="link-my-profile"
+              title="Meu Perfil"
+            >
               <div className="w-8 h-8 rounded-full bg-neutral-900 flex items-center justify-center text-white text-xs font-bold">
                 {initials}
               </div>
               <span className="text-sm font-medium text-neutral-700 hidden sm:inline" data-testid="text-user-name">
                 {userName}
               </span>
-            </div>
+            </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Meu Perfil"
+              asChild
+              className="hidden sm:inline-flex"
+              data-testid="button-my-profile"
+            >
+              <Link href="/paciente/perfil">
+                <UserCog className="w-4 h-4 text-neutral-500" />
+              </Link>
+            </Button>
             <Button
               variant="ghost"
               size="icon"

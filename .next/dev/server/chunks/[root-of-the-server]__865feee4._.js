@@ -146,12 +146,21 @@ async function POST(request) {
         });
     }
     const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServiceRoleClient"])();
-    const { data: profile } = await supabase.from("profiles").select("id").eq("id", user.id).single();
+    const { data: profile } = await supabase.from("profiles").select("id, phone").eq("id", user.id).single();
     if (!profile) {
+        const phone = user.user_metadata?.phone || null;
+        if (!phone || phone.replace(/\D/g, "").length < 10) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                error: "Número de WhatsApp obrigatório. Atualize seu perfil antes de agendar."
+            }, {
+                status: 400
+            });
+        }
         const { error: profileError } = await supabase.from("profiles").insert({
             id: user.id,
             role: "PATIENT",
             full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || null,
+            phone,
             is_active: true
         });
         if (profileError) {
@@ -162,6 +171,12 @@ async function POST(request) {
                 status: 500
             });
         }
+    } else if (!profile.phone || profile.phone.replace(/\D/g, "").length < 10) {
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            error: "Número de WhatsApp obrigatório. Atualize seu perfil antes de agendar."
+        }, {
+            status: 400
+        });
     }
     const today = new Date().toISOString().split("T")[0];
     const { data: futureAppts } = await supabase.from("appointments").select("id, type, status").eq("patient_id", user.id).gte("date", today).in("status", [
@@ -257,7 +272,7 @@ async function POST(request) {
         const adminId = await getAdminUserId();
         if (adminId) {
             const patientName = await getPatientName(user.id);
-            await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, adminId);
+            await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, adminId, user.id);
         }
         await addCalendarEvent(appointment);
     } catch (notifError) {

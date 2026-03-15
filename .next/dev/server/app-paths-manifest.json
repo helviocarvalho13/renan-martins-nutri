@@ -1,5 +1,11 @@
 {
   "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/apple-icon/route": "app/apple-icon/route.js",
+  "/(auth)/register/page": "app/(auth)/register/page.js",
+  "/(dashboard)/paciente/agendar/page": "app/(dashboard)/paciente/agendar/page.js",
+  "/(dashboard)/paciente/page": "app/(dashboard)/paciente/page.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/auth/register/route": "app/api/auth/register/route.js",
+  "/api/available-slots/route": "app/api/available-slots/route.js",
+  "/api/patient/return-eligibility/route": "app/api/patient/return-eligibility/route.js",
   "/page": "app/page.js"
 }

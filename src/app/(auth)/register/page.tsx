@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 function formatCPF(value: string): string {
   const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -23,22 +22,6 @@ function formatPhone(value: string): string {
   if (digits.length <= 2) return digits;
   if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
-}
-
-function validateCPF(cpf: string): boolean {
-  const digits = cpf.replace(/\D/g, "");
-  if (digits.length !== 11) return false;
-  if (/^(\d)\1+$/.test(digits)) return false;
-  let sum = 0;
-  for (let i = 0; i < 9; i++) sum += parseInt(digits[i]) * (10 - i);
-  let remainder = (sum * 10) % 11;
-  if (remainder === 10) remainder = 0;
-  if (remainder !== parseInt(digits[9])) return false;
-  sum = 0;
-  for (let i = 0; i < 10; i++) sum += parseInt(digits[i]) * (11 - i);
-  remainder = (sum * 10) % 11;
-  if (remainder === 10) remainder = 0;
-  return remainder === parseInt(digits[10]);
 }
 
 export default function RegisterPage() {
@@ -64,6 +47,12 @@ export default function RegisterPage() {
       return;
     }
 
+    const phoneDigits = phone.replace(/\D/g, "");
+    if (phoneDigits.length < 10) {
+      setError("Informe um número de WhatsApp válido com DDD (mínimo 10 dígitos).");
+      return;
+    }
+
     if (password.length < 6) {
       setError("A senha deve ter pelo menos 6 caracteres.");
       return;
@@ -74,46 +63,32 @@ export default function RegisterPage() {
       return;
     }
 
-    const phoneDigits = phone.replace(/\D/g, "");
-    if (phoneDigits.length < 10) {
-      setError("Informe um número de WhatsApp válido com DDD (mínimo 10 dígitos).");
-      return;
-    }
-
-    const cpfDigits = cpf.replace(/\D/g, "");
-    if (cpfDigits.length > 0 && !validateCPF(cpf)) {
-      setError("CPF inválido. Verifique o número informado.");
-      return;
-    }
-
     setLoading(true);
 
-    const supabase = createClient();
-    const { error: authError } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        data: {
-          full_name: fullName.trim(),
-          phone: phone.replace(/\D/g, ""),
-          cpf: cpfDigits || null,
-          date_of_birth: dateOfBirth || null,
-          role: "PATIENT",
-        },
-      },
-    });
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fullName, email, phone, cpf, dateOfBirth, password }),
+      });
 
-    if (authError) {
-      if (authError.message.includes("already registered")) {
-        setError("Este email ja esta cadastrado. Tente fazer login.");
-      } else {
-        setError(authError.message);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Erro ao criar conta. Tente novamente.");
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-      return;
+
+      if (data.autoLogin && data.destination) {
+        window.location.href = data.destination;
+      } else {
+        setSuccess(true);
+      }
+    } catch {
+      setError("Erro de conexão. Tente novamente.");
     }
 
-    setSuccess(true);
     setLoading(false);
   };
 
@@ -126,7 +101,7 @@ export default function RegisterPage() {
           </div>
           <h2 className="text-xl font-bold text-neutral-900" data-testid="text-register-success">Conta criada com sucesso!</h2>
           <p className="text-sm text-neutral-500">
-            Verifique seu email para confirmar o cadastro antes de fazer login.
+            Sua conta foi criada. Agora você já pode fazer login.
           </p>
           <Button
             variant="outline"
@@ -310,7 +285,7 @@ export default function RegisterPage() {
 
           <div className="text-center space-y-3">
             <p className="text-sm text-neutral-500">
-              Ja tem uma conta?{" "}
+              Já tem uma conta?{" "}
               <Link href="/login" className="text-neutral-900 font-medium hover:underline" data-testid="link-login">
                 Entrar
               </Link>
