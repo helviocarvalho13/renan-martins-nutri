@@ -1,11 +1,20 @@
-const DEFAULT_TEMPLATE =
-  "Olá, {nome}! Sua {tipo} com o nutricionista Renan Martins foi agendada para {data} às {horário}. Aguardamos você!";
+const DEFAULT_TEMPLATE = `Olá! Tudo bem?
+
+Equipe do nutricionista Renan passando para confirmar seu horário:
+
+📅 {data} às {horário}
+📍 {modalidade}
+
+Seu horário está reservado. Em caso de imprevisto, informe com antecedência.
+
+Será um prazer recebê-lo(a).`;
 
 export async function buildWhatsAppMessage(
   patientName: string,
   type: string,
   date: string,
-  time: string
+  time: string,
+  modality: string = "PRESENCIAL"
 ): Promise<string> {
   let template = DEFAULT_TEMPLATE;
 
@@ -25,13 +34,15 @@ export async function buildWhatsAppMessage(
     // Fall back to default template
   }
 
-  const typeLabel = type === "FIRST_VISIT" ? "Consulta" : "Retorno";
+  const modalidadeLabel = modality === "ONLINE" ? "Online" : "Presencial";
+
   return template
     .replace(/\{nome\}/g, patientName)
-    .replace(/\{tipo\}/g, typeLabel)
+    .replace(/\{tipo\}/g, type === "FIRST_VISIT" ? "Consulta" : "Retorno")
     .replace(/\{data\}/g, date)
     .replace(/\{horário\}/g, time)
-    .replace(/\{horario\}/g, time);
+    .replace(/\{horario\}/g, time)
+    .replace(/\{modalidade\}/g, modalidadeLabel);
 }
 
 function normalizePhone(phone: string): string | null {
@@ -39,6 +50,18 @@ function normalizePhone(phone: string): string | null {
   if (digits.length === 0) return null;
   if (digits.startsWith("0")) digits = digits.slice(1);
   if (!digits.startsWith("55")) digits = "55" + digits;
+
+  // Brazilian mobile numbers: 55 + 2-digit area + 9-digit mobile (starting with 9)
+  // Remove the leading 9 from the local number to match 8-digit format expected by WhatsApp API
+  // e.g. 5598984050086 (13 digits) → 559884050086 (12 digits)
+  if (digits.length === 13) {
+    const areaCode = digits.slice(2, 4);
+    const localNumber = digits.slice(4);
+    if (localNumber.startsWith("9") && localNumber.length === 9) {
+      digits = "55" + areaCode + localNumber.slice(1);
+    }
+  }
+
   if (digits.length < 12 || digits.length > 13) return null;
   return digits;
 }
@@ -57,7 +80,6 @@ export async function sendWhatsApp(phone: string, message: string): Promise<bool
     return false;
   }
 
-  // Whapi Cloud uses the format: <number>@s.whatsapp.net
   const to = `${digits}@s.whatsapp.net`;
 
   try {
@@ -77,7 +99,7 @@ export async function sendWhatsApp(phone: string, message: string): Promise<bool
       return false;
     }
 
-    console.log("[whatsapp/sender] WhatsApp sent via Whapi:", data?.message?.id || data?.sent_id || "ok");
+    console.log("[whatsapp/sender] WhatsApp sent via Whapi:", data?.message?.id || "ok", "to:", to);
     return true;
   } catch (error) {
     console.error("[whatsapp/sender] Failed to send WhatsApp:", error);

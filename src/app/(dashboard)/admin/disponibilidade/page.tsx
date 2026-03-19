@@ -58,7 +58,7 @@ export default function DisponibilidadePage() {
   const [savingReturnWindow, setSavingReturnWindow] = useState(false);
 
   const DEFAULT_WHATSAPP_TEMPLATE =
-    "Olá, {nome}! Sua {tipo} com o nutricionista Renan Martins foi agendada para {data} às {horário}. Aguardamos você!";
+    `Olá! Tudo bem?\n\nEquipe do nutricionista Renan passando para confirmar seu horário:\n\n📅 {data} às {horário}\n📍 {modalidade}\n\nSeu horário está reservado. Em caso de imprevisto, informe com antecedência.\n\nSerá um prazer recebê-lo(a).`;
   const [whatsappTemplate, setWhatsappTemplate] = useState(DEFAULT_WHATSAPP_TEMPLATE);
   const [savingWhatsappTemplate, setSavingWhatsappTemplate] = useState(false);
 
@@ -613,7 +613,7 @@ export default function DisponibilidadePage() {
             Personalize a mensagem enviada ao paciente quando uma consulta é agendada. Use as variáveis abaixo para inserir dados dinâmicos.
           </p>
           <div className="flex flex-wrap gap-2 text-xs">
-            {["{nome}", "{tipo}", "{data}", "{horário}"].map((v) => (
+            {["{nome}", "{tipo}", "{data}", "{horário}", "{modalidade}"].map((v) => (
               <span key={v} className="bg-muted px-2 py-1 rounded font-mono border">{v}</span>
             ))}
           </div>

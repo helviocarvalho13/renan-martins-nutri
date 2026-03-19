@@ -69,13 +69,16 @@ export async function notifyNewAppointment(
   type: string,
   appointmentId: string,
   adminId: string,
-  patientId?: string
+  patientId?: string,
+  modality: string = "PRESENCIAL"
 ) {
+  const modalidadeLabel = modality === "ONLINE" ? "Online" : "Presencial";
+
   await createNotification({
     userId: adminId,
     type: "APPOINTMENT_CREATED",
     title: "Nova consulta agendada",
-    message: `${patientName} agendou ${type === "FIRST_VISIT" ? "Consulta" : "Retorno"} para ${formatDateBR(date)} às ${time}`,
+    message: `${patientName} agendou ${type === "FIRST_VISIT" ? "Consulta" : "Retorno"} (${modalidadeLabel}) para ${formatDateBR(date)} às ${time}`,
     appointmentId,
   });
 
@@ -96,7 +99,7 @@ export async function notifyNewAppointment(
       if (!phone) {
         console.warn("[notifyNewAppointment] Patient has no phone saved, skipping WhatsApp:", patientId);
       } else {
-        const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time);
+        const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time, modality);
         await sendWhatsApp(phone, msg);
       }
     } catch (e) {

@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { date, start_time, end_time, type } = body;
+  const { date, start_time, end_time, type, modality } = body;
 
   if (!date || !start_time || !end_time || !type) {
     return NextResponse.json({ error: "Campos obrigatórios faltando" }, { status: 400 });
@@ -39,6 +39,9 @@ export async function POST(request: Request) {
   if (!validTypes.includes(type)) {
     return NextResponse.json({ error: "Tipo de consulta inválido" }, { status: 400 });
   }
+
+  const validModalities = ["ONLINE", "PRESENCIAL"];
+  const appointmentModality = validModalities.includes(modality) ? modality : "PRESENCIAL";
 
   const appointmentDateTime = new Date(`${date}T${start_time}`);
   const minAdvance = Date.now() + 24 * 60 * 60 * 1000;
@@ -180,6 +183,7 @@ export async function POST(request: Request) {
       end_time,
       type,
       status: "PENDING",
+      modality: appointmentModality,
     })
     .select()
     .single();
@@ -202,7 +206,7 @@ export async function POST(request: Request) {
     const adminId = await getAdminUserId();
     if (adminId) {
       const patientName = await getPatientName(user.id);
-      await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, adminId, user.id);
+      await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, adminId, user.id, appointmentModality);
     }
 
     await addCalendarEvent(appointment);

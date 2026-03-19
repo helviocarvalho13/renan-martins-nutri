@@ -18,6 +18,9 @@ import {
   CalendarDays,
   Clock,
   Loader2,
+  Laptop,
+  MapPin,
+  MessageCircle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Appointment } from "@/lib/types";
@@ -117,12 +120,13 @@ function SimpleCalendar({
   );
 }
 
-const stepLabels = ["Tipo", "Data", "Horário", "Confirmação"];
+const stepLabels = ["Tipo & Modalidade", "Data", "Horário", "Confirmação"];
 
 export default function PatientBookingPage() {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedType, setSelectedType] = useState<"FIRST_VISIT" | "RETURN" | null>(null);
+  const [selectedModality, setSelectedModality] = useState<"ONLINE" | "PRESENCIAL" | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedDateObj, setSelectedDateObj] = useState<Date | undefined>();
   const [selectedSlot, setSelectedSlot] = useState<{ start_time: string; end_time: string } | null>(null);
@@ -219,6 +223,7 @@ export default function PatientBookingPage() {
           start_time: selectedSlot.start_time,
           end_time: selectedSlot.end_time,
           type: selectedType,
+          modality: selectedModality,
         }),
       });
 
@@ -253,6 +258,14 @@ export default function PatientBookingPage() {
   };
 
   if (success) {
+    const dayMonth = selectedDateObj ? format(selectedDateObj, "dd/MM", { locale: ptBR }) : "";
+    const hora = selectedSlot?.start_time.slice(0, 5) ?? "";
+    const modalidadeLabel = selectedModality === "ONLINE" ? "Online" : "Presencial";
+    const waText = encodeURIComponent(
+      `Sim, confirmo o agendamento para o dia ${dayMonth} às ${hora}, na modalidade ${modalidadeLabel}.`
+    );
+    const waLink = `https://wa.me/559888318881?text=${waText}`;
+
     return (
       <div className="max-w-2xl mx-auto py-16 text-center px-4 sm:px-0">
         <div className="w-16 h-16 mx-auto rounded-full bg-green-50 flex items-center justify-center mb-6">
@@ -264,16 +277,31 @@ export default function PatientBookingPage() {
         <p className="text-neutral-500 mb-2">
           {selectedType === "FIRST_VISIT" ? "Consulta agendada" : "Retorno agendado"} com sucesso.
         </p>
-        <p className="text-sm text-neutral-400 mb-10">
-          {selectedDateObj && format(selectedDateObj, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} as{" "}
-          {selectedSlot?.start_time.slice(0, 5)} - {selectedSlot?.end_time.slice(0, 5)}
+        <p className="text-sm text-neutral-400 mb-3">
+          {selectedDateObj && format(selectedDateObj, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} às{" "}
+          {selectedSlot?.start_time.slice(0, 5)} — {modalidadeLabel}
         </p>
-        <Button className="rounded-full px-6 bg-neutral-900 text-white" data-testid="button-go-to-appointments" asChild>
-          <Link href="/paciente">
-            Ver minhas consultas
-            <ArrowRight className="w-4 h-4 ml-1" />
-          </Link>
-        </Button>
+        <p className="text-sm text-neutral-500 mb-8">
+          Clique abaixo para confirmar seu horário via WhatsApp e garantir seu atendimento.
+        </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Button
+            className="rounded-full px-6 bg-green-600 hover:bg-green-700 text-white"
+            data-testid="button-confirm-whatsapp"
+            asChild
+          >
+            <a href={waLink} target="_blank" rel="noopener noreferrer">
+              <MessageCircle className="w-4 h-4 mr-2" />
+              Confirmar pelo WhatsApp
+            </a>
+          </Button>
+          <Button variant="outline" className="rounded-full px-6 border-neutral-200" data-testid="button-go-to-appointments" asChild>
+            <Link href="/paciente">
+              Ver minhas consultas
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
+          </Button>
+        </div>
       </div>
     );
   }
@@ -426,10 +454,65 @@ export default function PatientBookingPage() {
             </button>
           </div>
 
+          <div className="mb-8">
+            <h3 className="text-sm font-semibold text-neutral-700 mb-4">Modalidade</h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setSelectedModality("PRESENCIAL")}
+                className="text-left"
+                data-testid="button-select-presencial"
+              >
+                <Card
+                  className={`p-5 transition-colors cursor-pointer ${
+                    selectedModality === "PRESENCIAL"
+                      ? "border-neutral-900 border-2"
+                      : "border-neutral-200"
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-5 h-5 text-neutral-700" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-neutral-900 mb-1">Presencial</p>
+                      <p className="text-xs text-neutral-500">Atendimento no consultório</p>
+                    </div>
+                  </div>
+                </Card>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedModality("ONLINE")}
+                className="text-left"
+                data-testid="button-select-online"
+              >
+                <Card
+                  className={`p-5 transition-colors cursor-pointer ${
+                    selectedModality === "ONLINE"
+                      ? "border-neutral-900 border-2"
+                      : "border-neutral-200"
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0">
+                      <Laptop className="w-5 h-5 text-neutral-700" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-neutral-900 mb-1">Online</p>
+                      <p className="text-xs text-neutral-500">Atendimento por videochamada</p>
+                    </div>
+                  </div>
+                </Card>
+              </button>
+            </div>
+          </div>
+
           <div className="flex items-center gap-3">
             <Button
               onClick={() => setCurrentStep(2)}
-              disabled={!selectedType}
+              disabled={!selectedType || !selectedModality}
               className="rounded-full px-6 bg-neutral-900 text-white"
               data-testid="button-step1-continue"
             >
@@ -584,7 +667,14 @@ export default function PatientBookingPage() {
               </div>
               <div className="h-px bg-neutral-100" />
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <span className="text-sm text-neutral-500">Duracao</span>
+                <span className="text-sm text-neutral-500">Modalidade</span>
+                <span className="text-sm font-medium text-neutral-900" data-testid="text-confirm-modality">
+                  {selectedModality === "ONLINE" ? "Online" : "Presencial"}
+                </span>
+              </div>
+              <div className="h-px bg-neutral-100" />
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <span className="text-sm text-neutral-500">Duração</span>
                 <span className="text-sm font-medium text-neutral-900" data-testid="text-confirm-duration">
                   50 minutos
                 </span>
