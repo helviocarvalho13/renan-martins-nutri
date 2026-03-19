@@ -1,4 +1,4 @@
-// Google Calendar integration via standard Google OAuth2 (compatible with Vercel)
+// Google Calendar integration via Replit Connector
 import { google } from "googleapis";
 
 interface AppointmentData {
@@ -11,38 +11,64 @@ interface AppointmentData {
   patient_id?: string;
 }
 
-let cachedClient: ReturnType<typeof google.calendar> | null = null;
-let tokenExpiry = 0;
+let connectionSettings: any;
 
-function isConfigured(): boolean {
-  return !!(
-    process.env.GOOGLE_CLIENT_ID &&
-    process.env.GOOGLE_CLIENT_SECRET &&
-    process.env.GOOGLE_REFRESH_TOKEN
-  );
+async function getAccessToken(): Promise<string> {
+  if (
+    connectionSettings &&
+    connectionSettings.settings.expires_at &&
+    new Date(connectionSettings.settings.expires_at).getTime() > Date.now()
+  ) {
+    return connectionSettings.settings.access_token;
+  }
+
+  const hostname = process.env.REPLIT_CONNECTORS_HOSTNAME;
+  const xReplitToken = process.env.REPL_IDENTITY
+    ? "repl " + process.env.REPL_IDENTITY
+    : process.env.WEB_REPL_RENEWAL
+      ? "depl " + process.env.WEB_REPL_RENEWAL
+      : null;
+
+  if (!xReplitToken || !hostname) {
+    throw new Error("Replit connector environment not available");
+  }
+
+  connectionSettings = await fetch(
+    "https://" +
+      hostname +
+      "/api/v2/connection?include_secrets=true&connector_names=google-calendar",
+    {
+      headers: {
+        Accept: "application/json",
+        "X-Replit-Token": xReplitToken,
+      },
+    }
+  )
+    .then((res) => res.json())
+    .then((data) => data.items?.[0]);
+
+  const accessToken =
+    connectionSettings?.settings?.access_token ||
+    connectionSettings?.settings?.oauth?.credentials?.access_token;
+
+  if (!connectionSettings || !accessToken) {
+    throw new Error("Google Calendar not connected");
+  }
+  return accessToken;
 }
 
 async function getCalendarClient() {
-  if (cachedClient && Date.now() < tokenExpiry - 60_000) {
-    return cachedClient;
-  }
+  const accessToken = await getAccessToken();
+  const oauth2Client = new google.auth.OAuth2();
+  oauth2Client.setCredentials({ access_token: accessToken });
+  return google.calendar({ version: "v3", auth: oauth2Client });
+}
 
-  const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET
+function isConfigured(): boolean {
+  return !!(
+    process.env.REPLIT_CONNECTORS_HOSTNAME &&
+    (process.env.REPL_IDENTITY || process.env.WEB_REPL_RENEWAL)
   );
-
-  oauth2Client.setCredentials({
-    refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
-  });
-
-  // Listen for token refresh so we can update the expiry
-  oauth2Client.on("tokens", (tokens) => {
-    if (tokens.expiry_date) tokenExpiry = tokens.expiry_date;
-  });
-
-  cachedClient = google.calendar({ version: "v3", auth: oauth2Client });
-  return cachedClient;
 }
 
 async function getPatientNameForEvent(patientId: string): Promise<string> {
@@ -58,7 +84,7 @@ export async function addCalendarEvent(
   appointment: AppointmentData
 ): Promise<string | null> {
   if (!isConfigured()) {
-    console.warn("[google-calendar] Credentials not configured. Skipping.");
+    console.warn("[google-calendar] Connector not available. Skipping.");
     return null;
   }
 
@@ -106,16 +132,24 @@ export async function addCalendarEvent(
         const supabase = createServiceRoleClient();
         await supabase
           .from("appointments")
-          .update({ google_calendar_event_id: eventId } as Record<string, unknown>)
+          .update({
+            google_calendar_event_id: eventId,
+          } as Record<string, unknown>)
           .eq("id", appointment.id);
       } catch {
-        console.warn("[google-calendar] Could not save event ID to database.");
+        console.warn(
+          "[google-calendar] Could not save event ID to database (column may not exist yet)"
+        );
       }
     }
 
     return eventId || null;
   } catch (error: any) {
-    console.error("[google-calendar] Create event error:", error?.message || error);
+    if (error?.message?.includes("not connected")) {
+      console.warn("[google-calendar] Not connected. Skipping event creation.");
+    } else {
+      console.error("[google-calendar] Create event error:", error?.message || error);
+    }
     return null;
   }
 }
@@ -126,7 +160,9 @@ export async function updateCalendarEvent(
   if (!isConfigured()) return false;
 
   try {
-    const { createServiceRoleClient } = await import("@/lib/supabase/server");
+    const { createServiceRoleClient } = await import(
+      "@/lib/supabase/server"
+    );
     const supabase = createServiceRoleClient();
     const { data } = await supabase
       .from("appointments")
@@ -159,7 +195,11 @@ export async function updateCalendarEvent(
     console.log("[google-calendar] Event updated:", eventId);
     return true;
   } catch (error: any) {
-    console.error("[google-calendar] Update event error:", error?.message || error);
+    if (error?.message?.includes("not connected")) {
+      console.warn("[google-calendar] Not connected. Skipping event update.");
+    } else {
+      console.error("[google-calendar] Update event error:", error?.message || error);
+    }
     return false;
   }
 }
@@ -170,7 +210,9 @@ export async function deleteCalendarEvent(
   if (!isConfigured()) return false;
 
   try {
-    const { createServiceRoleClient } = await import("@/lib/supabase/server");
+    const { createServiceRoleClient } = await import(
+      "@/lib/supabase/server"
+    );
     const supabase = createServiceRoleClient();
     const { data } = await supabase
       .from("appointments")
@@ -192,7 +234,12 @@ export async function deleteCalendarEvent(
     console.log("[google-calendar] Event deleted:", eventId);
     return true;
   } catch (error: any) {
-    if (error?.code === 410) return false;
+    if (
+      error?.message?.includes("not connected") ||
+      error?.code === 410
+    ) {
+      return false;
+    }
     console.error("[google-calendar] Delete event error:", error?.message || error);
     return false;
   }
