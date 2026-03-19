@@ -1,11 +1,3 @@
 {
-  "/(dashboard)/paciente/agendar/page": "app/(dashboard)/paciente/agendar/page.js",
-  "/(dashboard)/paciente/page": "app/(dashboard)/paciente/page.js",
-  "/(dashboard)/paciente/perfil/page": "app/(dashboard)/paciente/perfil/page.js",
-  "/api/available-slots/route": "app/api/available-slots/route.js",
-  "/api/patient/book/route": "app/api/patient/book/route.js",
-  "/api/patient/cancel/route": "app/api/patient/cancel/route.js",
-  "/api/patient/profile/route": "app/api/patient/profile/route.js",
-  "/api/patient/return-eligibility/route": "app/api/patient/return-eligibility/route.js",
   "/page": "app/page.js"
 }
