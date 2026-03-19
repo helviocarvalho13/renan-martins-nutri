@@ -16,7 +16,7 @@ Core features include:
 - **Admin Dashboard**: Gated access for managing patients, schedules, site content, and testimonials. Features real-time updates via Supabase Realtime.
 - **Patient Area**: A personalized panel for patients to manage bookings, view upcoming appointments, and access their history.
 - **Team Mago Chatbot**: A floating widget that facilitates in-chat appointment booking, including an in-chat login flow.
-- **Notification System**: In-app notifications, email (via Resend API), and WhatsApp (via Twilio API) for various appointment lifecycle events and reminders.
+- **Notification System**: In-app notifications, email (via Resend API), and WhatsApp (via Whapi Cloud) for various appointment lifecycle events and reminders.
 - **Google Calendar Integration**: Automatic event creation and management for appointments.
 - **SEO & Accessibility**: Comprehensive meta tags, SVG favicons, skip-to-content links, ARIA labels, and full responsiveness across devices.
 - **Error Handling & Loading States**: Robust error handling with toast notifications and skeleton screens for a smooth user experience.
@@ -24,7 +24,7 @@ Core features include:
 ## External Dependencies
 - **Supabase**: Used for authentication (Auth), database (PostgreSQL), and real-time functionalities.
 - **Resend API**: For sending professional HTML email notifications.
-- **Twilio API**: For sending WhatsApp notifications, including appointment confirmations.
+- **Whapi Cloud**: For sending WhatsApp notifications via the business number, including appointment confirmations.
 - **Google Calendar API**: Integrated via Replit Google Calendar Connector for managing calendar events related to appointments.
 
 ## Environment Variables
@@ -32,8 +32,6 @@ Core features include:
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
 - `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
 - `RESEND_API_KEY` - (Optional) Resend API key for email notifications
-- `TWILIO_ACCOUNT_SID` - (Optional) Twilio Account SID for WhatsApp notifications
-- `TWILIO_AUTH_TOKEN` - (Optional) Twilio Auth Token for WhatsApp notifications
-- `TWILIO_WHATSAPP_FROM` - (Optional) Twilio WhatsApp sender number (e.g. +14155238886 for sandbox, or whatsapp:+14155238886)
+- `WHAPI_TOKEN` - Whapi Cloud channel token for WhatsApp notifications
 - `CRON_SECRET` - (Optional) Secret for cron endpoint authentication
 - `REPLIT_CONNECTORS_HOSTNAME` - (Auto) Replit connector host for Google Calendar OAuth

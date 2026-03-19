@@ -34,69 +34,50 @@ export async function buildWhatsAppMessage(
     .replace(/\{horario\}/g, time);
 }
 
-function normalizePhoneToE164(phone: string): string | null {
+function normalizePhone(phone: string): string | null {
   let digits = phone.replace(/\D/g, "");
-
   if (digits.length === 0) return null;
-
-  if (digits.startsWith("0")) {
-    digits = digits.slice(1);
-  }
-
-  if (!digits.startsWith("55")) {
-    digits = "55" + digits;
-  }
-
+  if (digits.startsWith("0")) digits = digits.slice(1);
+  if (!digits.startsWith("55")) digits = "55" + digits;
   if (digits.length < 12 || digits.length > 13) return null;
-
-  return "+" + digits;
+  return digits;
 }
 
 export async function sendWhatsApp(phone: string, message: string): Promise<boolean> {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const fromNumber = process.env.TWILIO_WHATSAPP_FROM;
+  const token = process.env.WHAPI_TOKEN;
 
-  if (!accountSid || !authToken || !fromNumber) {
-    console.warn("[whatsapp/sender] Twilio credentials not configured. Skipping WhatsApp.");
+  if (!token) {
+    console.warn("[whatsapp/sender] WHAPI_TOKEN not configured. Skipping WhatsApp.");
     return false;
   }
 
-  const normalizedPhone = normalizePhoneToE164(phone);
-  if (!normalizedPhone) {
+  const digits = normalizePhone(phone);
+  if (!digits) {
     console.warn("[whatsapp/sender] Invalid phone number:", phone);
     return false;
   }
 
-  const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-  const credentials = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
-
-  const fromFormatted = fromNumber.startsWith("whatsapp:") ? fromNumber : `whatsapp:${fromNumber}`;
-
-  const body = new URLSearchParams({
-    From: fromFormatted,
-    To: `whatsapp:${normalizedPhone}`,
-    Body: message,
-  });
+  // Whapi Cloud uses the format: <number>@s.whatsapp.net
+  const to = `${digits}@s.whatsapp.net`;
 
   try {
-    const response = await fetch(url, {
+    const response = await fetch("https://gate.whapi.cloud/messages/text", {
       method: "POST",
       headers: {
-        Authorization: `Basic ${credentials}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-      body: body.toString(),
+      body: JSON.stringify({ to, body: message }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorBody = await response.text();
-      console.error("[whatsapp/sender] Twilio API error:", response.status, errorBody);
+      console.error("[whatsapp/sender] Whapi error:", response.status, JSON.stringify(data));
       return false;
     }
 
-    const data = await response.json();
-    console.log("[whatsapp/sender] WhatsApp sent successfully:", data.sid);
+    console.log("[whatsapp/sender] WhatsApp sent via Whapi:", data?.message?.id || data?.sent_id || "ok");
     return true;
   } catch (error) {
     console.error("[whatsapp/sender] Failed to send WhatsApp:", error);
