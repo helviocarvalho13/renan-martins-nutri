@@ -12,7 +12,15 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { Clock, Trash2, Plus, Save, CalendarOff, RotateCcw, MessageSquare } from "lucide-react";
+import {
+  Clock,
+  Trash2,
+  Plus,
+  Save,
+  CalendarOff,
+  RotateCcw,
+  MessageSquare,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const DAYS_OF_WEEK = [
@@ -57,9 +65,10 @@ export default function DisponibilidadePage() {
   const [returnWindowDays, setReturnWindowDays] = useState(30);
   const [savingReturnWindow, setSavingReturnWindow] = useState(false);
 
-  const DEFAULT_WHATSAPP_TEMPLATE =
-    `Olá! Tudo bem?\n\nEquipe do nutricionista Renan passando para confirmar seu horário:\n\n📅 {data} às {horário}\n📍 {modalidade}\n\nSeu horário está reservado. Em caso de imprevisto, informe com antecedência.\n\nSerá um prazer recebê-lo(a).`;
-  const [whatsappTemplate, setWhatsappTemplate] = useState(DEFAULT_WHATSAPP_TEMPLATE);
+  const DEFAULT_WHATSAPP_TEMPLATE = `Olá, {nome}! Tudo bem?\n\nEquipe do nutricionista Renan Martins passando para confirmar seu horário:\n\n📅 {data} às {horário}\n📍 {modalidade}\n\nSeu horário está reservado. Em caso de imprevisto, informe com antecedência.\n\nSerá um prazer recebê-lo(a).`;
+  const [whatsappTemplate, setWhatsappTemplate] = useState(
+    DEFAULT_WHATSAPP_TEMPLATE,
+  );
   const [savingWhatsappTemplate, setSavingWhatsappTemplate] = useState(false);
 
   const [newBlock, setNewBlock] = useState({
@@ -82,7 +91,9 @@ export default function DisponibilidadePage() {
           .from("blocked_slots")
           .select("*")
           .order("date", { ascending: true }),
-        fetch("/api/settings").then(r => r.json()).catch(() => null),
+        fetch("/api/settings")
+          .then((r) => r.json())
+          .catch(() => null),
       ]);
 
       if (settingsRes?.return_window_days) {
@@ -110,10 +121,18 @@ export default function DisponibilidadePage() {
       });
 
       if (configRes.error) {
-        toast({ title: "Erro ao carregar configurações", description: configRes.error.message, variant: "destructive" });
+        toast({
+          title: "Erro ao carregar configurações",
+          description: configRes.error.message,
+          variant: "destructive",
+        });
       }
       if (blockedRes.error) {
-        toast({ title: "Erro ao carregar bloqueios", description: blockedRes.error.message, variant: "destructive" });
+        toast({
+          title: "Erro ao carregar bloqueios",
+          description: blockedRes.error.message,
+          variant: "destructive",
+        });
       }
 
       setConfigs(dayConfigs);
@@ -129,7 +148,7 @@ export default function DisponibilidadePage() {
 
   const updateConfig = (index: number, updates: Partial<DayConfig>) => {
     setConfigs((prev) =>
-      prev.map((c, i) => (i === index ? { ...c, ...updates } : c))
+      prev.map((c, i) => (i === index ? { ...c, ...updates } : c)),
     );
   };
 
@@ -160,7 +179,9 @@ export default function DisponibilidadePage() {
             .eq("id", config.id);
           if (error) hasError = true;
         } else {
-          const { error } = await supabase.from("schedule_config").insert(payload);
+          const { error } = await supabase
+            .from("schedule_config")
+            .insert(payload);
           if (error) hasError = true;
         }
       }
@@ -168,9 +189,17 @@ export default function DisponibilidadePage() {
       await loadData();
 
       if (hasError) {
-        toast({ title: "Erro ao salvar", description: "Alguns horários não puderam ser salvos.", variant: "destructive" });
+        toast({
+          title: "Erro ao salvar",
+          description: "Alguns horários não puderam ser salvos.",
+          variant: "destructive",
+        });
       } else {
-        toast({ title: "Horários salvos", description: "Configurações de disponibilidade atualizadas com sucesso." });
+        toast({
+          title: "Horários salvos",
+          description:
+            "Configurações de disponibilidade atualizadas com sucesso.",
+        });
       }
     } finally {
       setSaving(false);
@@ -196,9 +225,16 @@ export default function DisponibilidadePage() {
       });
 
       if (error) {
-        toast({ title: "Erro ao adicionar bloqueio", description: error.message, variant: "destructive" });
+        toast({
+          title: "Erro ao adicionar bloqueio",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
-        toast({ title: "Bloqueio adicionado", description: "Data bloqueada com sucesso." });
+        toast({
+          title: "Bloqueio adicionado",
+          description: "Data bloqueada com sucesso.",
+        });
         setNewBlock({
           date: "",
           start_time: "",
@@ -222,13 +258,24 @@ export default function DisponibilidadePage() {
         body: JSON.stringify({ return_window_days: returnWindowDays }),
       });
       if (res.ok) {
-        toast({ title: "Configuração salva", description: "Janela de retorno atualizada com sucesso." });
+        toast({
+          title: "Configuração salva",
+          description: "Janela de retorno atualizada com sucesso.",
+        });
       } else {
         const data = await res.json().catch(() => null);
-        toast({ title: "Erro ao salvar", description: data?.error || "Não foi possível salvar.", variant: "destructive" });
+        toast({
+          title: "Erro ao salvar",
+          description: data?.error || "Não foi possível salvar.",
+          variant: "destructive",
+        });
       }
     } catch {
-      toast({ title: "Erro ao salvar", description: "Erro de conexão.", variant: "destructive" });
+      toast({
+        title: "Erro ao salvar",
+        description: "Erro de conexão.",
+        variant: "destructive",
+      });
     }
     setSavingReturnWindow(false);
   };
@@ -242,13 +289,24 @@ export default function DisponibilidadePage() {
         body: JSON.stringify({ whatsapp_template: whatsappTemplate }),
       });
       if (res.ok) {
-        toast({ title: "Template salvo", description: "Mensagem WhatsApp atualizada com sucesso." });
+        toast({
+          title: "Template salvo",
+          description: "Mensagem WhatsApp atualizada com sucesso.",
+        });
       } else {
         const data = await res.json().catch(() => null);
-        toast({ title: "Erro ao salvar", description: data?.error || "Não foi possível salvar.", variant: "destructive" });
+        toast({
+          title: "Erro ao salvar",
+          description: data?.error || "Não foi possível salvar.",
+          variant: "destructive",
+        });
       }
     } catch {
-      toast({ title: "Erro ao salvar", description: "Erro de conexão.", variant: "destructive" });
+      toast({
+        title: "Erro ao salvar",
+        description: "Erro de conexão.",
+        variant: "destructive",
+      });
     }
     setSavingWhatsappTemplate(false);
   };
@@ -256,11 +314,21 @@ export default function DisponibilidadePage() {
   const handleDeleteBlock = async (id: string) => {
     setDeletingId(id);
     try {
-      const { error } = await supabase.from("blocked_slots").delete().eq("id", id);
+      const { error } = await supabase
+        .from("blocked_slots")
+        .delete()
+        .eq("id", id);
       if (error) {
-        toast({ title: "Erro ao remover bloqueio", description: error.message, variant: "destructive" });
+        toast({
+          title: "Erro ao remover bloqueio",
+          description: error.message,
+          variant: "destructive",
+        });
       } else {
-        toast({ title: "Bloqueio removido", description: "O bloqueio foi removido com sucesso." });
+        toast({
+          title: "Bloqueio removido",
+          description: "O bloqueio foi removido com sucesso.",
+        });
       }
       await loadData();
     } finally {
@@ -535,7 +603,10 @@ export default function DisponibilidadePage() {
                     data-testid={`blocked-slot-${slot.id}`}
                   >
                     <div className="flex items-center gap-3 flex-wrap">
-                      <Badge variant="secondary" data-testid={`badge-block-date-${slot.id}`}>
+                      <Badge
+                        variant="secondary"
+                        data-testid={`badge-block-date-${slot.id}`}
+                      >
                         {slot.date}
                       </Badge>
                       {slot.all_day ? (
@@ -575,14 +646,20 @@ export default function DisponibilidadePage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Após uma consulta concluída, o paciente pode agendar um retorno dentro desta janela de dias. Após esse período, será necessário agendar uma consulta regular.
+            Após uma consulta concluída, o paciente pode agendar um retorno
+            dentro desta janela de dias. Após esse período, será necessário
+            agendar uma consulta regular.
           </p>
           <div className="flex items-center gap-3">
-            <Label className="text-sm whitespace-nowrap">Dias para retorno</Label>
+            <Label className="text-sm whitespace-nowrap">
+              Dias para retorno
+            </Label>
             <Input
               type="number"
               value={returnWindowDays}
-              onChange={(e) => setReturnWindowDays(parseInt(e.target.value) || 30)}
+              onChange={(e) =>
+                setReturnWindowDays(parseInt(e.target.value) || 30)
+              }
               min={1}
               max={365}
               className="w-24"
@@ -610,12 +687,20 @@ export default function DisponibilidadePage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Personalize a mensagem enviada ao paciente quando uma consulta é agendada. Use as variáveis abaixo para inserir dados dinâmicos.
+            Personalize a mensagem enviada ao paciente quando uma consulta é
+            agendada. Use as variáveis abaixo para inserir dados dinâmicos.
           </p>
           <div className="flex flex-wrap gap-2 text-xs">
-            {["{nome}", "{tipo}", "{data}", "{horário}", "{modalidade}"].map((v) => (
-              <span key={v} className="bg-muted px-2 py-1 rounded font-mono border">{v}</span>
-            ))}
+            {["{nome}", "{tipo}", "{data}", "{horário}", "{modalidade}"].map(
+              (v) => (
+                <span
+                  key={v}
+                  className="bg-muted px-2 py-1 rounded font-mono border"
+                >
+                  {v}
+                </span>
+              ),
+            )}
           </div>
           <div className="space-y-2">
             <Label className="text-sm">Mensagem</Label>

@@ -180,6 +180,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$user$2d$plus$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__UserPlus$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/user-plus.js [app-client] (ecmascript) <export default as UserPlus>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$rotate$2d$ccw$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__RotateCcw$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/rotate-ccw.js [app-client] (ecmascript) <export default as RotateCcw>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/loader-circle.js [app-client] (ecmascript) <export default as Loader2>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$laptop$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Laptop$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/laptop.js [app-client] (ecmascript) <export default as Laptop>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$map$2d$pin$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__MapPin$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/map-pin.js [app-client] (ecmascript) <export default as MapPin>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$message$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__MessageCircle$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/message-circle.js [app-client] (ecmascript) <export default as MessageCircle>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/hooks/use-toast.ts [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature();
@@ -237,12 +240,12 @@ function SimpleCalendar({ selected, onSelect }) {
                             className: "w-4 h-4"
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                            lineNumber: 61,
+                            lineNumber: 64,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 54,
+                        lineNumber: 57,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -254,7 +257,7 @@ function SimpleCalendar({ selected, onSelect }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 63,
+                        lineNumber: 66,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -267,18 +270,18 @@ function SimpleCalendar({ selected, onSelect }) {
                             className: "w-4 h-4"
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                            lineNumber: 73,
+                            lineNumber: 76,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 66,
+                        lineNumber: 69,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                lineNumber: 53,
+                lineNumber: 56,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -296,12 +299,12 @@ function SimpleCalendar({ selected, onSelect }) {
                         children: d
                     }, d, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 78,
+                        lineNumber: 81,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                lineNumber: 76,
+                lineNumber: 79,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -309,7 +312,7 @@ function SimpleCalendar({ selected, onSelect }) {
                 children: cells.map((date, i)=>{
                     if (!date) return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {}, `empty-${i}`, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 83,
+                        lineNumber: 86,
                         columnNumber: 29
                     }, this);
                     const disabled = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isBefore$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["isBefore"])(date, today) || date > (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["addDays"])(new Date(), 60) || date.getDay() === 0;
@@ -325,26 +328,26 @@ function SimpleCalendar({ selected, onSelect }) {
                         children: date.getDate()
                     }, date.toISOString(), false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 95,
+                        lineNumber: 98,
                         columnNumber: 13
                     }, this);
                 })
             }, void 0, false, {
                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                lineNumber: 81,
+                lineNumber: 84,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-        lineNumber: 52,
+        lineNumber: 55,
         columnNumber: 5
     }, this);
 }
 _s(SimpleCalendar, "wUqAezTpJkjGTdav4eQEkJOPxy0=");
 _c = SimpleCalendar;
 const stepLabels = [
-    "Tipo",
+    "Tipo & Modalidade",
     "Data",
     "Horário",
     "Confirmação"
@@ -354,6 +357,7 @@ function PatientBookingPage() {
     const { toast } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useToast"])();
     const [currentStep, setCurrentStep] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(1);
     const [selectedType, setSelectedType] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [selectedModality, setSelectedModality] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [selectedDate, setSelectedDate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [selectedDateObj, setSelectedDateObj] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])();
     const [selectedSlot, setSelectedSlot] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
@@ -444,7 +448,8 @@ function PatientBookingPage() {
                     date: selectedDate,
                     start_time: selectedSlot.start_time,
                     end_time: selectedSlot.end_time,
-                    type: selectedType
+                    type: selectedType,
+                    modality: selectedModality
                 })
             });
             const data = await res.json();
@@ -475,6 +480,13 @@ function PatientBookingPage() {
         setSubmitting(false);
     };
     if (success) {
+        const dayMonth = selectedDateObj ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(selectedDateObj, "dd/MM", {
+            locale: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$locale$2f$pt$2d$BR$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ptBR"]
+        }) : "";
+        const hora = selectedSlot?.start_time.slice(0, 5) ?? "";
+        const modalidadeLabel = selectedModality === "ONLINE" ? "Online" : "Presencial";
+        const waText = encodeURIComponent(`Sim, confirmo o agendamento para o dia ${dayMonth} às ${hora}, na modalidade ${modalidadeLabel}.`);
+        const waLink = `https://wa.me/559888318881?text=${waText}`;
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             className: "max-w-2xl mx-auto py-16 text-center px-4 sm:px-0",
             children: [
@@ -484,12 +496,12 @@ function PatientBookingPage() {
                         className: "w-8 h-8 text-green-600"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 259,
+                        lineNumber: 272,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                    lineNumber: 258,
+                    lineNumber: 271,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -498,7 +510,7 @@ function PatientBookingPage() {
                     children: "Sua consulta foi agendada!"
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                    lineNumber: 261,
+                    lineNumber: 274,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -509,56 +521,102 @@ function PatientBookingPage() {
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                    lineNumber: 264,
+                    lineNumber: 277,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                    className: "text-sm text-neutral-400 mb-10",
+                    className: "text-sm text-neutral-400 mb-3",
                     children: [
                         selectedDateObj && (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(selectedDateObj, "dd 'de' MMMM 'de' yyyy", {
                             locale: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$locale$2f$pt$2d$BR$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ptBR"]
                         }),
-                        " as",
+                        " às",
                         " ",
                         selectedSlot?.start_time.slice(0, 5),
-                        " - ",
-                        selectedSlot?.end_time.slice(0, 5)
+                        " — ",
+                        modalidadeLabel
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                    lineNumber: 267,
+                    lineNumber: 280,
                     columnNumber: 9
                 }, this),
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
-                    className: "rounded-full px-6 bg-neutral-900 text-white",
-                    "data-testid": "button-go-to-appointments",
-                    asChild: true,
-                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                        href: "/paciente",
-                        children: [
-                            "Ver minhas consultas",
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
-                                className: "w-4 h-4 ml-1"
-                            }, void 0, false, {
-                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 274,
-                                columnNumber: 13
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 272,
-                        columnNumber: 11
-                    }, this)
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    className: "text-sm text-neutral-500 mb-8",
+                    children: "Clique abaixo para confirmar seu horário via WhatsApp e garantir seu atendimento."
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                    lineNumber: 271,
+                    lineNumber: 284,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "flex flex-col sm:flex-row items-center justify-center gap-3",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                            className: "rounded-full px-6 bg-green-600 hover:bg-green-700 text-white",
+                            "data-testid": "button-confirm-whatsapp",
+                            asChild: true,
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
+                                href: waLink,
+                                target: "_blank",
+                                rel: "noopener noreferrer",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$message$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__MessageCircle$3e$__["MessageCircle"], {
+                                        className: "w-4 h-4 mr-2"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                        lineNumber: 294,
+                                        columnNumber: 15
+                                    }, this),
+                                    "Confirmar pelo WhatsApp"
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                lineNumber: 293,
+                                columnNumber: 13
+                            }, this)
+                        }, void 0, false, {
+                            fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                            lineNumber: 288,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                            variant: "outline",
+                            className: "rounded-full px-6 border-neutral-200",
+                            "data-testid": "button-go-to-appointments",
+                            asChild: true,
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
+                                href: "/paciente",
+                                children: [
+                                    "Ver minhas consultas",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$arrow$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ArrowRight$3e$__["ArrowRight"], {
+                                        className: "w-4 h-4 ml-1"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                        lineNumber: 301,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                lineNumber: 299,
+                                columnNumber: 13
+                            }, this)
+                        }, void 0, false, {
+                            fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                            lineNumber: 298,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                    lineNumber: 287,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-            lineNumber: 257,
+            lineNumber: 270,
             columnNumber: 7
         }, this);
     }
@@ -569,12 +627,12 @@ function PatientBookingPage() {
                 className: "w-6 h-6 animate-spin text-neutral-400"
             }, void 0, false, {
                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                lineNumber: 284,
+                lineNumber: 312,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-            lineNumber: 283,
+            lineNumber: 311,
             columnNumber: 7
         }, this);
     }
@@ -590,7 +648,7 @@ function PatientBookingPage() {
                         children: "Agendar Consulta"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 292,
+                        lineNumber: 320,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -598,13 +656,13 @@ function PatientBookingPage() {
                         children: "Siga os passos abaixo para agendar sua consulta."
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 295,
+                        lineNumber: 323,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                lineNumber: 291,
+                lineNumber: 319,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -620,7 +678,7 @@ function PatientBookingPage() {
                                 className: `w-6 sm:w-10 h-px ${isComplete || isActive ? "bg-neutral-900" : "bg-neutral-200"}`
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 308,
+                                lineNumber: 336,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -629,19 +687,19 @@ function PatientBookingPage() {
                                 children: label
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 310,
+                                lineNumber: 338,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, label, true, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 306,
+                        lineNumber: 334,
                         columnNumber: 13
                     }, this);
                 })
             }, void 0, false, {
                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                lineNumber: 300,
+                lineNumber: 328,
                 columnNumber: 7
             }, this),
             currentStep === 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -652,7 +710,7 @@ function PatientBookingPage() {
                         children: "Escolha o tipo de consulta"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 329,
+                        lineNumber: 357,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -675,12 +733,12 @@ function PatientBookingPage() {
                                                     className: "w-5 h-5 text-neutral-700"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                    lineNumber: 352,
+                                                    lineNumber: 380,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                lineNumber: 351,
+                                                lineNumber: 379,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -690,7 +748,7 @@ function PatientBookingPage() {
                                                         children: "Consulta"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                        lineNumber: 355,
+                                                        lineNumber: 383,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -698,7 +756,7 @@ function PatientBookingPage() {
                                                         children: "Sua primeira consulta com o nutricionista"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                        lineNumber: 356,
+                                                        lineNumber: 384,
                                                         columnNumber: 21
                                                     }, this),
                                                     hasActiveFirstVisit && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -707,29 +765,29 @@ function PatientBookingPage() {
                                                         children: "Você já tem uma consulta agendada"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                        lineNumber: 360,
+                                                        lineNumber: 388,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                lineNumber: 354,
+                                                lineNumber: 382,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                        lineNumber: 350,
+                                        lineNumber: 378,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                    lineNumber: 341,
+                                    lineNumber: 369,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 334,
+                                lineNumber: 362,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -749,12 +807,12 @@ function PatientBookingPage() {
                                                     className: "w-5 h-5 text-neutral-700"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                    lineNumber: 387,
+                                                    lineNumber: 415,
                                                     columnNumber: 21
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                lineNumber: 386,
+                                                lineNumber: 414,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -764,7 +822,7 @@ function PatientBookingPage() {
                                                         children: "Retorno"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                        lineNumber: 390,
+                                                        lineNumber: 418,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -772,7 +830,7 @@ function PatientBookingPage() {
                                                         children: "Consulta de acompanhamento"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                        lineNumber: 391,
+                                                        lineNumber: 419,
                                                         columnNumber: 21
                                                     }, this),
                                                     !canReturn && !returnWindowExpired && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -781,7 +839,7 @@ function PatientBookingPage() {
                                                         children: "Disponível após uma consulta concluída"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                        lineNumber: 395,
+                                                        lineNumber: 423,
                                                         columnNumber: 23
                                                     }, this),
                                                     returnWindowExpired && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -790,7 +848,7 @@ function PatientBookingPage() {
                                                         children: "Janela de retorno expirou. Agende uma consulta regular."
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                        lineNumber: 400,
+                                                        lineNumber: 428,
                                                         columnNumber: 23
                                                     }, this),
                                                     canReturn && hasActiveReturn && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -799,7 +857,7 @@ function PatientBookingPage() {
                                                         children: "Você já possui um retorno agendado"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                        lineNumber: 405,
+                                                        lineNumber: 433,
                                                         columnNumber: 23
                                                     }, this),
                                                     canReturn && !hasActiveReturn && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -814,7 +872,7 @@ function PatientBookingPage() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                                lineNumber: 412,
+                                                                lineNumber: 440,
                                                                 columnNumber: 27
                                                             }, this),
                                                             returnDaysRemaining !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -826,48 +884,202 @@ function PatientBookingPage() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                                lineNumber: 417,
+                                                                lineNumber: 445,
                                                                 columnNumber: 27
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                        lineNumber: 410,
+                                                        lineNumber: 438,
                                                         columnNumber: 23
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                                lineNumber: 389,
+                                                lineNumber: 417,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                        lineNumber: 385,
+                                        lineNumber: 413,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                    lineNumber: 376,
+                                    lineNumber: 404,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 369,
+                                lineNumber: 397,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 333,
+                        lineNumber: 361,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "mb-8",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                className: "text-sm font-semibold text-neutral-700 mb-4",
+                                children: "Modalidade"
+                            }, void 0, false, {
+                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                lineNumber: 458,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "grid sm:grid-cols-2 gap-4",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        type: "button",
+                                        onClick: ()=>setSelectedModality("PRESENCIAL"),
+                                        className: "text-left",
+                                        "data-testid": "button-select-presencial",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
+                                            className: `p-5 transition-colors cursor-pointer ${selectedModality === "PRESENCIAL" ? "border-neutral-900 border-2" : "border-neutral-200"}`,
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "flex items-start gap-3",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "w-10 h-10 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0",
+                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$map$2d$pin$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__MapPin$3e$__["MapPin"], {
+                                                            className: "w-5 h-5 text-neutral-700"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                            lineNumber: 475,
+                                                            columnNumber: 23
+                                                        }, this)
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                        lineNumber: 474,
+                                                        columnNumber: 21
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                className: "font-medium text-neutral-900 mb-1",
+                                                                children: "Presencial"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                                lineNumber: 478,
+                                                                columnNumber: 23
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                className: "text-xs text-neutral-500",
+                                                                children: "Atendimento no consultório"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                                lineNumber: 479,
+                                                                columnNumber: 23
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                        lineNumber: 477,
+                                                        columnNumber: 21
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                lineNumber: 473,
+                                                columnNumber: 19
+                                            }, this)
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                            lineNumber: 466,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                        lineNumber: 460,
+                                        columnNumber: 15
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        type: "button",
+                                        onClick: ()=>setSelectedModality("ONLINE"),
+                                        className: "text-left",
+                                        "data-testid": "button-select-online",
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
+                                            className: `p-5 transition-colors cursor-pointer ${selectedModality === "ONLINE" ? "border-neutral-900 border-2" : "border-neutral-200"}`,
+                                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "flex items-start gap-3",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "w-10 h-10 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0",
+                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$laptop$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Laptop$3e$__["Laptop"], {
+                                                            className: "w-5 h-5 text-neutral-700"
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                            lineNumber: 500,
+                                                            columnNumber: 23
+                                                        }, this)
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                        lineNumber: 499,
+                                                        columnNumber: 21
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                className: "font-medium text-neutral-900 mb-1",
+                                                                children: "Online"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                                lineNumber: 503,
+                                                                columnNumber: 23
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                className: "text-xs text-neutral-500",
+                                                                children: "Atendimento por videochamada"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                                lineNumber: 504,
+                                                                columnNumber: 23
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                        lineNumber: 502,
+                                                        columnNumber: 21
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                                lineNumber: 498,
+                                                columnNumber: 19
+                                            }, this)
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                            lineNumber: 491,
+                                            columnNumber: 17
+                                        }, this)
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                        lineNumber: 485,
+                                        columnNumber: 15
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                lineNumber: 459,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                        lineNumber: 457,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex items-center gap-3",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                             onClick: ()=>setCurrentStep(2),
-                            disabled: !selectedType,
+                            disabled: !selectedType || !selectedModality,
                             className: "rounded-full px-6 bg-neutral-900 text-white",
                             "data-testid": "button-step1-continue",
                             children: [
@@ -876,24 +1088,24 @@ function PatientBookingPage() {
                                     className: "w-4 h-4 ml-1"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                    lineNumber: 437,
+                                    lineNumber: 520,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                            lineNumber: 430,
+                            lineNumber: 513,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 429,
+                        lineNumber: 512,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                lineNumber: 328,
+                lineNumber: 356,
                 columnNumber: 9
             }, this),
             currentStep === 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -904,7 +1116,7 @@ function PatientBookingPage() {
                         children: "Escolha a data"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 445,
+                        lineNumber: 528,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -914,12 +1126,12 @@ function PatientBookingPage() {
                             onSelect: handleDateSelect
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                            lineNumber: 450,
+                            lineNumber: 533,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 449,
+                        lineNumber: 532,
                         columnNumber: 11
                     }, this),
                     selectedDate && !loadingSlots && slots.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -928,7 +1140,7 @@ function PatientBookingPage() {
                         children: "Nenhum horário disponível nesta data. Escolha outra data."
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 454,
+                        lineNumber: 537,
                         columnNumber: 13
                     }, this),
                     selectedDate && loadingSlots && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -938,14 +1150,14 @@ function PatientBookingPage() {
                                 className: "w-4 h-4 animate-spin"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 461,
+                                lineNumber: 544,
                                 columnNumber: 15
                             }, this),
                             "Verificando disponibilidade..."
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 460,
+                        lineNumber: 543,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -961,14 +1173,14 @@ function PatientBookingPage() {
                                         className: "w-4 h-4 mr-1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                        lineNumber: 473,
+                                        lineNumber: 556,
                                         columnNumber: 15
                                     }, this),
                                     "Voltar"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 467,
+                                lineNumber: 550,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -982,25 +1194,25 @@ function PatientBookingPage() {
                                         className: "w-4 h-4 ml-1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                        lineNumber: 483,
+                                        lineNumber: 566,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 476,
+                                lineNumber: 559,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 466,
+                        lineNumber: 549,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                lineNumber: 444,
+                lineNumber: 527,
                 columnNumber: 9
             }, this),
             currentStep === 3 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1011,7 +1223,7 @@ function PatientBookingPage() {
                         children: "Escolha o horário"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 491,
+                        lineNumber: 574,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1021,7 +1233,7 @@ function PatientBookingPage() {
                         })
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 494,
+                        lineNumber: 577,
                         columnNumber: 11
                     }, this),
                     loadingSlots ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1030,12 +1242,12 @@ function PatientBookingPage() {
                             className: "w-5 h-5 animate-spin text-neutral-400"
                         }, void 0, false, {
                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                            lineNumber: 500,
+                            lineNumber: 583,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 499,
+                        lineNumber: 582,
                         columnNumber: 13
                     }, this) : slots.length > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-8",
@@ -1052,13 +1264,13 @@ function PatientBookingPage() {
                                 children: slot.start_time.slice(0, 5)
                             }, slot.start_time, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 509,
+                                lineNumber: 592,
                                 columnNumber: 19
                             }, this);
                         })
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 503,
+                        lineNumber: 586,
                         columnNumber: 13
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         className: "text-sm text-neutral-400 py-8 text-center",
@@ -1066,7 +1278,7 @@ function PatientBookingPage() {
                         children: "Nenhum horário disponível nesta data."
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 526,
+                        lineNumber: 609,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1085,14 +1297,14 @@ function PatientBookingPage() {
                                         className: "w-4 h-4 mr-1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                        lineNumber: 541,
+                                        lineNumber: 624,
                                         columnNumber: 15
                                     }, this),
                                     "Voltar"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 532,
+                                lineNumber: 615,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1106,25 +1318,25 @@ function PatientBookingPage() {
                                         className: "w-4 h-4 ml-1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                        lineNumber: 551,
+                                        lineNumber: 634,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 544,
+                                lineNumber: 627,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 531,
+                        lineNumber: 614,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                lineNumber: 490,
+                lineNumber: 573,
                 columnNumber: 9
             }, this),
             currentStep === 4 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1135,7 +1347,7 @@ function PatientBookingPage() {
                         children: "Confirme seu agendamento"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 559,
+                        lineNumber: 642,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1151,7 +1363,7 @@ function PatientBookingPage() {
                                             children: "Tipo"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                            lineNumber: 566,
+                                            lineNumber: 649,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1160,20 +1372,20 @@ function PatientBookingPage() {
                                             children: selectedType === "FIRST_VISIT" ? "Consulta" : "Retorno"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                            lineNumber: 567,
+                                            lineNumber: 650,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                    lineNumber: 565,
+                                    lineNumber: 648,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "h-px bg-neutral-100"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                    lineNumber: 571,
+                                    lineNumber: 654,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1184,7 +1396,7 @@ function PatientBookingPage() {
                                             children: "Data"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                            lineNumber: 573,
+                                            lineNumber: 656,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1195,20 +1407,20 @@ function PatientBookingPage() {
                                             })
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                            lineNumber: 574,
+                                            lineNumber: 657,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                    lineNumber: 572,
+                                    lineNumber: 655,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "h-px bg-neutral-100"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                    lineNumber: 578,
+                                    lineNumber: 661,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1219,7 +1431,7 @@ function PatientBookingPage() {
                                             children: "Horário"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                            lineNumber: 580,
+                                            lineNumber: 663,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1232,20 +1444,20 @@ function PatientBookingPage() {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                            lineNumber: 581,
+                                            lineNumber: 664,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                    lineNumber: 579,
+                                    lineNumber: 662,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "h-px bg-neutral-100"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                    lineNumber: 585,
+                                    lineNumber: 668,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1253,10 +1465,43 @@ function PatientBookingPage() {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                             className: "text-sm text-neutral-500",
-                                            children: "Duracao"
+                                            children: "Modalidade"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                            lineNumber: 587,
+                                            lineNumber: 670,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "text-sm font-medium text-neutral-900",
+                                            "data-testid": "text-confirm-modality",
+                                            children: selectedModality === "ONLINE" ? "Online" : "Presencial"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                            lineNumber: 671,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                    lineNumber: 669,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "h-px bg-neutral-100"
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                    lineNumber: 675,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "flex items-center justify-between gap-2 flex-wrap",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "text-sm text-neutral-500",
+                                            children: "Duração"
+                                        }, void 0, false, {
+                                            fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
+                                            lineNumber: 677,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1265,24 +1510,24 @@ function PatientBookingPage() {
                                             children: "50 minutos"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                            lineNumber: 588,
+                                            lineNumber: 678,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                    lineNumber: 586,
+                                    lineNumber: 676,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                            lineNumber: 564,
+                            lineNumber: 647,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 563,
+                        lineNumber: 646,
                         columnNumber: 11
                     }, this),
                     error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1291,7 +1536,7 @@ function PatientBookingPage() {
                         children: error
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 596,
+                        lineNumber: 686,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1307,14 +1552,14 @@ function PatientBookingPage() {
                                         className: "w-4 h-4 mr-1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                        lineNumber: 608,
+                                        lineNumber: 698,
                                         columnNumber: 15
                                     }, this),
                                     "Voltar"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 602,
+                                lineNumber: 692,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1328,7 +1573,7 @@ function PatientBookingPage() {
                                             className: "w-4 h-4 animate-spin mr-1"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                            lineNumber: 619,
+                                            lineNumber: 709,
                                             columnNumber: 19
                                         }, this),
                                         "Agendando..."
@@ -1336,29 +1581,29 @@ function PatientBookingPage() {
                                 }, void 0, true) : "Confirmar Agendamento"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                                lineNumber: 611,
+                                lineNumber: 701,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                        lineNumber: 601,
+                        lineNumber: 691,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-                lineNumber: 558,
+                lineNumber: 641,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/(dashboard)/paciente/agendar/page.tsx",
-        lineNumber: 290,
+        lineNumber: 318,
         columnNumber: 5
     }, this);
 }
-_s1(PatientBookingPage, "ehUZUra5XM2EHYDxaDUIZkD9GJQ=", false, function() {
+_s1(PatientBookingPage, "obZIKPOgM3oOagU2IK2FnDncbVs=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useToast"],
         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useAvailableSlots$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useAvailableSlots"]

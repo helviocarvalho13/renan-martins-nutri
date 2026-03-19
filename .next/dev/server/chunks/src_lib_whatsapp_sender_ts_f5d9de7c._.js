@@ -1,93 +1,149 @@
 module.exports = [
-"[project]/src/lib/whatsapp/sender.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
-"use strict";
+    "[project]/src/lib/whatsapp/sender.ts [app-route] (ecmascript)",
+    (__turbopack_context__) => {
+        "use strict";
 
-__turbopack_context__.s([
-    "buildWhatsAppMessage",
-    ()=>buildWhatsAppMessage,
-    "getPatientPhone",
-    ()=>getPatientPhone,
-    "sendWhatsApp",
-    ()=>sendWhatsApp
-]);
-const DEFAULT_TEMPLATE = "Olá, {nome}! Sua {tipo} com o nutricionista Renan Martins foi agendada para {data} às {horário}. Aguardamos você!";
-async function buildWhatsAppMessage(patientName, type, date, time) {
-    let template = DEFAULT_TEMPLATE;
-    try {
-        const { createServiceRoleClient } = await __turbopack_context__.A("[project]/src/lib/supabase/server.ts [app-route] (ecmascript, async loader)");
-        const supabase = createServiceRoleClient();
-        const { data } = await supabase.from("site_content").select("content").eq("section", "settings").eq("title", "whatsapp_template").maybeSingle();
-        if (data?.content?.template) {
-            template = data.content.template;
+        __turbopack_context__.s([
+            "buildWhatsAppMessage",
+            () => buildWhatsAppMessage,
+            "getPatientPhone",
+            () => getPatientPhone,
+            "sendWhatsApp",
+            () => sendWhatsApp,
+        ]);
+        const DEFAULT_TEMPLATE = `Olá, {nome}! Tudo bem?
+
+Equipe do nutricionista Renan Martins passando para confirmar seu horário:
+
+📅 {data} às {horário}
+📍 {modalidade}
+
+Seu horário está reservado. Em caso de imprevisto, informe com antecedência.
+
+Será um prazer recebê-lo(a).`;
+        async function buildWhatsAppMessage(
+            patientName,
+            type,
+            date,
+            time,
+            modality = "PRESENCIAL",
+        ) {
+            let template = DEFAULT_TEMPLATE;
+            try {
+                const { createServiceRoleClient } =
+                    await __turbopack_context__.A(
+                        "[project]/src/lib/supabase/server.ts [app-route] (ecmascript, async loader)",
+                    );
+                const supabase = createServiceRoleClient();
+                const { data } = await supabase
+                    .from("site_content")
+                    .select("content")
+                    .eq("section", "settings")
+                    .eq("title", "whatsapp_template")
+                    .maybeSingle();
+                if (data?.content?.template) {
+                    template = data.content.template;
+                }
+            } catch {
+                // Fall back to default template
+            }
+            const modalidadeLabel =
+                modality === "ONLINE" ? "Online" : "Presencial";
+            return template
+                .replace(/\{nome\}/g, patientName)
+                .replace(
+                    /\{tipo\}/g,
+                    type === "FIRST_VISIT" ? "Consulta" : "Retorno",
+                )
+                .replace(/\{data\}/g, date)
+                .replace(/\{horário\}/g, time)
+                .replace(/\{horario\}/g, time)
+                .replace(/\{modalidade\}/g, modalidadeLabel);
         }
-    } catch  {
-    // Fall back to default template
-    }
-    const typeLabel = type === "FIRST_VISIT" ? "Consulta" : "Retorno";
-    return template.replace(/\{nome\}/g, patientName).replace(/\{tipo\}/g, typeLabel).replace(/\{data\}/g, date).replace(/\{horário\}/g, time).replace(/\{horario\}/g, time);
-}
-function normalizePhoneToE164(phone) {
-    let digits = phone.replace(/\D/g, "");
-    if (digits.length === 0) return null;
-    if (digits.startsWith("0")) {
-        digits = digits.slice(1);
-    }
-    if (!digits.startsWith("55")) {
-        digits = "55" + digits;
-    }
-    if (digits.length < 12 || digits.length > 13) return null;
-    return "+" + digits;
-}
-async function sendWhatsApp(phone, message) {
-    const accountSid = process.env.TWILIO_ACCOUNT_SID;
-    const authToken = process.env.TWILIO_AUTH_TOKEN;
-    const fromNumber = process.env.TWILIO_WHATSAPP_FROM;
-    if (!accountSid || !authToken || !fromNumber) {
-        console.warn("[whatsapp/sender] Twilio credentials not configured. Skipping WhatsApp.");
-        return false;
-    }
-    const normalizedPhone = normalizePhoneToE164(phone);
-    if (!normalizedPhone) {
-        console.warn("[whatsapp/sender] Invalid phone number:", phone);
-        return false;
-    }
-    const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-    const credentials = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
-    const fromFormatted = fromNumber.startsWith("whatsapp:") ? fromNumber : `whatsapp:${fromNumber}`;
-    const body = new URLSearchParams({
-        From: fromFormatted,
-        To: `whatsapp:${normalizedPhone}`,
-        Body: message
-    });
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                Authorization: `Basic ${credentials}`,
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: body.toString()
-        });
-        if (!response.ok) {
-            const errorBody = await response.text();
-            console.error("[whatsapp/sender] Twilio API error:", response.status, errorBody);
-            return false;
+        function normalizePhone(phone) {
+            let digits = phone.replace(/\D/g, "");
+            if (digits.length === 0) return null;
+            if (digits.startsWith("0")) digits = digits.slice(1);
+            if (!digits.startsWith("55")) digits = "55" + digits;
+            // Brazilian mobile numbers: 55 + 2-digit area + 9-digit mobile (starting with 9)
+            // Remove the leading 9 from the local number to match 8-digit format expected by WhatsApp API
+            // e.g. 5598984050086 (13 digits) → 559884050086 (12 digits)
+            if (digits.length === 13) {
+                const areaCode = digits.slice(2, 4);
+                const localNumber = digits.slice(4);
+                if (localNumber.startsWith("9") && localNumber.length === 9) {
+                    digits = "55" + areaCode + localNumber.slice(1);
+                }
+            }
+            if (digits.length < 12 || digits.length > 13) return null;
+            return digits;
         }
-        const data = await response.json();
-        console.log("[whatsapp/sender] WhatsApp sent successfully:", data.sid);
-        return true;
-    } catch (error) {
-        console.error("[whatsapp/sender] Failed to send WhatsApp:", error);
-        return false;
-    }
-}
-async function getPatientPhone(patientId) {
-    const { createServiceRoleClient } = await __turbopack_context__.A("[project]/src/lib/supabase/server.ts [app-route] (ecmascript, async loader)");
-    const supabase = createServiceRoleClient();
-    const { data } = await supabase.from("profiles").select("phone").eq("id", patientId).single();
-    return data?.phone || null;
-}
-}),
+        async function sendWhatsApp(phone, message) {
+            const token = process.env.WHAPI_TOKEN;
+            if (!token) {
+                console.warn(
+                    "[whatsapp/sender] WHAPI_TOKEN not configured. Skipping WhatsApp.",
+                );
+                return false;
+            }
+            const digits = normalizePhone(phone);
+            if (!digits) {
+                console.warn("[whatsapp/sender] Invalid phone number:", phone);
+                return false;
+            }
+            const to = `${digits}@s.whatsapp.net`;
+            try {
+                const response = await fetch(
+                    "https://gate.whapi.cloud/messages/text",
+                    {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            to,
+                            body: message,
+                        }),
+                    },
+                );
+                const data = await response.json();
+                if (!response.ok) {
+                    console.error(
+                        "[whatsapp/sender] Whapi error:",
+                        response.status,
+                        JSON.stringify(data),
+                    );
+                    return false;
+                }
+                console.log(
+                    "[whatsapp/sender] WhatsApp sent via Whapi:",
+                    data?.message?.id || "ok",
+                    "to:",
+                    to,
+                );
+                return true;
+            } catch (error) {
+                console.error(
+                    "[whatsapp/sender] Failed to send WhatsApp:",
+                    error,
+                );
+                return false;
+            }
+        }
+        async function getPatientPhone(patientId) {
+            const { createServiceRoleClient } = await __turbopack_context__.A(
+                "[project]/src/lib/supabase/server.ts [app-route] (ecmascript, async loader)",
+            );
+            const supabase = createServiceRoleClient();
+            const { data } = await supabase
+                .from("profiles")
+                .select("phone")
+                .eq("id", patientId)
+                .single();
+            return data?.phone || null;
+        }
+    },
 ];
 
 //# sourceMappingURL=src_lib_whatsapp_sender_ts_f5d9de7c._.js.map

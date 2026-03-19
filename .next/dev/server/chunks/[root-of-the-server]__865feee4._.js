@@ -117,7 +117,7 @@ async function POST(request) {
         });
     }
     const body = await request.json();
-    const { date, start_time, end_time, type } = body;
+    const { date, start_time, end_time, type, modality } = body;
     if (!date || !start_time || !end_time || !type) {
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             error: "Campos obrigatórios faltando"
@@ -136,6 +136,11 @@ async function POST(request) {
             status: 400
         });
     }
+    const validModalities = [
+        "ONLINE",
+        "PRESENCIAL"
+    ];
+    const appointmentModality = validModalities.includes(modality) ? modality : "PRESENCIAL";
     const appointmentDateTime = new Date(`${date}T${start_time}`);
     const minAdvance = Date.now() + 24 * 60 * 60 * 1000;
     if (appointmentDateTime.getTime() < minAdvance) {
@@ -249,7 +254,8 @@ async function POST(request) {
         start_time,
         end_time,
         type,
-        status: "PENDING"
+        status: "PENDING",
+        modality: appointmentModality
     }).select().single();
     if (error) {
         console.error("[patient/book] Insert error:", error.code, error.message, error.details);
@@ -272,7 +278,7 @@ async function POST(request) {
         const adminId = await getAdminUserId();
         if (adminId) {
             const patientName = await getPatientName(user.id);
-            await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, adminId, user.id);
+            await notifyNewAppointment(patientName, date, start_time.slice(0, 5), type, appointment.id, adminId, user.id, appointmentModality);
         }
         await addCalendarEvent(appointment);
     } catch (notifError) {

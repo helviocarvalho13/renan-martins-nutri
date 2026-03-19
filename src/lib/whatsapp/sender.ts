@@ -1,6 +1,6 @@
-const DEFAULT_TEMPLATE = `Olá! Tudo bem?
+const DEFAULT_TEMPLATE = `Olá, {nome}! Tudo bem?
 
-Equipe do nutricionista Renan passando para confirmar seu horário:
+Equipe do nutricionista Renan Martins passando para confirmar seu horário:
 
 📅 {data} às {horário}
 📍 {modalidade}
