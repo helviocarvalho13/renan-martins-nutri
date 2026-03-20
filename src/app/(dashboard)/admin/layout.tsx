@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { NotificationBell } from "@/components/NotificationBell";
+import { authClient } from "@/lib/auth-client";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -82,7 +83,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await authClient.signOut();
     } finally {
       router.push("/login");
       router.refresh();

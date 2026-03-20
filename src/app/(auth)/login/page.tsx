@@ -3,12 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -21,21 +24,21 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password }),
+      const { data, error: authError } = await authClient.signIn.email({
+        email: email.trim(),
+        password,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
+      if (authError || !data) {
         setError("Email ou senha incorretos. Verifique suas credenciais.");
         setLoading(false);
         return;
       }
 
-      window.location.href = data.destination || "/admin";
+      const userRole = (data.user as any)?.role;
+      const destination = userRole === "ADMIN" ? "/admin" : "/paciente";
+      router.push(destination);
+      router.refresh();
     } catch {
       setError("Erro ao fazer login. Tente novamente.");
       setLoading(false);

@@ -1,6 +1,5 @@
 import {
   pgTable,
-  varchar,
   text,
   boolean,
   integer,
@@ -10,39 +9,73 @@ import {
   jsonb,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 
-const genId = sql`gen_random_uuid()`;
+// ─── better-auth tables ──────────────────────────────────────────────────────
 
 export const user = pgTable("user", {
-  id: varchar("id", { length: 36 }).primaryKey().default(genId),
-  name: text("name").notNull().default(""),
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  password: text("password").notNull(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  image: text("image"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  // Custom app fields
   role: text("role").notNull().default("PATIENT"),
   phone: text("phone"),
-  cpf: text("cpf").unique(),
+  cpf: text("cpf"),
   dateOfBirth: text("date_of_birth"),
   isActive: boolean("is_active").notNull().default(true),
+});
+
+export const session = pgTable("session", {
+  id: text("id").primaryKey(),
+  expiresAt: timestamp("expires_at").notNull(),
+  token: text("token").notNull().unique(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});
+
+export const account = pgTable("account", {
+  id: text("id").primaryKey(),
+  accountId: text("account_id").notNull(),
+  providerId: text("provider_id").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  idToken: text("id_token"),
+  accessTokenExpiresAt: timestamp("access_token_expires_at"),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  scope: text("scope"),
+  password: text("password"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const passwordResetToken = pgTable("password_reset_token", {
-  id: varchar("id", { length: 36 }).primaryKey().default(genId),
-  userId: varchar("user_id", { length: 36 })
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  token: text("token").notNull().unique(),
+export const verification = pgTable("verification", {
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+// ─── App tables ───────────────────────────────────────────────────────────────
 
 export const appointments = pgTable(
   "appointments",
   {
-    id: varchar("id", { length: 36 }).primaryKey().default(genId),
-    patientId: varchar("patient_id", { length: 36 })
+    id: text("id").primaryKey(),
+    patientId: text("patient_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     date: date("date").notNull(),
@@ -63,8 +96,8 @@ export const appointments = pgTable(
 export const scheduleConfig = pgTable(
   "schedule_config",
   {
-    id: varchar("id", { length: 36 }).primaryKey().default(genId),
-    adminId: varchar("admin_id", { length: 36 })
+    id: text("id").primaryKey(),
+    adminId: text("admin_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     dayOfWeek: integer("day_of_week").notNull(),
@@ -80,8 +113,8 @@ export const scheduleConfig = pgTable(
 );
 
 export const blockedSlots = pgTable("blocked_slots", {
-  id: varchar("id", { length: 36 }).primaryKey().default(genId),
-  adminId: varchar("admin_id", { length: 36 })
+  id: text("id").primaryKey(),
+  adminId: text("admin_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   date: date("date").notNull(),
@@ -93,10 +126,8 @@ export const blockedSlots = pgTable("blocked_slots", {
 });
 
 export const testimonials = pgTable("testimonials", {
-  id: varchar("id", { length: 36 }).primaryKey().default(genId),
-  patientId: varchar("patient_id", { length: 36 }).references(() => user.id, {
-    onDelete: "set null",
-  }),
+  id: text("id").primaryKey(),
+  patientId: text("patient_id").references(() => user.id, { onDelete: "set null" }),
   content: text("content").notNull(),
   rating: integer("rating").notNull().default(5),
   isApproved: boolean("is_approved").notNull().default(false),
@@ -104,7 +135,7 @@ export const testimonials = pgTable("testimonials", {
 });
 
 export const siteContent = pgTable("site_content", {
-  id: varchar("id", { length: 36 }).primaryKey().default(genId),
+  id: text("id").primaryKey(),
   section: text("section").notNull(),
   title: text("title").notNull().default(""),
   content: jsonb("content").notNull().default({}),
@@ -115,26 +146,23 @@ export const siteContent = pgTable("site_content", {
 });
 
 export const notifications = pgTable("notifications", {
-  id: varchar("id", { length: 36 }).primaryKey().default(genId),
-  userId: varchar("user_id", { length: 36 })
+  id: text("id").primaryKey(),
+  userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   type: text("type").notNull().default("GENERAL"),
   title: text("title").notNull(),
   message: text("message").notNull(),
   isRead: boolean("is_read").notNull().default(false),
-  appointmentId: varchar("appointment_id", { length: 36 }).references(
-    () => appointments.id,
-    { onDelete: "set null" }
-  ),
+  appointmentId: text("appointment_id").references(() => appointments.id, {
+    onDelete: "set null",
+  }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const chatbotSessions = pgTable("chatbot_sessions", {
-  id: varchar("id", { length: 36 }).primaryKey().default(genId),
-  userId: varchar("user_id", { length: 36 }).references(() => user.id, {
-    onDelete: "set null",
-  }),
+  id: text("id").primaryKey(),
+  userId: text("user_id").references(() => user.id, { onDelete: "set null" }),
   sessionToken: text("session_token").notNull().unique(),
   currentState: text("current_state").notNull().default("WELCOME"),
   context: jsonb("context").notNull().default({}),
@@ -142,6 +170,8 @@ export const chatbotSessions = pgTable("chatbot_sessions", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+// ─── Relations ────────────────────────────────────────────────────────────────
 
 export const userRelations = relations(user, ({ many }) => ({
   appointments: many(appointments),
@@ -153,6 +183,8 @@ export const userRelations = relations(user, ({ many }) => ({
 export const appointmentRelations = relations(appointments, ({ one }) => ({
   patient: one(user, { fields: [appointments.patientId], references: [user.id] }),
 }));
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export type User = typeof user.$inferSelect;
 export type NewUser = typeof user.$inferInsert;

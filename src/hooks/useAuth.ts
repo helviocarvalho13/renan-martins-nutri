@@ -1,40 +1,81 @@
 "use client";
 
-import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import type { SessionData } from "@/lib/session";
+import { useSession } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
+
+export type UserRole = "ADMIN" | "PATIENT";
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  role?: string;
+  phone?: string | null;
+  cpf?: string | null;
+  dateOfBirth?: string | null;
+  isActive?: boolean;
+}
+
+export interface Profile {
+  id: string;
+  role: UserRole;
+  full_name?: string;
+  phone?: string | null;
+  cpf?: string | null;
+  date_of_birth?: string | null;
+  is_active?: boolean;
+}
 
 interface UseAuthReturn {
-  user: SessionData | null;
+  user: AuthUser | null;
+  profile: Profile | null;
+  role: UserRole | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
 
 export function useAuth(): UseAuthReturn {
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const { data: session, isPending } = useSession();
 
-  const { data, isPending } = useQuery<{ user: SessionData | null }>({
-    queryKey: ["/api/auth/session"],
-    retry: false,
-    staleTime: 1000 * 60 * 5,
-  });
+  const sessionUser = session?.user as any;
 
-  const signOut = useCallback(async () => {
+  const user: AuthUser | null = sessionUser
+    ? {
+        id: sessionUser.id,
+        email: sessionUser.email,
+        name: sessionUser.name,
+        role: sessionUser.role ?? "PATIENT",
+        phone: sessionUser.phone ?? null,
+        cpf: sessionUser.cpf ?? null,
+        dateOfBirth: sessionUser.dateOfBirth ?? null,
+        isActive: sessionUser.isActive ?? true,
+      }
+    : null;
+
+  const profile: Profile | null = user
+    ? {
+        id: user.id,
+        role: (user.role as UserRole) ?? "PATIENT",
+        full_name: user.name,
+        phone: user.phone,
+        cpf: user.cpf,
+        date_of_birth: user.dateOfBirth,
+        is_active: user.isActive,
+      }
+    : null;
+
+  const role = (user?.role as UserRole) ?? null;
+
+  const signOut = async () => {
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      queryClient.clear();
+      await authClient.signOut();
+    } finally {
       router.push("/login");
       router.refresh();
-    } catch {
-      window.location.href = "/login";
     }
-  }, [router, queryClient]);
-
-  return {
-    user: data?.user ?? null,
-    loading: isPending,
-    signOut,
   };
+
+  return { user, profile, role, loading: isPending, signOut };
 }

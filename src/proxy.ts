@@ -1,17 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getIronSession } from "iron-session";
-import type { SessionData } from "@/lib/session";
-
-const sessionOptions = {
-  cookieName: "renan-session",
-  password: process.env.SESSION_SECRET || "fallback-secret-at-least-32-chars-long!!",
-  cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 60 * 60 * 24 * 7,
-    sameSite: "lax" as const,
-  },
-};
+import { auth } from "@/lib/auth";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -23,24 +11,25 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const response = NextResponse.next();
-  const session = await getIronSession<SessionData>(request, response, sessionOptions);
+  const session = await auth.api.getSession({ headers: request.headers });
 
-  if (!session.isLoggedIn || !session.userId) {
+  if (!session?.user) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isAdminRoute && session.role !== "ADMIN") {
+  const userRole = (session.user as any).role as string;
+
+  if (isAdminRoute && userRole !== "ADMIN") {
     return NextResponse.redirect(new URL("/paciente", request.url));
   }
 
-  if (isPatientRoute && session.role === "ADMIN") {
+  if (isPatientRoute && userRole === "ADMIN") {
     return NextResponse.redirect(new URL("/admin", request.url));
   }
 
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {

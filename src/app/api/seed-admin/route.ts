@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { db, user, scheduleConfig } from "@/lib/db";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { user, account, scheduleConfig } from "@/lib/schema";
 import { eq } from "drizzle-orm";
-import { hashPassword, generateId } from "@/lib/auth-helpers";
+import { randomUUID } from "crypto";
 
 const ADMIN_EMAIL = "renanmartinsnutri@gmail.com";
-const ADMIN_PASSWORD = "123456";
+const ADMIN_NAME = "Renan Martins";
 
 const DEFAULT_SCHEDULE = [
   { dayOfWeek: 1, startTime: "08:00:00", endTime: "18:00:00", isActive: true },
@@ -18,19 +19,20 @@ const DEFAULT_SCHEDULE = [
 ];
 
 export async function POST(request: NextRequest) {
-  const headersList = await headers();
-  const host = headersList.get("host") || "";
-  const isLocalhost =
-    host.includes("localhost") ||
-    host.includes("127.0.0.1") ||
-    host.includes("replit");
-
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get("secret");
   const sessionSecret = process.env.SESSION_SECRET;
 
-  if (!isLocalhost && secret !== sessionSecret) {
+  if (!sessionSecret || secret !== sessionSecret) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 403 });
+  }
+
+  const adminPassword = searchParams.get("password");
+  if (!adminPassword || adminPassword.length < 6) {
+    return NextResponse.json(
+      { error: "Provide a ?password= query param with at least 6 characters." },
+      { status: 400 }
+    );
   }
 
   try {
@@ -46,19 +48,56 @@ export async function POST(request: NextRequest) {
       adminId = existing[0].id;
       await db
         .update(user)
-        .set({ role: "ADMIN", isActive: true })
+        .set({ role: "ADMIN", isActive: true, updatedAt: new Date() })
         .where(eq(user.id, adminId));
+
+      const existingAccount = await db
+        .select()
+        .from(account)
+        .where(eq(account.userId, adminId))
+        .limit(1);
+
+      if (existingAccount.length === 0) {
+        const signUpResult = await auth.api.signUpEmail({
+          body: {
+            name: ADMIN_NAME,
+            email: `_tmp_${Date.now()}@replace.invalid`,
+            password: adminPassword,
+          },
+        });
+        if (signUpResult?.user?.id) {
+          const tmpAccount = await db
+            .select()
+            .from(account)
+            .where(eq(account.userId, signUpResult.user.id))
+            .limit(1);
+          if (tmpAccount.length > 0) {
+            await db
+              .update(account)
+              .set({ userId: adminId, accountId: ADMIN_EMAIL })
+              .where(eq(account.id, tmpAccount[0].id));
+            await db.delete(user).where(eq(user.id, signUpResult.user.id));
+          }
+        }
+      }
     } else {
-      const hashed = await hashPassword(ADMIN_PASSWORD);
-      adminId = generateId();
-      await db.insert(user).values({
-        id: adminId,
-        name: "Renan Martins",
-        email: ADMIN_EMAIL,
-        password: hashed,
-        role: "ADMIN",
-        isActive: true,
+      const signUpResult = await auth.api.signUpEmail({
+        body: {
+          name: ADMIN_NAME,
+          email: ADMIN_EMAIL,
+          password: adminPassword,
+        },
       });
+
+      if (!signUpResult?.user?.id) {
+        return NextResponse.json({ error: "Falha ao criar usuário admin." }, { status: 500 });
+      }
+
+      adminId = signUpResult.user.id;
+      await db
+        .update(user)
+        .set({ role: "ADMIN", isActive: true, updatedAt: new Date() })
+        .where(eq(user.id, adminId));
     }
 
     const existingSchedule = await db
@@ -70,7 +109,7 @@ export async function POST(request: NextRequest) {
     if (existingSchedule.length === 0) {
       await db.insert(scheduleConfig).values(
         DEFAULT_SCHEDULE.map((s) => ({
-          id: generateId(),
+          id: randomUUID(),
           adminId,
           dayOfWeek: s.dayOfWeek,
           startTime: s.startTime,
@@ -85,6 +124,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: `Admin ${existing.length > 0 ? "updated" : "created"} successfully.`,
       adminId,
+      email: ADMIN_EMAIL,
     });
   } catch (err) {
     console.error("[seed-admin]", err);

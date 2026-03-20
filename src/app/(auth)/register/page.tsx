@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 function formatCPF(value: string): string {
   const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -66,30 +67,36 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, phone, cpf, dateOfBirth, password }),
-      });
+      const { data, error: signUpError } = await authClient.signUp.email({
+        name: fullName.trim(),
+        email: email.trim(),
+        password,
+        phone: phoneDigits,
+        cpf: cpf.replace(/\D/g, "") || undefined,
+        dateOfBirth: dateOfBirth || undefined,
+      } as any);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Erro ao criar conta. Tente novamente.");
+      if (signUpError) {
+        const msg = (signUpError as any)?.message || "";
+        if (msg.toLowerCase().includes("already exists") || msg.toLowerCase().includes("duplicate")) {
+          setError("Este email já está cadastrado. Tente fazer login.");
+        } else {
+          setError("Erro ao criar conta. Tente novamente.");
+        }
         setLoading(false);
         return;
       }
 
-      if (data.autoLogin && data.destination) {
-        window.location.href = data.destination;
+      if (data?.user) {
+        router.push("/paciente");
+        router.refresh();
       } else {
         setSuccess(true);
       }
     } catch {
       setError("Erro de conexão. Tente novamente.");
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   if (success) {
