@@ -2,23 +2,47 @@
 
 import { useQuery } from "@tanstack/react-query";
 
-interface UseRealtimeAgendaOptions {
+interface AppointmentRow {
+  id: string;
+  patient_id: string;
   date: string;
-  refetchIntervalMs?: number;
-}
-
-interface AgendaData {
-  appointments: unknown[];
+  start_time: string;
+  end_time: string;
+  type: string;
+  status: string;
+  notes: string | null;
+  modality: string | null;
+  return_suggested_date: string | null;
+  patient_name: string | null;
+  patient_email: string | null;
+  patient_phone: string | null;
   [key: string]: unknown;
 }
 
+interface AgendaResponse {
+  appointments: AppointmentRow[];
+}
+
+interface UseRealtimeAgendaOptions {
+  from: string;
+  to: string;
+  refetchIntervalMs?: number;
+}
+
 export function useRealtimeAgenda({
-  date,
+  from,
+  to,
   refetchIntervalMs = 30000,
 }: UseRealtimeAgendaOptions) {
-  return useQuery<AgendaData>({
-    queryKey: ["/api/admin/appointments", date],
+  return useQuery<AgendaResponse>({
+    queryKey: ["/api/admin/agenda", from, to],
+    queryFn: async () => {
+      const res = await fetch(`/api/admin/agenda?from=${from}&to=${to}`);
+      if (!res.ok) throw new Error("Falha ao carregar agenda");
+      return res.json() as Promise<AgendaResponse>;
+    },
     refetchInterval: refetchIntervalMs,
     staleTime: 0,
+    enabled: Boolean(from && to),
   });
 }
