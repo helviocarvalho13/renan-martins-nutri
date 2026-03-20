@@ -320,10 +320,14 @@ var __turbopack_async_dependencies__ = __turbopack_handle_async_dependencies__([
 ;
 ;
 ;
+const PRODUCTION_URL = "https://renan-martins-nutri.replit.app";
+const CUSTOM_DOMAIN = "https://renanmartins.com.br";
 const replitDomain = process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS}` : null;
-const appBaseUrl = process.env.BETTER_AUTH_URL || replitDomain || "http://localhost:5000";
+const appBaseUrl = process.env.BETTER_AUTH_URL || CUSTOM_DOMAIN;
 const trustedOrigins = [
     "http://localhost:5000",
+    PRODUCTION_URL,
+    CUSTOM_DOMAIN,
     ...replitDomain ? [
         replitDomain
     ] : []
