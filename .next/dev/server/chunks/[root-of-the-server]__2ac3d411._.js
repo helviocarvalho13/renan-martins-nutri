@@ -378,7 +378,6 @@ const auth = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f
             },
             dateOfBirth: {
                 type: "string",
-                fieldName: "date_of_birth",
                 required: false,
                 input: true
             },
