@@ -1,37 +1,56 @@
 # Renan Martins Nutricionista
 
 ## Overview
-This project is a comprehensive platform for nutritionist Renan Martins. It streamlines operations by offering an institutional website, a patient area, an admin dashboard for managing appointments and content, and an intelligent chatbot for scheduling. The primary goal is to enhance patient engagement, simplify appointment booking, and provide Renan Martins with robust tools for practice management. The platform aims to be a leading digital solution in the nutrition sector, focusing on user-friendly interfaces and efficient backend processes.
+This project is a comprehensive platform for nutritionist Renan Martins. It streamlines operations by offering an institutional website, a patient area, an admin dashboard for managing appointments and content, and an intelligent chatbot for scheduling. The primary goal is to enhance patient engagement, simplify appointment booking, and provide Renan Martins with robust tools for practice management.
 
 ## User Preferences
-I prefer simple language and direct instructions. I want iterative development with frequent, small updates rather than large, infrequent ones. Always ask for my approval before making any significant changes to the database schema or core business logic. I value detailed explanations for complex technical decisions but prefer concise updates for routine progress.
+Simple language and direct instructions. Iterative development with frequent, small updates. Always ask for approval before making significant changes to the database schema or core business logic.
 
 ## System Architecture
-The platform is built using Next.js 16 with the App Router and TypeScript, ensuring a modern, scalable, and type-safe application. Styling is managed with Tailwind CSS and Shadcn/UI components for a consistent and responsive design. Authentication and database management are handled by Supabase, utilizing its Auth service for user authentication with role-based access (ADMIN/PATIENT) and PostgreSQL for data storage, protected by Row Level Security (RLS) policies. Route protection is implemented via Next.js middleware using `@supabase/ssr`.
+**Stack**: Next.js 16 (App Router + Turbopack), TypeScript, Tailwind CSS, Shadcn/UI, Drizzle ORM.
 
-The UI/UX adheres to a clean, minimal design aesthetic with a neutral color palette (neutral-900/500/400) and Plus Jakarta Sans font, inspired by modern SaaS landing pages. Key design elements include full-screen hero sections with subtle overlays, generous whitespace, and rounded pill-style buttons.
+**Authentication** (migrated from Supabase → Replit infra):
+- `iron-session` for encrypted session cookies (httpOnly, secure)
+- `bcryptjs` for password hashing
+- Route protection via `src/proxy.ts` (Next.js 16 renamed middleware to proxy)
+- Session stored in `renan-session` cookie
+- Auth endpoints: `/api/auth/login`, `/api/auth/register`, `/api/auth/logout`, `/api/auth/session`, `/api/auth/forgot-password`, `/api/auth/reset-password`
 
-Core features include:
-- **Appointment Scheduling**: A 3-step booking wizard for patients and comprehensive daily/weekly/monthly views for admins.
-- **Admin Dashboard**: Gated access for managing patients, schedules, site content, and testimonials. Features real-time updates via Supabase Realtime.
-- **Patient Area**: A personalized panel for patients to manage bookings, view upcoming appointments, and access their history.
-- **Team Mago Chatbot**: A floating widget that facilitates in-chat appointment booking, including an in-chat login flow.
-- **Notification System**: In-app notifications, email (via Resend API), and WhatsApp (via Whapi Cloud) for various appointment lifecycle events and reminders.
-- **Google Calendar Integration**: Automatic event creation and management for appointments.
-- **SEO & Accessibility**: Comprehensive meta tags, SVG favicons, skip-to-content links, ARIA labels, and full responsiveness across devices.
-- **Error Handling & Loading States**: Robust error handling with toast notifications and skeleton screens for a smooth user experience.
+**Database**: Replit PostgreSQL via `DATABASE_URL`
+- Schema defined in `src/lib/schema.ts` (Drizzle ORM)
+- Tables: `user`, `password_reset_token`, `appointments`, `schedule_config`, `blocked_slots`, `testimonials`, `site_content`, `notifications`, `chatbot_sessions`
+- Drizzle config: `drizzle.config.ts` → `./src/lib/schema.ts`
+- DB client: `src/lib/db.ts`
+- Admin account seeded: `renanmartinsnutri@gmail.com` / `123456` (ADMIN role)
+
+**Auth Hooks/Helpers**:
+- `src/lib/session.ts` — iron-session options + `getSession()`, `getCurrentUser()`
+- `src/lib/auth-helpers.ts` — `hashPassword()`, `verifyPassword()`, `getUserByEmail()`, `generateToken()`
+- `src/hooks/useAuth.ts` — React hook using `/api/auth/session` via TanStack Query
+
+**Notifications**: `src/components/NotificationBell.tsx` polls `/api/notifications` (no Supabase realtime)
+
+**Dashboard Layouts**:
+- Admin: `src/app/(dashboard)/admin/layout.tsx` — logout via `POST /api/auth/logout`
+- Patient: `src/app/(dashboard)/paciente/layout.tsx` — uses `useAuth()` for user name + logout
+
+## Important File Conventions
+- Next.js 16 renamed `middleware.ts` → `proxy.ts` and `middleware()` → `proxy()` export
+- Button + Link: always `<Button asChild><Link>` — never wrap Button with Link/a
+- Fonts: Plus Jakarta Sans + Playfair Display
+- Port: 5000, `reactStrictMode: false`
 
 ## External Dependencies
-- **Supabase**: Used for authentication (Auth), database (PostgreSQL), and real-time functionalities.
-- **Resend API**: For sending professional HTML email notifications.
-- **Whapi Cloud**: For sending WhatsApp notifications via the business number, including appointment confirmations.
-- **Google Calendar API**: Integrated via Replit Google Calendar Connector for managing calendar events related to appointments.
+- **Replit PostgreSQL** (`DATABASE_URL`): Primary database for all app data
+- **Whapi Cloud** (`WHAPI_TOKEN`): WhatsApp notifications
+- **Google Calendar** (Replit connector): Appointment calendar events
+- **Twilio** (`TWILIO_*`): SMS/WhatsApp fallback
+
+> NOTE: Supabase is no longer used for auth (Task #2 complete). Many dashboard API routes and data-fetching pages still reference Supabase client — these will be migrated in Task #3.
 
 ## Environment Variables
-- `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
-- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
-- `RESEND_API_KEY` - (Optional) Resend API key for email notifications
-- `WHAPI_TOKEN` - Whapi Cloud channel token for WhatsApp notifications
-- `CRON_SECRET` - (Optional) Secret for cron endpoint authentication
-- `REPLIT_CONNECTORS_HOSTNAME` - (Auto) Replit connector host for Google Calendar OAuth
+- `DATABASE_URL` — Replit PostgreSQL connection string (auto-provided)
+- `SESSION_SECRET` — Secret for encrypting iron-session cookies (must be 32+ chars)
+- `WHAPI_TOKEN` — Whapi Cloud channel token for WhatsApp
+- `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM` — Twilio config
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` — Still present for Task #3 migration; will be removed after Task #3

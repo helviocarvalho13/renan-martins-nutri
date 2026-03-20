@@ -1,31 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
 import { LogOut, UserCog } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function PatientLayout({ children }: { children: React.ReactNode }) {
-  const [userName, setUserName] = useState("");
+  const { user, signOut } = useAuth();
+  const router = useRouter();
 
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Paciente");
-      }
-    });
-  }, []);
-
-  const initials = userName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase() || "P";
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "P";
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -57,7 +51,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
                 {initials}
               </div>
               <span className="text-sm font-medium text-neutral-700 hidden sm:inline" data-testid="text-user-name">
-                {userName}
+                {user?.name ?? ""}
               </span>
             </Link>
             <Button
@@ -76,12 +70,7 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
               variant="ghost"
               size="icon"
               aria-label="Sair da conta"
-              onClick={() => {
-                const supabase = createClient();
-                supabase.auth.signOut().then(() => {
-                  window.location.href = "/login";
-                });
-              }}
+              onClick={signOut}
               data-testid="button-logout"
             >
               <LogOut className="w-4 h-4 text-neutral-500" />

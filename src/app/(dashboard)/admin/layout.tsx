@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { usePathname, useRouter } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -73,11 +72,22 @@ function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const currentTitle = navItems.find(
-    (item) => item.href === pathname || (item.href !== "/admin" && pathname.startsWith(item.href))
-  )?.label || "Dashboard";
+  const currentTitle =
+    navItems.find(
+      (item) => item.href === pathname || (item.href !== "/admin" && pathname.startsWith(item.href))
+    )?.label || "Dashboard";
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } finally {
+      router.push("/login");
+      router.refresh();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-neutral-50 flex">
@@ -100,19 +110,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <SidebarContent pathname={pathname} onNavigate={() => setMobileOpen(false)} />
                 </SheetContent>
               </Sheet>
-              <h1 className="text-lg font-semibold text-neutral-900" data-testid="text-page-title">{currentTitle}</h1>
+              <h1 className="text-lg font-semibold text-neutral-900" data-testid="text-page-title">
+                {currentTitle}
+              </h1>
             </div>
 
             <div className="flex items-center gap-2">
               <NotificationBell />
-
               <Separator orientation="vertical" className="h-6 mx-1 hidden sm:block" />
               <div className="hidden sm:flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-neutral-900 flex items-center justify-center text-white text-xs font-bold">
                   RM
                 </div>
-                <span className="text-sm font-medium text-neutral-700" data-testid="text-admin-name">Renan Martins</span>
-                <Button variant="ghost" size="icon" aria-label="Sair da conta" onClick={() => { const supabase = createClient(); supabase.auth.signOut().then(() => { window.location.href = "/login"; }); }} data-testid="button-logout"><LogOut className="w-4 h-4 text-neutral-500" /></Button>
+                <span className="text-sm font-medium text-neutral-700" data-testid="text-admin-name">
+                  Renan Martins
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Sair da conta"
+                  onClick={handleLogout}
+                  data-testid="button-logout"
+                >
+                  <LogOut className="w-4 h-4 text-neutral-500" />
+                </Button>
               </div>
             </div>
           </div>

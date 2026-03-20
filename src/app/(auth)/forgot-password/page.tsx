@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -20,22 +19,25 @@ export default function ForgotPasswordPage() {
     setError("");
     setLoading(true);
 
-    const supabase = createClient();
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-      email.trim(),
-      {
-        redirectTo: `${window.location.origin}/update-password`,
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Erro ao solicitar recuperação. Tente novamente.");
+        return;
       }
-    );
 
-    if (resetError) {
-      setError("Erro ao enviar email de recuperação. Tente novamente.");
+      setSent(true);
+    } catch {
+      setError("Erro de conexão. Tente novamente.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    setSent(true);
-    setLoading(false);
   };
 
   if (sent) {
@@ -45,13 +47,14 @@ export default function ForgotPasswordPage() {
           <div className="w-14 h-14 mx-auto rounded-full bg-green-50 flex items-center justify-center">
             <CheckCircle2 className="w-7 h-7 text-green-600" />
           </div>
-          <h2 className="text-xl font-bold text-neutral-900" data-testid="text-email-sent-title">Email enviado!</h2>
+          <h2 className="text-xl font-bold text-neutral-900" data-testid="text-email-sent-title">
+            Solicitação enviada!
+          </h2>
           <p className="text-sm text-neutral-500">
-            Se existe uma conta com o email <strong className="text-neutral-700">{email}</strong>, você receberá um link para redefinir sua senha.
+            Se existe uma conta com o email{" "}
+            <strong className="text-neutral-700">{email}</strong>, você receberá um link para redefinir sua senha em breve.
           </p>
-          <p className="text-xs text-neutral-400">
-            Verifique também sua caixa de spam.
-          </p>
+          <p className="text-xs text-neutral-400">Verifique também sua caixa de spam.</p>
           <Button
             variant="outline"
             className="w-full rounded-full border-neutral-200"
@@ -64,7 +67,10 @@ export default function ForgotPasswordPage() {
             </Link>
           </Button>
           <button
-            onClick={() => { setSent(false); setEmail(""); }}
+            onClick={() => {
+              setSent(false);
+              setEmail("");
+            }}
             className="text-xs text-neutral-400 hover:text-neutral-700 transition-colors"
             data-testid="button-try-another-email"
           >
@@ -92,9 +98,18 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-sm space-y-8">
           <div>
             <Link href="/" className="inline-block mb-8">
-              <Image src="/images/renan-martins-logo.png" alt="Renan Martins" width={120} height={40} className="object-contain" />
+              <Image
+                src="/images/renan-martins-logo.png"
+                alt="Renan Martins"
+                width={120}
+                height={40}
+                className="object-contain"
+              />
             </Link>
-            <h1 className="text-2xl font-bold tracking-tight text-neutral-900" data-testid="text-forgot-password-title">
+            <h1
+              className="text-2xl font-bold tracking-tight text-neutral-900"
+              data-testid="text-forgot-password-title"
+            >
               Recuperar Senha
             </h1>
             <p className="text-sm text-neutral-500 mt-1">
@@ -104,13 +119,18 @@ export default function ForgotPasswordPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100" data-testid="text-forgot-error">
+              <div
+                className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100"
+                data-testid="text-forgot-error"
+              >
                 {error}
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-neutral-700 text-sm">Email cadastrado</Label>
+              <Label htmlFor="email" className="text-neutral-700 text-sm">
+                Email cadastrado
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -142,7 +162,11 @@ export default function ForgotPasswordPage() {
           </form>
 
           <div className="text-center">
-            <Link href="/login" className="text-sm text-neutral-500 hover:text-neutral-900 inline-flex items-center gap-1 transition-colors" data-testid="link-back-login-bottom">
+            <Link
+              href="/login"
+              className="text-sm text-neutral-500 hover:text-neutral-900 inline-flex items-center gap-1 transition-colors"
+              data-testid="link-back-login-bottom"
+            >
               <ArrowLeft className="w-3 h-3" />
               Voltar ao login
             </Link>

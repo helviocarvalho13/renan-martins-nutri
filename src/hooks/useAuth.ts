@@ -1,75 +1,40 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import type { User } from "@supabase/supabase-js";
-import type { Profile, UserRole } from "@/lib/types/database";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { SessionData } from "@/lib/session";
 
 interface UseAuthReturn {
-  user: User | null;
-  profile: Profile | null;
-  role: UserRole | null;
+  user: SessionData | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
 
 export function useAuth(): UseAuthReturn {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const queryClient = useQueryClient();
 
-  const fetchProfile = useCallback(async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    setProfile(data);
-  }, [supabase]);
+  const { data, isPending } = useQuery<{ user: SessionData | null }>({
+    queryKey: ["/api/auth/session"],
+    retry: false,
+    staleTime: 1000 * 60 * 5,
+  });
 
-  useEffect(() => {
-    const getSession = async () => {
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      setUser(currentUser);
-      if (currentUser) {
-        await fetchProfile(currentUser.id);
-      }
-      setLoading(false);
-    };
+  const signOut = useCallback(async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      queryClient.clear();
+      router.push("/login");
+      router.refresh();
+    } catch {
+      window.location.href = "/login";
+    }
+  }, [router, queryClient]);
 
-    getSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        const currentUser = session?.user ?? null;
-        setUser(currentUser);
-        if (currentUser) {
-          await fetchProfile(currentUser.id);
-        } else {
-          setProfile(null);
-        }
-        setLoading(false);
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase, fetchProfile]);
-
-  const role: UserRole | null =
-    profile?.role ?? (user?.user_metadata?.role as UserRole) ?? null;
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setProfile(null);
-    router.push("/login");
-    router.refresh();
+  return {
+    user: data?.user ?? null,
+    loading: isPending,
+    signOut,
   };
-
-  return { user, profile, role, loading, signOut };
 }
