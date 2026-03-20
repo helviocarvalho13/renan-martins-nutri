@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import * as schema from "@/lib/schema";
 
 const PRODUCTION_URL = "https://renan-martins-nutri.replit.app";
+const CUSTOM_DOMAIN = "https://renanmartins.com.br";
 
 const replitDomain = process.env.REPLIT_DOMAINS
   ? `https://${process.env.REPLIT_DOMAINS}`
@@ -11,12 +12,12 @@ const replitDomain = process.env.REPLIT_DOMAINS
 
 const appBaseUrl =
   process.env.BETTER_AUTH_URL ||
-  replitDomain ||
-  "http://localhost:5000";
+  CUSTOM_DOMAIN;
 
 const trustedOrigins = [
   "http://localhost:5000",
   PRODUCTION_URL,
+  CUSTOM_DOMAIN,
   ...(replitDomain ? [replitDomain] : []),
 ];
 

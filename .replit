@@ -51,4 +51,4 @@ integrations = ["google-calendar:1.0.0"]
 [userenv]
 
 [userenv.production]
-BETTER_AUTH_URL = "https://renan-martins-nutri.replit.app"
+BETTER_AUTH_URL = "https://renanmartins.com.br"
