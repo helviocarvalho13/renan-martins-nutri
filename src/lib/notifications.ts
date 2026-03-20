@@ -135,17 +135,6 @@ export async function notifyAppointmentConfirmed(
     const { subject, html } = templates.appointmentConfirmedPatient(patientName, date, time, type);
     await sendEmail(email, subject, html);
   }
-  try {
-    const { sendWhatsApp, buildWhatsAppMessage } = await import("@/lib/whatsapp/sender");
-    const patientRows = await db.select({ phone: user.phone }).from(user).where(eq(user.id, patientId)).limit(1);
-    const phone = patientRows[0]?.phone;
-    if (phone) {
-      const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time);
-      await sendWhatsApp(phone, msg);
-    }
-  } catch (e) {
-    console.error("[notifyAppointmentConfirmed] WhatsApp error:", e);
-  }
 }
 
 export async function notifyAppointmentCancelledByAdmin(

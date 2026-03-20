@@ -14,7 +14,6 @@ import {
   CalendarDays,
   Users,
   Clock,
-  Settings,
   Menu,
   LogOut,
   ChevronRight,
@@ -25,7 +24,6 @@ const navItems = [
   { href: "/admin/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/admin/pacientes", label: "Pacientes", icon: Users },
   { href: "/admin/disponibilidade", label: "Disponibilidade", icon: Clock },
-  { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
