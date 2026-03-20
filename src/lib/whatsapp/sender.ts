@@ -29,8 +29,8 @@ export async function buildWhatsAppMessage(
       .where(and(eq(siteContent.section, "settings"), eq(siteContent.title, "whatsapp_template")))
       .limit(1);
     const tmpl = rows[0]?.content as Record<string, string> | undefined;
-    if (tmpl?.template) {
-      template = tmpl.template;
+    if (tmpl?.value) {
+      template = tmpl.value;
     }
   } catch {
     // Fall back to default template

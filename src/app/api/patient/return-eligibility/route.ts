@@ -15,11 +15,11 @@ export async function GET() {
     const settingsRows = await db
       .select({ content: siteContent.content })
       .from(siteContent)
-      .where(and(eq(siteContent.section, "settings"), eq(siteContent.title, "return_window")))
+      .where(and(eq(siteContent.section, "settings"), eq(siteContent.title, "return_window_days")))
       .limit(1);
     const content = settingsRows[0]?.content as Record<string, number> | undefined;
-    if (content?.return_window_days) {
-      returnWindowDays = content.return_window_days;
+    if (typeof content?.value === "number" && content.value > 0) {
+      returnWindowDays = content.value;
     }
   } catch {}
 
