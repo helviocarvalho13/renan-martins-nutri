@@ -3,6 +3,8 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/schema";
 
+const PRODUCTION_URL = "https://renan-martins-nutri.replit.app";
+
 const replitDomain = process.env.REPLIT_DOMAINS
   ? `https://${process.env.REPLIT_DOMAINS}`
   : null;
@@ -14,6 +16,7 @@ const appBaseUrl =
 
 const trustedOrigins = [
   "http://localhost:5000",
+  PRODUCTION_URL,
   ...(replitDomain ? [replitDomain] : []),
 ];
 

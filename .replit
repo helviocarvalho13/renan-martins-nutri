@@ -47,3 +47,8 @@ outputType = "webview"
 
 [agent]
 integrations = ["google-calendar:1.0.0"]
+
+[userenv]
+
+[userenv.production]
+BETTER_AUTH_URL = "https://renan-martins-nutri.replit.app"
