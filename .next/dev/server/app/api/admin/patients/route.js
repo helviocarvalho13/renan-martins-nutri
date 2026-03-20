@@ -1,5 +1,5 @@
 var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/admin/patients/route.js")
-R.c("server/chunks/node_modules_better-auth_649ec259._.js")
+R.c("server/chunks/_cb15e88f._.js")
 R.c("server/chunks/node_modules_next_e93072f8._.js")
 R.c("server/chunks/node_modules_drizzle-orm_47babb1f._.js")
 R.c("server/chunks/node_modules_better-auth_dist_f39740ad._.js")

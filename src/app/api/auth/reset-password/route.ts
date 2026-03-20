@@ -18,9 +18,9 @@ export async function POST(req: NextRequest) {
 
     await auth.api.resetPassword({ body: { token, newPassword: password } });
     return NextResponse.json({ success: true, destination: "/login" });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[reset-password]", err);
-    const msg = err?.message || "";
+    const msg = err instanceof Error ? err.message : String(err);
     if (msg.includes("invalid") || msg.includes("expired")) {
       return NextResponse.json(
         { error: "Link de recuperação inválido ou expirado. Solicite um novo." },

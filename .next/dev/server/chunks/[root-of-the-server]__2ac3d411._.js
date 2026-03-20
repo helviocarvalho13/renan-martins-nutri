@@ -346,8 +346,16 @@ const auth = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f
         requireEmailVerification: false,
         autoSignIn: true,
         minPasswordLength: 6,
-        sendResetPasswordToken: async ({ user })=>{
-            console.log(`[forgot-password] Password reset requested for ${user.email}`);
+        sendResetPasswordToken: async ({ user, url })=>{
+            try {
+                const { sendEmail } = await __turbopack_context__.A("[project]/src/lib/email/sender.ts [app-route] (ecmascript, async loader)");
+                const { passwordReset } = await __turbopack_context__.A("[project]/src/lib/email/templates.ts [app-route] (ecmascript, async loader)");
+                const { subject, html } = passwordReset(user.name, url);
+                await sendEmail(user.email, subject, html);
+                console.log(`[forgot-password] Reset email sent to ${user.email}`);
+            } catch (err) {
+                console.error("[forgot-password] Failed to send reset email:", err);
+            }
         }
     },
     user: {

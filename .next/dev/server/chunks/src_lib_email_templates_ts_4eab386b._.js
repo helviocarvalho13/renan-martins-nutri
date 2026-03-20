@@ -1,0 +1,252 @@
+module.exports = [
+"[project]/src/lib/email/templates.ts [middleware] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "appointmentCancelledAdmin",
+    ()=>appointmentCancelledAdmin,
+    "appointmentCancelledPatient",
+    ()=>appointmentCancelledPatient,
+    "appointmentCompleted",
+    ()=>appointmentCompleted,
+    "appointmentConfirmedPatient",
+    ()=>appointmentConfirmedPatient,
+    "appointmentRescheduled",
+    ()=>appointmentRescheduled,
+    "newAppointment",
+    ()=>newAppointment,
+    "newAppointmentAdmin",
+    ()=>newAppointmentAdmin,
+    "noShow",
+    ()=>noShow,
+    "passwordReset",
+    ()=>passwordReset,
+    "reminder24h",
+    ()=>reminder24h,
+    "returnSuggestion",
+    ()=>returnSuggestion
+]);
+const BRAND_COLOR = "#1a1a1a";
+const ACCENT_COLOR = "#2563eb";
+const BG_COLOR = "#f5f5f5";
+function baseTemplate(content) {
+    return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Renan Martins Nutricionista</title>
+</head>
+<body style="margin:0;padding:0;background-color:${BG_COLOR};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:${BG_COLOR};">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+          <tr>
+            <td style="background-color:${BRAND_COLOR};padding:24px 32px;text-align:center;">
+              <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:700;letter-spacing:-0.5px;">Renan Martins</h1>
+              <p style="margin:4px 0 0;color:rgba(255,255,255,0.7);font-size:13px;">Nutricionista</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px;">
+              ${content}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:16px 32px 24px;border-top:1px solid #eee;text-align:center;">
+              <p style="margin:0;color:#999;font-size:12px;">Renan Martins Nutricionista &bull; CRN: XXXXX</p>
+              <p style="margin:4px 0 0;color:#bbb;font-size:11px;">Este é um email automático. Não responda diretamente.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+function appointmentBlock(date, time, type) {
+    const typeLabel = type === "FIRST_VISIT" ? "Consulta" : "Retorno";
+    return `
+    <div style="background-color:#f8f9fa;border-radius:8px;padding:16px;margin:16px 0;border-left:4px solid ${ACCENT_COLOR};">
+      <p style="margin:0 0 4px;font-size:14px;color:#666;">📅 <strong>${date}</strong> às <strong>${time}</strong></p>
+      <p style="margin:0;font-size:13px;color:#888;">Tipo: ${typeLabel}</p>
+    </div>
+  `;
+}
+function newAppointmentAdmin(patientName, date, time, type) {
+    return {
+        subject: `Nova consulta agendada - ${patientName}`,
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Nova consulta agendada</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        <strong>${patientName}</strong> agendou uma nova consulta.
+      </p>
+      ${appointmentBlock(date, time, type)}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Acesse o painel administrativo para confirmar ou gerenciar este agendamento.
+      </p>
+    `)
+    };
+}
+function appointmentConfirmedPatient(patientName, date, time, type) {
+    return {
+        subject: "Sua consulta foi confirmada!",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta confirmada ✅</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Sua consulta foi confirmada.
+      </p>
+      ${appointmentBlock(date, time, type)}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Lembre-se de comparecer no horário agendado. Caso precise cancelar, faça com pelo menos 12 horas de antecedência.
+      </p>
+    `)
+    };
+}
+function appointmentCancelledPatient(patientName, date, time) {
+    return {
+        subject: "Consulta cancelada",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta cancelada</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>. Sua consulta foi cancelada.
+      </p>
+      ${appointmentBlock(date, time, "FIRST_VISIT")}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Se desejar, você pode agendar uma nova consulta a qualquer momento.
+      </p>
+    `)
+    };
+}
+function appointmentCancelledAdmin(patientName, date, time) {
+    return {
+        subject: `Consulta cancelada por ${patientName}`,
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta cancelada pelo paciente</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        <strong>${patientName}</strong> cancelou a consulta agendada.
+      </p>
+      ${appointmentBlock(date, time, "FIRST_VISIT")}
+    `)
+    };
+}
+function reminder24h(patientName, date, time, type) {
+    return {
+        subject: "Lembrete: sua consulta é amanhã!",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Lembrete de consulta 🔔</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Este é um lembrete de que sua consulta é <strong>amanhã</strong>.
+      </p>
+      ${appointmentBlock(date, time, type)}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Caso precise cancelar, faça com pelo menos 12 horas de antecedência.
+      </p>
+    `)
+    };
+}
+function passwordReset(userName, resetUrl) {
+    return {
+        subject: "Redefinição de senha - Renan Martins Nutricionista",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Redefinição de senha 🔐</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${userName}</strong>! Recebemos uma solicitação para redefinir a senha da sua conta.
+      </p>
+      <div style="text-align:center;margin:24px 0;">
+        <a href="${resetUrl}" style="display:inline-block;background-color:${ACCENT_COLOR};color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:600;">
+          Redefinir minha senha
+        </a>
+      </div>
+      <p style="color:#777;font-size:13px;line-height:1.6;">
+        Se você não solicitou a redefinição de senha, ignore este email. Seu acesso permanece seguro.
+      </p>
+      <p style="color:#aaa;font-size:12px;line-height:1.6;">
+        Este link é válido por 1 hora. Caso expire, solicite um novo na tela de login.
+      </p>
+    `)
+    };
+}
+function newAppointment(patientName, date, time, type) {
+    return {
+        subject: "Consulta agendada - Aguardando confirmação",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta agendada! ✅</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Sua consulta foi agendada e está aguardando confirmação.
+      </p>
+      ${appointmentBlock(date, time, type)}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Em breve você receberá a confirmação do seu horário. Caso precise cancelar, faça com pelo menos 12 horas de antecedência.
+      </p>
+    `)
+    };
+}
+function appointmentCompleted(patientName, date, time, type) {
+    return {
+        subject: "Consulta concluída - Obrigado!",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta concluída 🎉</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Sua consulta foi marcada como concluída.
+      </p>
+      ${appointmentBlock(date, time, type)}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Obrigado por confiar no trabalho do nutricionista Renan Martins. Acesse a área do paciente para acompanhar seu progresso.
+      </p>
+    `)
+    };
+}
+function noShow(patientName, date, time) {
+    return {
+        subject: "Ausência registrada na sua consulta",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Ausência registrada</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>. Sua presença não foi registrada na consulta agendada.
+      </p>
+      ${appointmentBlock(date, time, "FIRST_VISIT")}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Se isso foi um engano, entre em contato. Você pode agendar uma nova consulta a qualquer momento.
+      </p>
+    `)
+    };
+}
+function appointmentRescheduled(patientName, date, time) {
+    return {
+        subject: "Sua consulta foi reagendada",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta reagendada 📅</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Sua consulta foi reagendada.
+      </p>
+      ${appointmentBlock(date, time, "FIRST_VISIT")}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Verifique o novo horário na área do paciente. Qualquer dúvida, entre em contato.
+      </p>
+    `)
+    };
+}
+function returnSuggestion(patientName, suggestedDate) {
+    return {
+        subject: "Hora de agendar seu retorno!",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Sugestão de retorno 📋</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! O nutricionista Renan Martins sugeriu uma data de retorno para você.
+      </p>
+      <div style="background-color:#f0f7ff;border-radius:8px;padding:16px;margin:16px 0;border-left:4px solid ${ACCENT_COLOR};text-align:center;">
+        <p style="margin:0;font-size:16px;color:${BRAND_COLOR};font-weight:600;">📅 Data sugerida: ${suggestedDate}</p>
+      </div>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Acesse a área do paciente para agendar seu retorno.
+      </p>
+    `)
+    };
+}
+}),
+];
+
+//# sourceMappingURL=src_lib_email_templates_ts_4eab386b._.js.map

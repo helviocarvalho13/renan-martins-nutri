@@ -35,8 +35,18 @@ export const auth = betterAuth({
     requireEmailVerification: false,
     autoSignIn: true,
     minPasswordLength: 6,
-    sendResetPasswordToken: async ({ user }: { user: { email: string; id: string; name: string } }) => {
-      console.log(`[forgot-password] Password reset requested for ${user.email}`);
+    sendResetPasswordToken: async (
+      { user, url }: { user: { email: string; id: string; name: string }; url: string; token: string }
+    ) => {
+      try {
+        const { sendEmail } = await import("@/lib/email/sender");
+        const { passwordReset } = await import("@/lib/email/templates");
+        const { subject, html } = passwordReset(user.name, url);
+        await sendEmail(user.email, subject, html);
+        console.log(`[forgot-password] Reset email sent to ${user.email}`);
+      } catch (err) {
+        console.error("[forgot-password] Failed to send reset email:", err);
+      }
     },
   },
   user: {

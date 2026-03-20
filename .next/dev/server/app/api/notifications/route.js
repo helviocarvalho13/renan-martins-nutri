@@ -1,5 +1,5 @@
 var R=require("../../../chunks/[turbopack]_runtime.js")("server/app/api/notifications/route.js")
-R.c("server/chunks/node_modules_better-auth_284d51dd._.js")
+R.c("server/chunks/_32fdfd74._.js")
 R.c("server/chunks/node_modules_next_59e87f32._.js")
 R.c("server/chunks/node_modules_better-auth_dist_f39740ad._.js")
 R.c("server/chunks/4c5a8_@better-auth_core_dist_f4ad1b56._.js")

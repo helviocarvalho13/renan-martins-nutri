@@ -966,7 +966,9 @@ const authClient = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modu
 });
 const { useSession, signIn, signOut, signUp } = authClient;
 async function signUpWithProfile(input) {
-    return authClient.signUp.email(input);
+    return authClient.signUp.email({
+        ...input
+    });
 }
 }),
 "[project]/src/hooks/useMageBot.ts [app-ssr] (ecmascript)", ((__turbopack_context__) => {

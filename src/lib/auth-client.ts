@@ -23,11 +23,12 @@ export interface SignUpWithProfileInput {
 /**
  * Wraps authClient.signUp.email to accept additional profile fields.
  * better-auth's additionalFields (input: true) stores these on the user record.
+ * The spread cast is required because the generated client type doesn't include
+ * our custom fields (phone, cpf, dateOfBirth) in its Parameters type.
  */
 export async function signUpWithProfile(input: SignUpWithProfileInput) {
-  return authClient.signUp.email(
-    input as unknown as Parameters<typeof authClient.signUp.email>[0]
-  );
+  type SignUpBody = Parameters<typeof authClient.signUp.email>[0];
+  return authClient.signUp.email({ ...input } as SignUpBody);
 }
 
 export type { AppUser };

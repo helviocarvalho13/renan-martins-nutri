@@ -141,11 +141,11 @@ export async function addCalendarEvent(
     }
 
     return eventId || null;
-  } catch (error: any) {
-    if (error?.message?.includes("not connected")) {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message.includes("not connected")) {
       console.warn("[google-calendar] Not connected. Skipping event creation.");
     } else {
-      console.error("[google-calendar] Create event error:", error?.message || error);
+      console.error("[google-calendar] Create event error:", error instanceof Error ? error.message : String(error));
     }
     return null;
   }
@@ -186,11 +186,11 @@ export async function updateCalendarEvent(
 
     console.log("[google-calendar] Event updated:", eventId);
     return true;
-  } catch (error: any) {
-    if (error?.message?.includes("not connected")) {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message.includes("not connected")) {
       console.warn("[google-calendar] Not connected. Skipping event update.");
     } else {
-      console.error("[google-calendar] Update event error:", error?.message || error);
+      console.error("[google-calendar] Update event error:", error instanceof Error ? error.message : String(error));
     }
     return false;
   }
@@ -220,14 +220,15 @@ export async function deleteCalendarEvent(
 
     console.log("[google-calendar] Event deleted:", eventId);
     return true;
-  } catch (error: any) {
-    if (
-      error?.message?.includes("not connected") ||
-      error?.code === 410
-    ) {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message.includes("not connected")) {
       return false;
     }
-    console.error("[google-calendar] Delete event error:", error?.message || error);
+    const apiError = error as { code?: number };
+    if (apiError?.code === 410) {
+      return false;
+    }
+    console.error("[google-calendar] Delete event error:", error instanceof Error ? error.message : String(error));
     return false;
   }
 }

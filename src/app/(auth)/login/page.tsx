@@ -35,7 +35,7 @@ export default function LoginPage() {
         return;
       }
 
-      const userRole = (data.user as any)?.role;
+      const userRole = (data.user as { role?: string })?.role;
       const destination = userRole === "ADMIN" ? "/admin" : "/paciente";
       router.push(destination);
       router.refresh();

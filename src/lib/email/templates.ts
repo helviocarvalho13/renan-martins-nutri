@@ -127,6 +127,29 @@ export function reminder24h(patientName: string, date: string, time: string, typ
   };
 }
 
+export function passwordReset(userName: string, resetUrl: string): { subject: string; html: string } {
+  return {
+    subject: "Redefinição de senha - Renan Martins Nutricionista",
+    html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Redefinição de senha 🔐</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${userName}</strong>! Recebemos uma solicitação para redefinir a senha da sua conta.
+      </p>
+      <div style="text-align:center;margin:24px 0;">
+        <a href="${resetUrl}" style="display:inline-block;background-color:${ACCENT_COLOR};color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:600;">
+          Redefinir minha senha
+        </a>
+      </div>
+      <p style="color:#777;font-size:13px;line-height:1.6;">
+        Se você não solicitou a redefinição de senha, ignore este email. Seu acesso permanece seguro.
+      </p>
+      <p style="color:#aaa;font-size:12px;line-height:1.6;">
+        Este link é válido por 1 hora. Caso expire, solicite um novo na tela de login.
+      </p>
+    `),
+  };
+}
+
 export function newAppointment(patientName: string, date: string, time: string, type: string): { subject: string; html: string } {
   return {
     subject: "Consulta agendada - Aguardando confirmação",

@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
-import { authClient } from "@/lib/auth-client";
+import { useSession, authClient } from "@/lib/auth-client";
 import type { AppUser } from "@/lib/auth";
 
 export type UserRole = "ADMIN" | "PATIENT";
@@ -25,26 +24,41 @@ interface UseAuthReturn {
   signOut: () => Promise<void>;
 }
 
+interface ExtendedSessionUser {
+  id: string;
+  email: string;
+  name: string;
+  emailVerified: boolean;
+  image?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  role?: string;
+  phone?: string | null;
+  cpf?: string | null;
+  dateOfBirth?: string | null;
+  isActive?: boolean;
+}
+
 export function useAuth(): UseAuthReturn {
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
-  const sessionUser = session?.user as unknown as AppUser | undefined;
+  const rawUser = session?.user as ExtendedSessionUser | undefined;
 
-  const user: AppUser | null = sessionUser
+  const user: AppUser | null = rawUser
     ? {
-        id: sessionUser.id,
-        email: sessionUser.email,
-        name: sessionUser.name,
-        emailVerified: sessionUser.emailVerified ?? false,
-        image: sessionUser.image ?? null,
-        createdAt: sessionUser.createdAt,
-        updatedAt: sessionUser.updatedAt,
-        role: sessionUser.role ?? "PATIENT",
-        phone: sessionUser.phone ?? null,
-        cpf: sessionUser.cpf ?? null,
-        dateOfBirth: sessionUser.dateOfBirth ?? null,
-        isActive: sessionUser.isActive ?? true,
+        id: rawUser.id,
+        email: rawUser.email,
+        name: rawUser.name,
+        emailVerified: rawUser.emailVerified ?? false,
+        image: rawUser.image ?? null,
+        createdAt: rawUser.createdAt,
+        updatedAt: rawUser.updatedAt,
+        role: rawUser.role ?? "PATIENT",
+        phone: rawUser.phone ?? null,
+        cpf: rawUser.cpf ?? null,
+        dateOfBirth: rawUser.dateOfBirth ?? null,
+        isActive: rawUser.isActive ?? true,
       }
     : null;
 

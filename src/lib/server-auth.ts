@@ -2,11 +2,13 @@ import { auth, type AppUser } from "@/lib/auth";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
+type SessionUser = typeof auth.$Infer.Session.user;
+
 export async function getServerUser(): Promise<AppUser | null> {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user) return null;
-    const u = session.user as unknown as AppUser;
+    const u = session.user as SessionUser;
     return {
       id: u.id,
       email: u.email,
