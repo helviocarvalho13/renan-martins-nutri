@@ -418,6 +418,17 @@ async function notifyNewAppointment(patientName, date, time, type, appointmentId
             const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["newAppointment"](patientName, date, time, type);
             await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
         }
+        // Send WhatsApp confirmation to patient immediately after booking
+        try {
+            const { sendWhatsApp, buildWhatsAppMessage, getPatientPhone } = await __turbopack_context__.A("[project]/src/lib/whatsapp/sender.ts [app-route] (ecmascript, async loader)");
+            const phone = await getPatientPhone(patientId);
+            if (phone) {
+                const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time, modality);
+                await sendWhatsApp(phone, msg);
+            }
+        } catch (e) {
+            console.error("[notifyNewAppointment] WhatsApp error:", e);
+        }
     }
     const adminEmail = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getAdminEmail"])();
     if (adminEmail) {

@@ -8,6 +8,7 @@
   "/api/notifications/route": "app/api/notifications/route.js",
   "/api/patient/appointments/route": "app/api/patient/appointments/route.js",
   "/api/patient/book/route": "app/api/patient/book/route.js",
+  "/api/patient/cancel/route": "app/api/patient/cancel/route.js",
   "/api/patient/return-eligibility/route": "app/api/patient/return-eligibility/route.js",
   "/page": "app/page.js"
 }

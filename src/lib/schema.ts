@@ -93,7 +93,11 @@ export const appointments = pgTable(
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
-  (t) => [uniqueIndex("unique_appointment_slot").on(t.date, t.startTime)]
+  (t) => [
+    uniqueIndex("appointments_active_slot_key")
+      .on(t.date, t.startTime)
+      .where(sql`status IN ('PENDING', 'CONFIRMED')`),
+  ]
 );
 
 export const scheduleConfig = pgTable(
