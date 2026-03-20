@@ -1,0 +1,3 @@
+module.exports=[44229,a=>{"use strict";var b=a.i(87924);function c(){return(0,b.jsx)("div",{className:"fixed bottom-3 left-3 z-[9999] pointer-events-none",children:(0,b.jsxs)("div",{className:"backdrop-blur-md bg-black/60 rounded-lg px-3 py-1.5 pointer-events-auto flex items-center gap-2 border border-white/10","data-testid":"banner-powered-by",children:[(0,b.jsx)("span",{className:"text-[10px] text-neutral-400",children:"Powered by"}),(0,b.jsx)("img",{src:"/assets/luna-powered-by.png",alt:"Luna Tecnologia",className:"h-5 w-auto object-contain","data-testid":"img-powered-by-logo"})]})})}a.s(["default",()=>c])}];
+
+//# sourceMappingURL=src_components_site_PoweredByBanner_tsx_3530b58e._.js.map

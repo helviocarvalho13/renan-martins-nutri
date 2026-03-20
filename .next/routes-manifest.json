@@ -1,0 +1,399 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/admin/pacientes/[id]",
+      "regex": "^/admin/pacientes/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin/pacientes/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/admin/patients/[id]",
+      "regex": "^/api/admin/patients/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/admin/patients/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/admin/site-content/[id]",
+      "regex": "^/api/admin/site\\-content/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/admin/site\\-content/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/admin/testimonials/[id]",
+      "regex": "^/api/admin/testimonials/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/admin/testimonials/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/appointments/[id]",
+      "regex": "^/api/appointments/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/appointments/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/api/auth/[...all]",
+      "regex": "^/api/auth/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPall": "nxtPall"
+      },
+      "namedRegex": "^/api/auth/(?<nxtPall>.+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/admin",
+      "regex": "^/admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin(?:/)?$"
+    },
+    {
+      "page": "/admin/agenda",
+      "regex": "^/admin/agenda(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/agenda(?:/)?$"
+    },
+    {
+      "page": "/admin/configuracoes",
+      "regex": "^/admin/configuracoes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/configuracoes(?:/)?$"
+    },
+    {
+      "page": "/admin/disponibilidade",
+      "regex": "^/admin/disponibilidade(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/disponibilidade(?:/)?$"
+    },
+    {
+      "page": "/admin/pacientes",
+      "regex": "^/admin/pacientes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/pacientes(?:/)?$"
+    },
+    {
+      "page": "/admin/site",
+      "regex": "^/admin/site(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/site(?:/)?$"
+    },
+    {
+      "page": "/agenda",
+      "regex": "^/agenda(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agenda(?:/)?$"
+    },
+    {
+      "page": "/agendar",
+      "regex": "^/agendar(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agendar(?:/)?$"
+    },
+    {
+      "page": "/api/admin/agenda",
+      "regex": "^/api/admin/agenda(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/agenda(?:/)?$"
+    },
+    {
+      "page": "/api/admin/appointments",
+      "regex": "^/api/admin/appointments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/appointments(?:/)?$"
+    },
+    {
+      "page": "/api/admin/blocked-slots",
+      "regex": "^/api/admin/blocked\\-slots(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/blocked\\-slots(?:/)?$"
+    },
+    {
+      "page": "/api/admin/dashboard",
+      "regex": "^/api/admin/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/dashboard(?:/)?$"
+    },
+    {
+      "page": "/api/admin/patients",
+      "regex": "^/api/admin/patients(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/patients(?:/)?$"
+    },
+    {
+      "page": "/api/admin/patients/search",
+      "regex": "^/api/admin/patients/search(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/patients/search(?:/)?$"
+    },
+    {
+      "page": "/api/admin/schedule-config",
+      "regex": "^/api/admin/schedule\\-config(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/schedule\\-config(?:/)?$"
+    },
+    {
+      "page": "/api/admin/site-content",
+      "regex": "^/api/admin/site\\-content(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/site\\-content(?:/)?$"
+    },
+    {
+      "page": "/api/admin/testimonials",
+      "regex": "^/api/admin/testimonials(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/testimonials(?:/)?$"
+    },
+    {
+      "page": "/api/appointments",
+      "regex": "^/api/appointments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/appointments(?:/)?$"
+    },
+    {
+      "page": "/api/auth/forgot-password",
+      "regex": "^/api/auth/forgot\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/forgot\\-password(?:/)?$"
+    },
+    {
+      "page": "/api/auth/login",
+      "regex": "^/api/auth/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/login(?:/)?$"
+    },
+    {
+      "page": "/api/auth/logout",
+      "regex": "^/api/auth/logout(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/logout(?:/)?$"
+    },
+    {
+      "page": "/api/auth/register",
+      "regex": "^/api/auth/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/register(?:/)?$"
+    },
+    {
+      "page": "/api/auth/reset-password",
+      "regex": "^/api/auth/reset\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/reset\\-password(?:/)?$"
+    },
+    {
+      "page": "/api/auth/session",
+      "regex": "^/api/auth/session(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/auth/session(?:/)?$"
+    },
+    {
+      "page": "/api/available-slots",
+      "regex": "^/api/available\\-slots(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/available\\-slots(?:/)?$"
+    },
+    {
+      "page": "/api/cron/reminders",
+      "regex": "^/api/cron/reminders(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/cron/reminders(?:/)?$"
+    },
+    {
+      "page": "/api/notifications",
+      "regex": "^/api/notifications(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/notifications(?:/)?$"
+    },
+    {
+      "page": "/api/patient/appointments",
+      "regex": "^/api/patient/appointments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/patient/appointments(?:/)?$"
+    },
+    {
+      "page": "/api/patient/book",
+      "regex": "^/api/patient/book(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/patient/book(?:/)?$"
+    },
+    {
+      "page": "/api/patient/cancel",
+      "regex": "^/api/patient/cancel(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/patient/cancel(?:/)?$"
+    },
+    {
+      "page": "/api/patient/profile",
+      "regex": "^/api/patient/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/patient/profile(?:/)?$"
+    },
+    {
+      "page": "/api/patient/return-eligibility",
+      "regex": "^/api/patient/return\\-eligibility(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/patient/return\\-eligibility(?:/)?$"
+    },
+    {
+      "page": "/api/public/schedule",
+      "regex": "^/api/public/schedule(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/public/schedule(?:/)?$"
+    },
+    {
+      "page": "/api/seed-admin",
+      "regex": "^/api/seed\\-admin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/seed\\-admin(?:/)?$"
+    },
+    {
+      "page": "/api/settings",
+      "regex": "^/api/settings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/settings(?:/)?$"
+    },
+    {
+      "page": "/api/setup",
+      "regex": "^/api/setup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/setup(?:/)?$"
+    },
+    {
+      "page": "/api/testimonials",
+      "regex": "^/api/testimonials(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/testimonials(?:/)?$"
+    },
+    {
+      "page": "/apple-icon",
+      "regex": "^/apple\\-icon(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/apple\\-icon(?:/)?$"
+    },
+    {
+      "page": "/cadastro",
+      "regex": "^/cadastro(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/cadastro(?:/)?$"
+    },
+    {
+      "page": "/forgot-password",
+      "regex": "^/forgot\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/forgot\\-password(?:/)?$"
+    },
+    {
+      "page": "/icon.svg",
+      "regex": "^/icon\\.svg(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/icon\\.svg(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/paciente",
+      "regex": "^/paciente(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/paciente(?:/)?$"
+    },
+    {
+      "page": "/paciente/agendar",
+      "regex": "^/paciente/agendar(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/paciente/agendar(?:/)?$"
+    },
+    {
+      "page": "/paciente/perfil",
+      "regex": "^/paciente/perfil(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/paciente/perfil(?:/)?$"
+    },
+    {
+      "page": "/register",
+      "regex": "^/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/register(?:/)?$"
+    },
+    {
+      "page": "/setup",
+      "regex": "^/setup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/setup(?:/)?$"
+    },
+    {
+      "page": "/update-password",
+      "regex": "^/update\\-password(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/update\\-password(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

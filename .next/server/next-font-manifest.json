@@ -1,0 +1,87 @@
+{
+  "app": {
+    "[project]/src/app/(auth)/cadastro/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(auth)/forgot-password/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(auth)/login/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(auth)/register/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(auth)/update-password/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(dashboard)/admin/agenda/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(dashboard)/admin/configuracoes/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(dashboard)/admin/disponibilidade/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(dashboard)/admin/pacientes/[id]/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(dashboard)/admin/pacientes/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(dashboard)/admin/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(dashboard)/admin/site/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(dashboard)/paciente/agendar/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(dashboard)/paciente/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(dashboard)/paciente/perfil/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(public)/agenda/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/(public)/agendar/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/_not-found/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ],
+    "[project]/src/app/setup/page": [
+      "static/media/fba5a26ea33df6a3-s.p.1bbdebe6.woff2",
+      "static/media/2a65768255d6b625-s.p.d19752fb.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pages": {},
+  "pagesUsingSizeAdjust": false
+}
