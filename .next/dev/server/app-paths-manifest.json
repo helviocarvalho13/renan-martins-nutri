@@ -1,18 +1,8 @@
 {
-  "/(auth)/forgot-password/page": "app/(auth)/forgot-password/page.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/(auth)/register/page": "app/(auth)/register/page.js",
   "/(dashboard)/paciente/agendar/page": "app/(dashboard)/paciente/agendar/page.js",
-  "/(dashboard)/paciente/page": "app/(dashboard)/paciente/page.js",
-  "/(dashboard)/paciente/perfil/page": "app/(dashboard)/paciente/perfil/page.js",
   "/api/auth/[...all]/route": "app/api/auth/[...all]/route.js",
   "/api/auth/forgot-password/route": "app/api/auth/forgot-password/route.js",
-  "/api/available-slots/route": "app/api/available-slots/route.js",
   "/api/notifications/route": "app/api/notifications/route.js",
   "/api/patient/appointments/route": "app/api/patient/appointments/route.js",
-  "/api/patient/book/route": "app/api/patient/book/route.js",
-  "/api/patient/cancel/route": "app/api/patient/cancel/route.js",
-  "/api/patient/profile/route": "app/api/patient/profile/route.js",
-  "/api/patient/return-eligibility/route": "app/api/patient/return-eligibility/route.js",
-  "/page": "app/page.js"
+  "/api/patient/return-eligibility/route": "app/api/patient/return-eligibility/route.js"
 }

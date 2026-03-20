@@ -3,7 +3,7 @@ import { user } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
 const RESEND_API_URL = "https://api.resend.com/emails";
-const FROM_EMAIL = "Renan Martins Nutricionista <noreply@renanmartins.com.br>";
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Renan Martins Nutricionista <noreply@renanmartins.com.br>";
 
 export async function sendEmail(to: string, subject: string, html: string): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;

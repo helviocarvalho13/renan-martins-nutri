@@ -352,7 +352,7 @@ const auth = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f
         requireEmailVerification: false,
         autoSignIn: true,
         minPasswordLength: 6,
-        sendResetPasswordToken: async ({ user, url })=>{
+        sendResetPassword: async ({ user, url })=>{
             try {
                 const { sendEmail } = await __turbopack_context__.A("[project]/src/lib/email/sender.ts [app-route] (ecmascript, async loader)");
                 const { passwordReset } = await __turbopack_context__.A("[project]/src/lib/email/templates.ts [app-route] (ecmascript, async loader)");

@@ -346,7 +346,7 @@ const auth = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f
         requireEmailVerification: false,
         autoSignIn: true,
         minPasswordLength: 6,
-        sendResetPasswordToken: async ({ user, url })=>{
+        sendResetPassword: async ({ user, url })=>{
             try {
                 const { sendEmail } = await __turbopack_context__.A("[project]/src/lib/email/sender.ts [app-route] (ecmascript, async loader)");
                 const { passwordReset } = await __turbopack_context__.A("[project]/src/lib/email/templates.ts [app-route] (ecmascript, async loader)");
@@ -415,6 +415,7 @@ var __turbopack_async_dependencies__ = __turbopack_handle_async_dependencies__([
 [__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__] = __turbopack_async_dependencies__.then ? (await __turbopack_async_dependencies__)() : __turbopack_async_dependencies__;
 ;
 ;
+const appBaseUrl = process.env.BETTER_AUTH_URL || (process.env.REPLIT_DOMAINS ? `https://${process.env.REPLIT_DOMAINS.split(",")[0].trim()}` : null) || "http://localhost:5000";
 async function POST(req) {
     try {
         const { email } = await req.json();
@@ -425,17 +426,20 @@ async function POST(req) {
                 status: 400
             });
         }
-        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["auth"].api.requestPasswordReset({
+        const redirectTo = `${appBaseUrl}/update-password`;
+        const result = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["auth"].api.requestPasswordReset({
             body: {
                 email: email.trim().toLowerCase(),
-                redirectTo: "/update-password"
+                redirectTo
             }
         });
+        console.log("[forgot-password] requestPasswordReset result:", result);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             success: true
         });
     } catch (err) {
-        console.error("[forgot-password]", err);
+        console.error("[forgot-password] Error:", err);
+        // Always return success for security (prevent email enumeration)
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             success: true
         });

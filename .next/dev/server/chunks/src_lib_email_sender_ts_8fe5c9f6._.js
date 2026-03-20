@@ -23,7 +23,7 @@ var __turbopack_async_dependencies__ = __turbopack_handle_async_dependencies__([
 ;
 ;
 const RESEND_API_URL = "https://api.resend.com/emails";
-const FROM_EMAIL = "Renan Martins Nutricionista <noreply@renanmartins.com.br>";
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Renan Martins Nutricionista <noreply@renanmartins.com.br>";
 async function sendEmail(to, subject, html) {
     const apiKey = process.env.RESEND_API_KEY;
     if (!apiKey) {
