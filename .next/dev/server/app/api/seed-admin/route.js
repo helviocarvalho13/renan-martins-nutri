@@ -1,5 +1,5 @@
 var R=require("../../../chunks/[turbopack]_runtime.js")("server/app/api/seed-admin/route.js")
-R.c("server/chunks/node_modules_better-auth_eb73b5c3._.js")
+R.c("server/chunks/_c3ec0407._.js")
 R.c("server/chunks/node_modules_next_3a92c0de._.js")
 R.c("server/chunks/node_modules_better-auth_dist_f39740ad._.js")
 R.c("server/chunks/4c5a8_@better-auth_core_dist_f4ad1b56._.js")
