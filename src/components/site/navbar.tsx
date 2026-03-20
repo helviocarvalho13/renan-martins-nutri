@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useSession } from "@/lib/auth-client";
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { data: session, isPending } = useSession();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -20,6 +22,10 @@ export function Navbar() {
     { label: "Serviços", href: "#servicos" },
     { label: "Contato", href: "#contato" },
   ];
+
+  const userRole = (session?.user as { role?: string } | undefined)?.role;
+  const dashboardHref = userRole === "ADMIN" ? "/admin" : "/paciente";
+  const isLoggedIn = Boolean(session?.user);
 
   return (
     <nav
@@ -53,15 +59,32 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hidden sm:inline-flex text-neutral-500 hover:text-neutral-900"
-              data-testid="button-admin-login"
-              asChild
-            >
-              <Link href="/login">Login</Link>
-            </Button>
+            {!isPending && (
+              isLoggedIn ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden sm:inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900"
+                  data-testid="button-my-area"
+                  asChild
+                >
+                  <Link href={dashboardHref}>
+                    <LayoutDashboard className="w-4 h-4" />
+                    {userRole === "ADMIN" ? "Painel Admin" : "Minha área"}
+                  </Link>
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden sm:inline-flex text-neutral-500 hover:text-neutral-900"
+                  data-testid="button-admin-login"
+                  asChild
+                >
+                  <Link href="/login">Entrar</Link>
+                </Button>
+              )
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -88,13 +111,24 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
-            <Link
-              href="/login"
-              onClick={() => setMobileOpen(false)}
-              className="block px-3 py-2.5 text-sm text-neutral-600 hover:text-neutral-900 rounded-md hover:bg-neutral-50 transition-colors"
-            >
-              Login
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href={dashboardHref}
+                onClick={() => setMobileOpen(false)}
+                className="block px-3 py-2.5 text-sm text-neutral-600 hover:text-neutral-900 rounded-md hover:bg-neutral-50 transition-colors"
+                data-testid="link-my-area-mobile"
+              >
+                {userRole === "ADMIN" ? "Painel Admin" : "Minha área"}
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMobileOpen(false)}
+                className="block px-3 py-2.5 text-sm text-neutral-600 hover:text-neutral-900 rounded-md hover:bg-neutral-50 transition-colors"
+              >
+                Entrar
+              </Link>
+            )}
           </div>
         )}
       </div>

@@ -26,12 +26,18 @@ function formatPhone(value: string): string {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
-function displayPhone(digits: string): string {
-  if (!digits) return "";
-  const clean = digits.replace(/\D/g, "").slice(0, 11);
-  if (clean.length <= 2) return clean;
-  if (clean.length <= 7) return `(${clean.slice(0, 2)}) ${clean.slice(2)}`;
-  return `(${clean.slice(0, 2)}) ${clean.slice(2, 7)}-${clean.slice(7)}`;
+function displayPhone(stored: string): string {
+  if (!stored) return "";
+  let d = stored.replace(/\D/g, "");
+  // Strip Brazil country code (+55) for local display
+  if (d.startsWith("55") && d.length >= 11) {
+    d = d.slice(2);
+  }
+  d = d.slice(0, 11);
+  if (d.length <= 2) return d;
+  if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
 }
 
 function displayCPF(digits: string): string {
