@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   CalendarDays,
   Users,
+  Clock,
   Settings,
   Menu,
   LogOut,
@@ -23,7 +24,8 @@ const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/agenda", label: "Agenda", icon: CalendarDays },
   { href: "/admin/pacientes", label: "Pacientes", icon: Users },
-  { href: "/admin/disponibilidade", label: "Disponibilidade", icon: Settings },
+  { href: "/admin/disponibilidade", label: "Disponibilidade", icon: Clock },
+  { href: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 function SidebarContent({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {

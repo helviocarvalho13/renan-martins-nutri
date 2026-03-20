@@ -72,7 +72,7 @@ export async function processMessage(
         return handleLoginPassword(context);
 
       case "SELECT_TYPE":
-        return handleSelectType(trimmed, context);
+        return await handleSelectType(trimmed, context);
 
       case "SELECT_MODALITY":
         return handleSelectModality(input.trim(), context);
@@ -219,7 +219,7 @@ export function getLoginFailureResponse(context: ChatContext, error?: string): E
   };
 }
 
-function handleSelectType(input: string, context: ChatContext): EngineResponse {
+async function handleSelectType(input: string, context: ChatContext): Promise<EngineResponse> {
   let appointmentType: "FIRST_VISIT" | "RETURN" | null = null;
   let typeLabel = "";
 
@@ -237,6 +237,39 @@ function handleSelectType(input: string, context: ChatContext): EngineResponse {
       context: { ...context, state: "SELECT_TYPE" },
       quickReplies: TYPE_REPLIES,
     };
+  }
+
+  if (appointmentType === "RETURN") {
+    try {
+      const res = await fetch("/api/patient/return-eligibility");
+      if (res.ok) {
+        const data = await res.json() as {
+          eligible: boolean;
+          reason?: string;
+          return_window_days?: number;
+          days_remaining?: number;
+        };
+        if (!data.eligible) {
+          let msg = "";
+          if (data.reason === "no_completed") {
+            msg = "❌ Retorno só é possível após uma consulta concluída. Você ainda não tem nenhuma consulta realizada.";
+          } else if (data.reason === "window_expired") {
+            msg = `❌ O prazo de ${data.return_window_days ?? 30} dias para retorno expirou. Por favor, agende uma nova consulta.`;
+          } else if (data.reason === "active_return_exists") {
+            msg = "❌ Você já possui um retorno agendado.";
+          } else {
+            msg = "❌ Você não está elegível para retorno no momento.";
+          }
+          return {
+            messages: [msg, "Qual tipo de consulta você deseja agendar?"],
+            context: { ...context, state: "SELECT_TYPE" },
+            quickReplies: TYPE_REPLIES,
+          };
+        }
+      }
+    } catch {
+      // If eligibility check fails, the booking API will enforce the rule
+    }
   }
 
   return {
