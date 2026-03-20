@@ -96,6 +96,17 @@ export async function notifyNewAppointment(
       const { subject, html } = templates.newAppointment(patientName, date, time, type);
       await sendEmail(email, subject, html);
     }
+    // Send WhatsApp confirmation to patient immediately after booking
+    try {
+      const { sendWhatsApp, buildWhatsAppMessage, getPatientPhone } = await import("@/lib/whatsapp/sender");
+      const phone = await getPatientPhone(patientId);
+      if (phone) {
+        const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time, modality);
+        await sendWhatsApp(phone, msg);
+      }
+    } catch (e) {
+      console.error("[notifyNewAppointment] WhatsApp error:", e);
+    }
   }
   const adminEmail = await getAdminEmail();
   if (adminEmail) {

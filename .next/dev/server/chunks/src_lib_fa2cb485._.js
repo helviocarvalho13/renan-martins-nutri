@@ -2,6 +2,8 @@ module.exports = [
 "[project]/src/lib/email/sender.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
+return __turbopack_context__.a(async (__turbopack_handle_async_dependencies__, __turbopack_async_result__) => { try {
+
 __turbopack_context__.s([
     "getAdminEmail",
     ()=>getAdminEmail,
@@ -10,6 +12,16 @@ __turbopack_context__.s([
     "sendEmail",
     ()=>sendEmail
 ]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/src/lib/db.ts [app-route] (ecmascript) <locals>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/schema.ts [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/drizzle-orm/sql/expressions/conditions.js [app-route] (ecmascript)");
+var __turbopack_async_dependencies__ = __turbopack_handle_async_dependencies__([
+    __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__
+]);
+[__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__] = __turbopack_async_dependencies__.then ? (await __turbopack_async_dependencies__)() : __turbopack_async_dependencies__;
+;
+;
+;
 const RESEND_API_URL = "https://api.resend.com/emails";
 const FROM_EMAIL = "Renan Martins Nutricionista <noreply@renanmartins.com.br>";
 async function sendEmail(to, subject, html) {
@@ -40,7 +52,7 @@ async function sendEmail(to, subject, html) {
             return false;
         }
         const data = await response.json();
-        console.log("[email/sender] Email sent successfully:", data.id);
+        console.log("[email/sender] Email sent:", data.id);
         return true;
     } catch (error) {
         console.error("[email/sender] Failed to send email:", error);
@@ -48,20 +60,19 @@ async function sendEmail(to, subject, html) {
     }
 }
 async function getPatientEmail(patientId) {
-    const { createServiceRoleClient } = await __turbopack_context__.A("[project]/src/lib/supabase/server.ts [app-route] (ecmascript, async loader)");
-    const supabase = createServiceRoleClient();
-    const { data } = await supabase.auth.admin.getUserById(patientId);
-    return data?.user?.email || null;
+    const rows = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["db"].select({
+        email: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"].email
+    }).from(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"]).where((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["eq"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"].id, patientId)).limit(1);
+    return rows[0]?.email ?? null;
 }
 async function getAdminEmail() {
-    const { createServiceRoleClient } = await __turbopack_context__.A("[project]/src/lib/supabase/server.ts [app-route] (ecmascript, async loader)");
-    const supabase = createServiceRoleClient();
-    const { data: admins } = await supabase.from("profiles").select("id").eq("role", "ADMIN").limit(1);
-    if (!admins || admins.length === 0) return null;
-    const { data } = await supabase.auth.admin.getUserById(admins[0].id);
-    return data?.user?.email || null;
+    const rows = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["db"].select({
+        email: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"].email
+    }).from(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"]).where((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["eq"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"].role, "ADMIN")).limit(1);
+    return rows[0]?.email ?? null;
 }
-}),
+__turbopack_async_result__();
+} catch(e) { __turbopack_async_result__(e); } }, false);}),
 "[project]/src/lib/email/templates.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
@@ -70,10 +81,20 @@ __turbopack_context__.s([
     ()=>appointmentCancelledAdmin,
     "appointmentCancelledPatient",
     ()=>appointmentCancelledPatient,
+    "appointmentCompleted",
+    ()=>appointmentCompleted,
     "appointmentConfirmedPatient",
     ()=>appointmentConfirmedPatient,
+    "appointmentRescheduled",
+    ()=>appointmentRescheduled,
+    "newAppointment",
+    ()=>newAppointment,
     "newAppointmentAdmin",
     ()=>newAppointmentAdmin,
+    "noShow",
+    ()=>noShow,
+    "passwordReset",
+    ()=>passwordReset,
     "reminder24h",
     ()=>reminder24h,
     "returnSuggestion",
@@ -200,6 +221,88 @@ function reminder24h(patientName, date, time, type) {
     `)
     };
 }
+function passwordReset(userName, resetUrl) {
+    return {
+        subject: "Redefinição de senha - Renan Martins Nutricionista",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Redefinição de senha 🔐</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${userName}</strong>! Recebemos uma solicitação para redefinir a senha da sua conta.
+      </p>
+      <div style="text-align:center;margin:24px 0;">
+        <a href="${resetUrl}" style="display:inline-block;background-color:${ACCENT_COLOR};color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:600;">
+          Redefinir minha senha
+        </a>
+      </div>
+      <p style="color:#777;font-size:13px;line-height:1.6;">
+        Se você não solicitou a redefinição de senha, ignore este email. Seu acesso permanece seguro.
+      </p>
+      <p style="color:#aaa;font-size:12px;line-height:1.6;">
+        Este link é válido por 1 hora. Caso expire, solicite um novo na tela de login.
+      </p>
+    `)
+    };
+}
+function newAppointment(patientName, date, time, type) {
+    return {
+        subject: "Consulta agendada - Aguardando confirmação",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta agendada! ✅</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Sua consulta foi agendada e está aguardando confirmação.
+      </p>
+      ${appointmentBlock(date, time, type)}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Em breve você receberá a confirmação do seu horário. Caso precise cancelar, faça com pelo menos 12 horas de antecedência.
+      </p>
+    `)
+    };
+}
+function appointmentCompleted(patientName, date, time, type) {
+    return {
+        subject: "Consulta concluída - Obrigado!",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta concluída 🎉</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Sua consulta foi marcada como concluída.
+      </p>
+      ${appointmentBlock(date, time, type)}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Obrigado por confiar no trabalho do nutricionista Renan Martins. Acesse a área do paciente para acompanhar seu progresso.
+      </p>
+    `)
+    };
+}
+function noShow(patientName, date, time) {
+    return {
+        subject: "Ausência registrada na sua consulta",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Ausência registrada</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>. Sua presença não foi registrada na consulta agendada.
+      </p>
+      ${appointmentBlock(date, time, "FIRST_VISIT")}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Se isso foi um engano, entre em contato. Você pode agendar uma nova consulta a qualquer momento.
+      </p>
+    `)
+    };
+}
+function appointmentRescheduled(patientName, date, time) {
+    return {
+        subject: "Sua consulta foi reagendada",
+        html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta reagendada 📅</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Sua consulta foi reagendada.
+      </p>
+      ${appointmentBlock(date, time, "FIRST_VISIT")}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Verifique o novo horário na área do paciente. Qualquer dúvida, entre em contato.
+      </p>
+    `)
+    };
+}
 function returnSuggestion(patientName, suggestedDate) {
     return {
         subject: "Hora de agendar seu retorno!",
@@ -220,6 +323,8 @@ function returnSuggestion(patientName, suggestedDate) {
 }),
 "[project]/src/lib/notifications.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
+
+return __turbopack_context__.a(async (__turbopack_handle_async_dependencies__, __turbopack_async_result__) => { try {
 
 __turbopack_context__.s([
     "createNotification",
@@ -245,40 +350,51 @@ __turbopack_context__.s([
     "notifyReturnSuggestion",
     ()=>notifyReturnSuggestion
 ]);
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/supabase/server.ts [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/src/lib/db.ts [app-route] (ecmascript) <locals>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/schema.ts [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/drizzle-orm/sql/expressions/conditions.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/email/sender.ts [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/email/templates.ts [app-route] (ecmascript)");
+var __turbopack_async_dependencies__ = __turbopack_handle_async_dependencies__([
+    __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__,
+    __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__
+]);
+[__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__] = __turbopack_async_dependencies__.then ? (await __turbopack_async_dependencies__)() : __turbopack_async_dependencies__;
 ;
 ;
 ;
-function formatDateBR(date) {
-    if (!date) return date;
-    const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (match) return match[3] + "/" + match[2] + "/" + match[1];
-    return date;
+;
+;
+function formatDateBR(dateStr) {
+    if (!dateStr) return dateStr;
+    const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (match) return `${match[3]}/${match[2]}/${match[1]}`;
+    return dateStr;
 }
 async function createNotification({ userId, type, title, message, appointmentId }) {
-    const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServiceRoleClient"])();
-    const { error } = await supabase.from("notifications").insert({
-        user_id: userId,
-        type,
-        title,
-        message,
-        appointment_id: appointmentId ?? null
-    });
-    if (error) {
-        console.error("[createNotification] Error:", error.message);
+    try {
+        await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["db"].insert(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["notifications"]).values({
+            userId,
+            type,
+            title,
+            message,
+            appointmentId: appointmentId ?? null
+        });
+    } catch (e) {
+        console.error("[createNotification] Error:", e);
     }
 }
 async function getAdminUserId() {
-    const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServiceRoleClient"])();
-    const { data } = await supabase.from("profiles").select("id").eq("role", "ADMIN").limit(1);
-    return data && data.length > 0 ? data[0].id : null;
+    const rows = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["db"].select({
+        id: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"].id
+    }).from(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"]).where((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["eq"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"].role, "ADMIN")).limit(1);
+    return rows[0]?.id ?? null;
 }
 async function getPatientName(patientId) {
-    const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServiceRoleClient"])();
-    const { data } = await supabase.from("profiles").select("full_name").eq("id", patientId).single();
-    return data?.full_name || "Paciente";
+    const rows = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["db"].select({
+        name: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"].name
+    }).from(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"]).where((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["eq"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"].id, patientId)).limit(1);
+    return rows[0]?.name || "Paciente";
 }
 async function notifyNewAppointment(patientName, date, time, type, appointmentId, adminId, patientId, modality = "PRESENCIAL") {
     const modalidadeLabel = modality === "ONLINE" ? "Online" : "Presencial";
@@ -286,31 +402,27 @@ async function notifyNewAppointment(patientName, date, time, type, appointmentId
         userId: adminId,
         type: "APPOINTMENT_CREATED",
         title: "Nova consulta agendada",
-        message: `${patientName} agendou ${type === "FIRST_VISIT" ? "Consulta" : "Retorno"} (${modalidadeLabel}) para ${formatDateBR(date)} às ${time}`,
+        message: `${patientName} agendou uma consulta para ${formatDateBR(date)} às ${time} (${modalidadeLabel}).`,
         appointmentId
     });
-    try {
-        const adminEmail = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getAdminEmail"])();
-        if (adminEmail) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["newAppointmentAdmin"](patientName, formatDateBR(date), time, type);
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(adminEmail, subject, html);
-        }
-    } catch (e) {
-        console.error("[notifyNewAppointment] Email error:", e);
-    }
     if (patientId) {
-        try {
-            const { sendWhatsApp, getPatientPhone, buildWhatsAppMessage } = await __turbopack_context__.A("[project]/src/lib/whatsapp/sender.ts [app-route] (ecmascript, async loader)");
-            const phone = await getPatientPhone(patientId);
-            if (!phone) {
-                console.warn("[notifyNewAppointment] Patient has no phone saved, skipping WhatsApp:", patientId);
-            } else {
-                const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time, modality);
-                await sendWhatsApp(phone, msg);
-            }
-        } catch (e) {
-            console.error("[notifyNewAppointment] WhatsApp error:", e);
+        await createNotification({
+            userId: patientId,
+            type: "APPOINTMENT_CREATED",
+            title: "Consulta agendada",
+            message: `Sua consulta foi agendada para ${formatDateBR(date)} às ${time}. Aguardando confirmação.`,
+            appointmentId
+        });
+        const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
+        if (email) {
+            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["newAppointment"](patientName, date, time, type);
+            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
         }
+    }
+    const adminEmail = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getAdminEmail"])();
+    if (adminEmail) {
+        const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["newAppointmentAdmin"](patientName, date, time, type);
+        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(adminEmail, subject, html);
     }
 }
 async function notifyAppointmentConfirmed(patientId, date, time, type, appointmentId) {
@@ -319,17 +431,26 @@ async function notifyAppointmentConfirmed(patientId, date, time, type, appointme
         userId: patientId,
         type: "APPOINTMENT_CONFIRMED",
         title: "Consulta confirmada",
-        message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi confirmada!`,
+        message: `Sua consulta para ${formatDateBR(date)} às ${time} foi confirmada.`,
         appointmentId
     });
+    const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
+    if (email) {
+        const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentConfirmedPatient"](patientName, date, time, type);
+        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
+    }
     try {
-        const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
-        if (email) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentConfirmedPatient"](patientName, formatDateBR(date), time, type);
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
+        const { sendWhatsApp, buildWhatsAppMessage } = await __turbopack_context__.A("[project]/src/lib/whatsapp/sender.ts [app-route] (ecmascript, async loader)");
+        const patientRows = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["db"].select({
+            phone: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"].phone
+        }).from(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"]).where((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["eq"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["user"].id, patientId)).limit(1);
+        const phone = patientRows[0]?.phone;
+        if (phone) {
+            const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time);
+            await sendWhatsApp(phone, msg);
         }
     } catch (e) {
-        console.error("[notifyAppointmentConfirmed] Email error:", e);
+        console.error("[notifyAppointmentConfirmed] WhatsApp error:", e);
     }
 }
 async function notifyAppointmentCancelledByAdmin(patientId, date, time, appointmentId) {
@@ -338,17 +459,13 @@ async function notifyAppointmentCancelledByAdmin(patientId, date, time, appointm
         userId: patientId,
         type: "APPOINTMENT_CANCELLED",
         title: "Consulta cancelada",
-        message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi cancelada.`,
+        message: `Sua consulta para ${formatDateBR(date)} às ${time} foi cancelada pela clínica.`,
         appointmentId
     });
-    try {
-        const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
-        if (email) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledPatient"](patientName, formatDateBR(date), time);
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
-        }
-    } catch (e) {
-        console.error("[notifyAppointmentCancelledByAdmin] Email error:", e);
+    const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
+    if (email) {
+        const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledPatient"](patientName, date, time);
+        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
     }
 }
 async function notifyAppointmentCancelledByPatient(patientId, date, time, appointmentId) {
@@ -359,71 +476,84 @@ async function notifyAppointmentCancelledByPatient(patientId, date, time, appoin
             userId: adminId,
             type: "APPOINTMENT_CANCELLED",
             title: "Consulta cancelada pelo paciente",
-            message: `${patientName} cancelou a consulta do dia ${formatDateBR(date)} às ${time}.`,
+            message: `${patientName} cancelou a consulta de ${formatDateBR(date)} às ${time}.`,
             appointmentId
         });
     }
-    try {
-        const adminEmail = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getAdminEmail"])();
-        if (adminEmail) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledAdmin"](patientName, formatDateBR(date), time);
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(adminEmail, subject, html);
-        }
-        const patientEmail = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
-        if (patientEmail) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledPatient"](patientName, formatDateBR(date), time);
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(patientEmail, subject, html);
-        }
-    } catch (e) {
-        console.error("[notifyAppointmentCancelledByPatient] Email error:", e);
+    await createNotification({
+        userId: patientId,
+        type: "APPOINTMENT_CANCELLED",
+        title: "Consulta cancelada",
+        message: `Sua consulta para ${formatDateBR(date)} às ${time} foi cancelada.`,
+        appointmentId
+    });
+    const adminEmail = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getAdminEmail"])();
+    if (adminEmail) {
+        const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCancelledAdmin"](patientName, date, time);
+        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(adminEmail, subject, html);
     }
 }
 async function notifyAppointmentCompleted(patientId, date, time, type, appointmentId) {
+    const patientName = await getPatientName(patientId);
     await createNotification({
         userId: patientId,
         type: "APPOINTMENT_COMPLETED",
         title: "Consulta concluída",
-        message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi concluída. Obrigado!`,
+        message: `Sua consulta de ${formatDateBR(date)} foi marcada como concluída. Obrigado!`,
         appointmentId
     });
+    const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
+    if (email) {
+        const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentCompleted"](patientName, date, time, type);
+        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
+    }
 }
-async function notifyNoShow(patientId, date, time, appointmentId) {
-    await createNotification({
-        userId: patientId,
-        type: "GENERAL",
-        title: "Falta registrada",
-        message: `Você não compareceu à consulta do dia ${formatDateBR(date)} às ${time}.`,
-        appointmentId
-    });
-}
-async function notifyReturnSuggestion(patientId, suggestedDate) {
+async function notifyReturnSuggestion(patientId, returnDate) {
     const patientName = await getPatientName(patientId);
     await createNotification({
         userId: patientId,
-        type: "APPOINTMENT_REMINDER",
+        type: "GENERAL",
         title: "Sugestão de retorno",
-        message: `O nutricionista sugeriu um retorno para ${formatDateBR(suggestedDate)}. Agende pelo painel do paciente.`
+        message: `O Renan sugeriu seu retorno para ${formatDateBR(returnDate)}.`
     });
-    try {
-        const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
-        if (email) {
-            const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["returnSuggestion"](patientName, formatDateBR(suggestedDate));
-            await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
-        }
-    } catch (e) {
-        console.error("[notifyReturnSuggestion] Email error:", e);
+    const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
+    if (email) {
+        const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["returnSuggestion"](patientName, returnDate);
+        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
     }
 }
-async function notifyAppointmentRescheduled(patientId, newDate, newTime, appointmentId) {
+async function notifyNoShow(patientId, date, time, appointmentId) {
+    const patientName = await getPatientName(patientId);
+    await createNotification({
+        userId: patientId,
+        type: "GENERAL",
+        title: "Ausência registrada",
+        message: `Sua consulta de ${formatDateBR(date)} às ${time} foi marcada como ausência.`,
+        appointmentId
+    });
+    const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
+    if (email) {
+        const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["noShow"](patientName, date, time);
+        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
+    }
+}
+async function notifyAppointmentRescheduled(patientId, date, time, appointmentId) {
+    const patientName = await getPatientName(patientId);
     await createNotification({
         userId: patientId,
         type: "APPOINTMENT_CONFIRMED",
-        title: "Consulta remarcada",
-        message: `Sua consulta foi remarcada para ${formatDateBR(newDate)} às ${newTime}.`,
+        title: "Consulta reagendada",
+        message: `Sua consulta foi reagendada para ${formatDateBR(date)} às ${time}.`,
         appointmentId
     });
+    const email = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getPatientEmail"])(patientId);
+    if (email) {
+        const { subject, html } = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$templates$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointmentRescheduled"](patientName, date, time);
+        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$email$2f$sender$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["sendEmail"])(email, subject, html);
+    }
 }
-}),
+__turbopack_async_result__();
+} catch(e) { __turbopack_async_result__(e); } }, false);}),
 ];
 
 //# sourceMappingURL=src_lib_fa2cb485._.js.map

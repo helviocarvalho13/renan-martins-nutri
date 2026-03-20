@@ -109,6 +109,7 @@ export function useMageBot(): UseMageBotReturn {
             start_time: ctx.selectedSlot.start_time,
             end_time: ctx.selectedSlot.end_time,
             type: ctx.appointmentType,
+            modality: ctx.appointmentModality ?? "PRESENCIAL",
           }),
         });
 

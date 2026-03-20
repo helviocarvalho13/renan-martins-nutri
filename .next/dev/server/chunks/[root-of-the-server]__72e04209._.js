@@ -146,6 +146,8 @@ module.exports = mod;
 "[project]/src/lib/google-calendar.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
+return __turbopack_context__.a(async (__turbopack_handle_async_dependencies__, __turbopack_async_result__) => { try {
+
 __turbopack_context__.s([
     "addCalendarEvent",
     ()=>addCalendarEvent,
@@ -156,6 +158,16 @@ __turbopack_context__.s([
 ]);
 // Google Calendar integration via Replit Connector
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$googleapis$2f$build$2f$src$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/googleapis/build/src/index.js [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/src/lib/db.ts [app-route] (ecmascript) <locals>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/schema.ts [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/drizzle-orm/sql/expressions/conditions.js [app-route] (ecmascript)");
+var __turbopack_async_dependencies__ = __turbopack_handle_async_dependencies__([
+    __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__
+]);
+[__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__] = __turbopack_async_dependencies__.then ? (await __turbopack_async_dependencies__)() : __turbopack_async_dependencies__;
+;
+;
+;
 ;
 let connectionSettings;
 async function getAccessToken() {
@@ -208,7 +220,7 @@ async function addCalendarEvent(appointment) {
     }
     try {
         const calendar = await getCalendarClient();
-        const patientName = appointment.patient_id ? await getPatientNameForEvent(appointment.patient_id) : "Paciente";
+        const patientName = appointment.patientId ? await getPatientNameForEvent(appointment.patientId) : "Paciente";
         const typeLabel = appointment.type === "FIRST_VISIT" ? "Consulta" : "Retorno";
         const response = await calendar.events.insert({
             calendarId: "primary",
@@ -216,11 +228,11 @@ async function addCalendarEvent(appointment) {
                 summary: `${typeLabel} - ${patientName}`,
                 description: `Consulta com ${patientName}\nTipo: ${typeLabel}\nID: ${appointment.id}`,
                 start: {
-                    dateTime: `${appointment.date}T${appointment.start_time}`,
+                    dateTime: `${appointment.date}T${appointment.startTime}`,
                     timeZone: "America/Sao_Paulo"
                 },
                 end: {
-                    dateTime: `${appointment.date}T${appointment.end_time}`,
+                    dateTime: `${appointment.date}T${appointment.endTime}`,
                     timeZone: "America/Sao_Paulo"
                 },
                 reminders: {
@@ -242,21 +254,19 @@ async function addCalendarEvent(appointment) {
         console.log("[google-calendar] Event created:", eventId);
         if (eventId) {
             try {
-                const { createServiceRoleClient } = await __turbopack_context__.A("[project]/src/lib/supabase/server.ts [app-route] (ecmascript, async loader)");
-                const supabase = createServiceRoleClient();
-                await supabase.from("appointments").update({
-                    google_calendar_event_id: eventId
-                }).eq("id", appointment.id);
+                await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["db"].update(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointments"]).set({
+                    googleCalendarEventId: eventId
+                }).where((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["eq"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointments"].id, appointment.id));
             } catch  {
                 console.warn("[google-calendar] Could not save event ID to database (column may not exist yet)");
             }
         }
         return eventId || null;
     } catch (error) {
-        if (error?.message?.includes("not connected")) {
+        if (error instanceof Error && error.message.includes("not connected")) {
             console.warn("[google-calendar] Not connected. Skipping event creation.");
         } else {
-            console.error("[google-calendar] Create event error:", error?.message || error);
+            console.error("[google-calendar] Create event error:", error instanceof Error ? error.message : String(error));
         }
         return null;
     }
@@ -264,14 +274,14 @@ async function addCalendarEvent(appointment) {
 async function updateCalendarEvent(appointment) {
     if (!isConfigured()) return false;
     try {
-        const { createServiceRoleClient } = await __turbopack_context__.A("[project]/src/lib/supabase/server.ts [app-route] (ecmascript, async loader)");
-        const supabase = createServiceRoleClient();
-        const { data } = await supabase.from("appointments").select("google_calendar_event_id").eq("id", appointment.id).single();
-        const eventId = data?.google_calendar_event_id;
+        const rows = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["db"].select({
+            googleCalendarEventId: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointments"].googleCalendarEventId
+        }).from(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointments"]).where((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["eq"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointments"].id, appointment.id)).limit(1);
+        const eventId = rows[0]?.googleCalendarEventId;
         if (!eventId) return false;
         const calendar = await getCalendarClient();
         const statusLabel = appointment.status === "COMPLETED" ? " [CONCLUÍDA]" : "";
-        const patientName = appointment.patient_id ? await getPatientNameForEvent(appointment.patient_id) : "Paciente";
+        const patientName = appointment.patientId ? await getPatientNameForEvent(appointment.patientId) : "Paciente";
         const typeLabel = appointment.type === "FIRST_VISIT" ? "Consulta" : "Retorno";
         await calendar.events.patch({
             calendarId: "primary",
@@ -283,10 +293,10 @@ async function updateCalendarEvent(appointment) {
         console.log("[google-calendar] Event updated:", eventId);
         return true;
     } catch (error) {
-        if (error?.message?.includes("not connected")) {
+        if (error instanceof Error && error.message.includes("not connected")) {
             console.warn("[google-calendar] Not connected. Skipping event update.");
         } else {
-            console.error("[google-calendar] Update event error:", error?.message || error);
+            console.error("[google-calendar] Update event error:", error instanceof Error ? error.message : String(error));
         }
         return false;
     }
@@ -294,10 +304,10 @@ async function updateCalendarEvent(appointment) {
 async function deleteCalendarEvent(appointmentId) {
     if (!isConfigured()) return false;
     try {
-        const { createServiceRoleClient } = await __turbopack_context__.A("[project]/src/lib/supabase/server.ts [app-route] (ecmascript, async loader)");
-        const supabase = createServiceRoleClient();
-        const { data } = await supabase.from("appointments").select("google_calendar_event_id").eq("id", appointmentId).single();
-        const eventId = data?.google_calendar_event_id;
+        const rows = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["db"].select({
+            googleCalendarEventId: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointments"].googleCalendarEventId
+        }).from(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointments"]).where((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$drizzle$2d$orm$2f$sql$2f$expressions$2f$conditions$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["eq"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$schema$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["appointments"].id, appointmentId)).limit(1);
+        const eventId = rows[0]?.googleCalendarEventId;
         if (!eventId) return false;
         const calendar = await getCalendarClient();
         await calendar.events.delete({
@@ -307,14 +317,19 @@ async function deleteCalendarEvent(appointmentId) {
         console.log("[google-calendar] Event deleted:", eventId);
         return true;
     } catch (error) {
-        if (error?.message?.includes("not connected") || error?.code === 410) {
+        if (error instanceof Error && error.message.includes("not connected")) {
             return false;
         }
-        console.error("[google-calendar] Delete event error:", error?.message || error);
+        const apiError = error;
+        if (apiError?.code === 410) {
+            return false;
+        }
+        console.error("[google-calendar] Delete event error:", error instanceof Error ? error.message : String(error));
         return false;
     }
 }
-}),
+__turbopack_async_result__();
+} catch(e) { __turbopack_async_result__(e); } }, false);}),
 ];
 
 //# sourceMappingURL=%5Broot-of-the-server%5D__72e04209._.js.map

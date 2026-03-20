@@ -31,6 +31,18 @@ const TYPE_REPLIES: QuickReply[] = [
   { label: "Retorno", value: "Retorno" },
 ];
 
+const MODALITY_REPLIES: QuickReply[] = [
+  { label: "🏥 Presencial", value: "PRESENCIAL" },
+  { label: "💻 Online", value: "ONLINE" },
+];
+
+const DATE_REPLIES: QuickReply[] = [
+  { label: "Amanhã", value: "amanha" },
+  { label: "Próxima segunda", value: "proxima segunda" },
+  { label: "Próxima quarta", value: "proxima quarta" },
+  { label: "Próxima sexta", value: "proxima sexta" },
+];
+
 export async function processMessage(
   input: string,
   context: ChatContext
@@ -61,6 +73,9 @@ export async function processMessage(
 
       case "SELECT_TYPE":
         return handleSelectType(trimmed, context);
+
+      case "SELECT_MODALITY":
+        return handleSelectModality(input.trim(), context);
 
       case "SELECT_DATE":
         return await handleSelectDate(input, context);
@@ -205,42 +220,62 @@ export function getLoginFailureResponse(context: ChatContext, error?: string): E
 }
 
 function handleSelectType(input: string, context: ChatContext): EngineResponse {
+  let appointmentType: "FIRST_VISIT" | "RETURN" | null = null;
+  let typeLabel = "";
+
   if (input === "first_visit" || input.includes("consulta")) {
-    return {
-      messages: [
-        "Consulta selecionada! ✅",
-        "Para qual data você gostaria de agendar? Selecione a data no calendário",
-      ],
-      context: { ...context, state: "SELECT_DATE", appointmentType: "FIRST_VISIT" },
-      quickReplies: [
-        { label: "Amanhã", value: "amanha" },
-        { label: "Próxima segunda", value: "proxima segunda" },
-        { label: "Próxima quarta", value: "proxima quarta" },
-        { label: "Próxima sexta", value: "proxima sexta" },
-      ],
-    };
+    appointmentType = "FIRST_VISIT";
+    typeLabel = "Consulta";
+  } else if (input === "return" || input.includes("retorno")) {
+    appointmentType = "RETURN";
+    typeLabel = "Retorno";
   }
 
-  if (input === "return" || input.includes("retorno")) {
+  if (!appointmentType) {
     return {
-      messages: [
-        "Retorno selecionado! ✅",
-        "Para qual data você gostaria de agendar o retorno? Selecione a data no calendário",
-      ],
-      context: { ...context, state: "SELECT_DATE", appointmentType: "RETURN" },
-      quickReplies: [
-        { label: "Amanhã", value: "amanha" },
-        { label: "Próxima segunda", value: "proxima segunda" },
-        { label: "Próxima quarta", value: "proxima quarta" },
-        { label: "Próxima sexta", value: "proxima sexta" },
-      ],
+      messages: ["Por favor, selecione o tipo de consulta:"],
+      context: { ...context, state: "SELECT_TYPE" },
+      quickReplies: TYPE_REPLIES,
     };
   }
 
   return {
-    messages: ["Por favor, selecione o tipo de consulta:"],
-    context: { ...context, state: "SELECT_TYPE" },
-    quickReplies: TYPE_REPLIES,
+    messages: [
+      `${typeLabel} selecionado(a)! ✅`,
+      "A consulta será presencial ou online?",
+    ],
+    context: { ...context, state: "SELECT_MODALITY", appointmentType },
+    quickReplies: MODALITY_REPLIES,
+  };
+}
+
+function handleSelectModality(input: string, context: ChatContext): EngineResponse {
+  const lower = input.toLowerCase();
+  let modality: "PRESENCIAL" | "ONLINE" | null = null;
+
+  if (lower === "presencial" || lower === "🏥 presencial" || lower.includes("presencial")) {
+    modality = "PRESENCIAL";
+  } else if (lower === "online" || lower === "💻 online" || lower.includes("online")) {
+    modality = "ONLINE";
+  }
+
+  if (!modality) {
+    return {
+      messages: ["Por favor, escolha entre presencial ou online:"],
+      context: { ...context, state: "SELECT_MODALITY" },
+      quickReplies: MODALITY_REPLIES,
+    };
+  }
+
+  const modalityLabel = modality === "ONLINE" ? "Online 💻" : "Presencial 🏥";
+
+  return {
+    messages: [
+      `${modalityLabel} selecionado! ✅`,
+      "Para qual data você gostaria de agendar? Selecione a data no calendário",
+    ],
+    context: { ...context, state: "SELECT_DATE", appointmentModality: modality },
+    quickReplies: DATE_REPLIES,
   };
 }
 
@@ -383,13 +418,14 @@ function handleShowSlots(input: string, context: ChatContext): EngineResponse {
   }
 
   const typeLabel = context.appointmentType === "FIRST_VISIT" ? "Consulta" : "Retorno";
+  const modalityLabel = context.appointmentModality === "ONLINE" ? "Online" : "Presencial";
   const dateFormatted = context.selectedDate
     ? formatDatePtBr(new Date(context.selectedDate + "T12:00:00"))
     : "";
 
   return {
     messages: [
-      "📋 Confirme: " + typeLabel + ", em " + dateFormatted + ", às " + formatSlotTime(matchedSlot.start_time) + " até " + formatSlotTime(matchedSlot.end_time) + ". Deseja confirmar?"
+      `📋 Confirme: ${typeLabel} ${modalityLabel}, em ${dateFormatted}, às ${formatSlotTime(matchedSlot.start_time)} até ${formatSlotTime(matchedSlot.end_time)}. Deseja confirmar?`
     ],
     context: { ...context, state: "CONFIRM", selectedSlot: matchedSlot },
     quickReplies: [
@@ -408,7 +444,15 @@ function handleConfirm(input: string, context: ChatContext): EngineResponse {
           "⚠️ Dados do agendamento incompletos. Vamos recomeçar.",
           "Qual tipo de consulta você deseja agendar?",
         ],
-        context: { ...context, state: "SELECT_TYPE", selectedDate: null, selectedSlot: null, appointmentType: null, availableSlots: [] },
+        context: {
+          ...context,
+          state: "SELECT_TYPE",
+          selectedDate: null,
+          selectedSlot: null,
+          appointmentType: null,
+          appointmentModality: null,
+          availableSlots: [],
+        },
         quickReplies: TYPE_REPLIES,
       };
     }
@@ -465,6 +509,7 @@ function handleConfirm(input: string, context: ChatContext): EngineResponse {
         selectedDate: null,
         selectedSlot: null,
         appointmentType: null,
+        appointmentModality: null,
         availableSlots: [],
       },
       quickReplies: ANYTHING_ELSE_REPLIES,
@@ -488,11 +533,12 @@ export function getBookingSuccessResponse(context: ChatContext): EngineResponse 
   const timeFormatted = context.selectedSlot
     ? formatSlotTime(context.selectedSlot.start_time)
     : "";
+  const modalityLabel = context.appointmentModality === "ONLINE" ? "Online" : "Presencial";
 
   return {
     messages: [
       "✅ Consulta agendada com sucesso!",
-      `Data: ${dateFormatted} às ${timeFormatted}`,
+      `Data: ${dateFormatted} às ${timeFormatted} (${modalityLabel})`,
       "Você receberá uma confirmação em breve. Posso ajudar com mais alguma coisa?",
     ],
     context: {
@@ -501,6 +547,7 @@ export function getBookingSuccessResponse(context: ChatContext): EngineResponse 
       selectedDate: null,
       selectedSlot: null,
       appointmentType: null,
+      appointmentModality: null,
       availableSlots: [],
     },
     quickReplies: ANYTHING_ELSE_REPLIES,

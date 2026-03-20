@@ -411,7 +411,9 @@ const authClient = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modu
 });
 const { useSession, signIn, signOut, signUp } = authClient;
 async function signUpWithProfile(input) {
-    return authClient.signUp.email(input);
+    return authClient.signUp.email({
+        ...input
+    });
 }
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
@@ -430,25 +432,24 @@ var _s = __turbopack_context__.k.signature();
 "use client";
 ;
 ;
-;
 function useAuth() {
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const { data: session, isPending } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2d$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSession"])();
-    const sessionUser = session?.user;
-    const user = sessionUser ? {
-        id: sessionUser.id,
-        email: sessionUser.email,
-        name: sessionUser.name,
-        emailVerified: sessionUser.emailVerified ?? false,
-        image: sessionUser.image ?? null,
-        createdAt: sessionUser.createdAt,
-        updatedAt: sessionUser.updatedAt,
-        role: sessionUser.role ?? "PATIENT",
-        phone: sessionUser.phone ?? null,
-        cpf: sessionUser.cpf ?? null,
-        dateOfBirth: sessionUser.dateOfBirth ?? null,
-        isActive: sessionUser.isActive ?? true
+    const rawUser = session?.user;
+    const user = rawUser ? {
+        id: rawUser.id,
+        email: rawUser.email,
+        name: rawUser.name,
+        emailVerified: rawUser.emailVerified ?? false,
+        image: rawUser.image ?? null,
+        createdAt: rawUser.createdAt,
+        updatedAt: rawUser.updatedAt,
+        role: rawUser.role ?? "PATIENT",
+        phone: rawUser.phone ?? null,
+        cpf: rawUser.cpf ?? null,
+        dateOfBirth: rawUser.dateOfBirth ?? null,
+        isActive: rawUser.isActive ?? true
     } : null;
     const profile = user ? {
         id: user.id,

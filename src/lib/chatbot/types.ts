@@ -22,6 +22,7 @@ export type ChatStateKey =
   | "LOGIN_EMAIL"
   | "LOGIN_PASSWORD"
   | "SELECT_TYPE"
+  | "SELECT_MODALITY"
   | "SELECT_DATE"
   | "SHOW_SLOTS"
   | "CONFIRM"
@@ -37,6 +38,7 @@ export interface ChatContext {
   accessToken: string | null;
   loginEmail: string | null;
   appointmentType: "FIRST_VISIT" | "RETURN" | null;
+  appointmentModality: "PRESENCIAL" | "ONLINE" | null;
   selectedDate: string | null;
   selectedSlot: Slot | null;
   availableSlots: Slot[];
@@ -58,6 +60,7 @@ export function createInitialContext(): ChatContext {
     accessToken: null,
     loginEmail: null,
     appointmentType: null,
+    appointmentModality: null,
     selectedDate: null,
     selectedSlot: null,
     availableSlots: [],
