@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { appointments, siteContent } from "@/lib/schema";
-import { eq, and, gte, inArray } from "drizzle-orm";
+import { eq, and, gte, inArray, desc } from "drizzle-orm";
 import { getServerUser } from "@/lib/server-auth";
 
 export async function GET() {
@@ -32,7 +32,7 @@ export async function GET() {
         eq(appointments.status, "COMPLETED")
       )
     )
-    .orderBy(appointments.date)
+    .orderBy(desc(appointments.date), desc(appointments.startTime))
     .limit(1);
 
   if (completed.length === 0) {

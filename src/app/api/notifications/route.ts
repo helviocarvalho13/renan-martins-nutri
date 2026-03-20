@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/session";
 import { db, notifications } from "@/lib/db";
-import { eq, desc } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
   try {
@@ -31,7 +31,10 @@ export async function PATCH(req: NextRequest) {
     const { id } = body;
 
     if (id) {
-      await db.update(notifications).set({ isRead: true }).where(eq(notifications.id, id));
+      await db
+        .update(notifications)
+        .set({ isRead: true })
+        .where(and(eq(notifications.id, id), eq(notifications.userId, user.id)));
     } else {
       await db
         .update(notifications)
