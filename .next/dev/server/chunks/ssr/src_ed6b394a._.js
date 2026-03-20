@@ -1,0 +1,1684 @@
+module.exports = [
+"[project]/src/lib/chatbot/types.ts [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "createInitialContext",
+    ()=>createInitialContext
+]);
+function createInitialContext() {
+    return {
+        state: "GREETING",
+        isAuthenticated: false,
+        userId: null,
+        userName: null,
+        accessToken: null,
+        loginEmail: null,
+        appointmentType: null,
+        selectedDate: null,
+        selectedSlot: null,
+        availableSlots: []
+    };
+}
+}),
+"[project]/src/lib/chatbot/dateParser.ts [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "formatDateISO",
+    ()=>formatDateISO,
+    "formatDatePtBr",
+    ()=>formatDatePtBr,
+    "parseDatePtBr",
+    ()=>parseDatePtBr
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/addDays.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextMonday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/nextMonday.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextTuesday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/nextTuesday.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextWednesday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/nextWednesday.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextThursday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/nextThursday.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextFriday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/nextFriday.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextSaturday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/nextSaturday.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextSunday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/nextSunday.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$setDate$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/setDate.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$setMonth$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/setMonth.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isValid$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/isValid.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/date-fns/format.mjs [app-ssr] (ecmascript) <locals>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$startOfDay$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/startOfDay.mjs [app-ssr] (ecmascript)");
+;
+const MONTH_MAP = {
+    janeiro: 0,
+    fevereiro: 1,
+    marco: 2,
+    março: 2,
+    abril: 3,
+    maio: 4,
+    junho: 5,
+    julho: 6,
+    agosto: 7,
+    setembro: 8,
+    outubro: 9,
+    novembro: 10,
+    dezembro: 11,
+    jan: 0,
+    fev: 1,
+    mar: 2,
+    abr: 3,
+    mai: 4,
+    jun: 5,
+    jul: 6,
+    ago: 7,
+    set: 8,
+    out: 9,
+    nov: 10,
+    dez: 11
+};
+const DAY_OF_WEEK_FN = {
+    segunda: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextMonday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextMonday"],
+    "segunda-feira": __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextMonday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextMonday"],
+    terca: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextTuesday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextTuesday"],
+    "terca-feira": __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextTuesday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextTuesday"],
+    terça: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextTuesday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextTuesday"],
+    "terça-feira": __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextTuesday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextTuesday"],
+    quarta: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextWednesday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextWednesday"],
+    "quarta-feira": __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextWednesday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextWednesday"],
+    quinta: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextThursday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextThursday"],
+    "quinta-feira": __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextThursday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextThursday"],
+    sexta: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextFriday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextFriday"],
+    "sexta-feira": __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextFriday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextFriday"],
+    sabado: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextSaturday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextSaturday"],
+    sábado: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextSaturday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextSaturday"],
+    domingo: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$nextSunday$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["nextSunday"]
+};
+function normalize(input) {
+    return input.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+function parseDatePtBr(input) {
+    const raw = input.toLowerCase().trim();
+    const normalized = normalize(input);
+    const today = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$startOfDay$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startOfDay"])(new Date());
+    if (normalized === "hoje") {
+        return today;
+    }
+    if (normalized === "amanha") {
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["addDays"])(today, 1);
+    }
+    if (normalized === "depois de amanha") {
+        return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["addDays"])(today, 2);
+    }
+    const nextDayMatch = normalized.match(/^(?:proxima?|próxima?|prox\.?)\s+(.+)$/);
+    if (nextDayMatch) {
+        const dayName = nextDayMatch[1].trim();
+        for (const [key, fn] of Object.entries(DAY_OF_WEEK_FN)){
+            if (normalize(key) === normalize(dayName)) {
+                return fn(today);
+            }
+        }
+    }
+    for (const [key, fn] of Object.entries(DAY_OF_WEEK_FN)){
+        if (normalized === normalize(key)) {
+            return fn(today);
+        }
+    }
+    const ddmmyyyySlash = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (ddmmyyyySlash) {
+        const [, d, m, y] = ddmmyyyySlash;
+        const date = new Date(Number(y), Number(m) - 1, Number(d));
+        if ((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isValid$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["isValid"])(date)) return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$startOfDay$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startOfDay"])(date);
+    }
+    const ddmmSlash = raw.match(/^(\d{1,2})\/(\d{1,2})$/);
+    if (ddmmSlash) {
+        const [, d, m] = ddmmSlash;
+        let year = today.getFullYear();
+        let date = new Date(year, Number(m) - 1, Number(d));
+        if (date < today) {
+            date = new Date(year + 1, Number(m) - 1, Number(d));
+        }
+        if ((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isValid$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["isValid"])(date)) return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$startOfDay$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startOfDay"])(date);
+    }
+    const diaNumMatch = normalized.match(/^dia\s+(\d{1,2})$/);
+    if (diaNumMatch) {
+        const day = Number(diaNumMatch[1]);
+        let date = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$setDate$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["setDate"])(today, day);
+        if (date < today) {
+            date = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$setDate$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["setDate"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["addDays"])(today, 30), day);
+            date = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$setMonth$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["setMonth"])(date, today.getMonth() + 1);
+        }
+        if ((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isValid$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["isValid"])(date) && date.getDate() === day) return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$startOfDay$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startOfDay"])(date);
+    }
+    const dayDeMonthMatch = normalized.match(/^(\d{1,2})\s+de\s+([a-zçã]+)$/);
+    if (dayDeMonthMatch) {
+        const day = Number(dayDeMonthMatch[1]);
+        const monthStr = dayDeMonthMatch[2];
+        const month = MONTH_MAP[monthStr] ?? MONTH_MAP[normalize(monthStr)];
+        if (month !== undefined) {
+            let year = today.getFullYear();
+            let date = new Date(year, month, day);
+            if (date < today) {
+                date = new Date(year + 1, month, day);
+            }
+            if ((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isValid$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["isValid"])(date) && date.getDate() === day) return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$startOfDay$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startOfDay"])(date);
+        }
+    }
+    const ddmmyyyyDash = raw.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+    if (ddmmyyyyDash) {
+        const [, d, m, y] = ddmmyyyyDash;
+        const date = new Date(Number(y), Number(m) - 1, Number(d));
+        if ((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$isValid$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["isValid"])(date)) return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$startOfDay$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startOfDay"])(date);
+    }
+    return null;
+}
+function formatDatePtBr(date) {
+    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(date, "dd/MM/yyyy");
+}
+function formatDateISO(date) {
+    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$format$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["format"])(date, "yyyy-MM-dd");
+}
+}),
+"[project]/src/lib/chatbot/engine.ts [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "getBookingErrorResponse",
+    ()=>getBookingErrorResponse,
+    "getBookingSuccessResponse",
+    ()=>getBookingSuccessResponse,
+    "getGreetingResponse",
+    ()=>getGreetingResponse,
+    "getLoginFailureResponse",
+    ()=>getLoginFailureResponse,
+    "getLoginSuccessResponse",
+    ()=>getLoginSuccessResponse,
+    "processMessage",
+    ()=>processMessage
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/chatbot/dateParser.ts [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$startOfDay$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/startOfDay.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/date-fns/addDays.mjs [app-ssr] (ecmascript)");
+;
+;
+async function fetchAvailableSlots(date) {
+    try {
+        const res = await fetch(`/api/available-slots?date=${date}`);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.slots || [];
+    } catch  {
+        return [];
+    }
+}
+function formatSlotTime(time) {
+    return time.slice(0, 5);
+}
+const MENU_REPLIES = [
+    {
+        label: "📅 Agendar consulta",
+        value: "Agendar"
+    }
+];
+const ANYTHING_ELSE_REPLIES = [
+    {
+        label: "Sim, agendar outra",
+        value: "sim"
+    },
+    {
+        label: "Não, obrigado",
+        value: "Não"
+    }
+];
+const TYPE_REPLIES = [
+    {
+        label: "Consulta",
+        value: "Consulta"
+    },
+    {
+        label: "Retorno",
+        value: "Retorno"
+    }
+];
+async function processMessage(input, context) {
+    const trimmed = input.trim().toLowerCase();
+    if (trimmed === "menu" || trimmed === "voltar" || trimmed === "inicio" || trimmed === "início") {
+        return {
+            messages: [
+                "Como posso te ajudar?"
+            ],
+            context: {
+                ...context,
+                state: "MENU",
+                loginEmail: null
+            },
+            quickReplies: MENU_REPLIES
+        };
+    }
+    try {
+        switch(context.state){
+            case "GREETING":
+                return handleGreeting(context);
+            case "MENU":
+                return handleMenu(trimmed, context);
+            case "LOGIN_EMAIL":
+                return handleLoginEmail(input.trim(), context);
+            case "LOGIN_PASSWORD":
+                return handleLoginPassword(context);
+            case "SELECT_TYPE":
+                return handleSelectType(trimmed, context);
+            case "SELECT_DATE":
+                return await handleSelectDate(input, context);
+            case "SHOW_SLOTS":
+                return handleShowSlots(trimmed, context);
+            case "CONFIRM":
+                return handleConfirm(trimmed, context);
+            case "BOOKING_READY":
+                return {
+                    messages: [
+                        "Processando seu agendamento..."
+                    ],
+                    context,
+                    quickReplies: []
+                };
+            case "ANYTHING_ELSE":
+                return handleAnythingElse(trimmed, context);
+            case "FAREWELL":
+                return handleFarewell(context);
+            default:
+                return handleGreeting(context);
+        }
+    } catch  {
+        return {
+            messages: [
+                "Desculpe, ocorreu um erro inesperado. Vamos tentar novamente.",
+                "Como posso te ajudar?"
+            ],
+            context: {
+                ...context,
+                state: "MENU"
+            },
+            quickReplies: MENU_REPLIES
+        };
+    }
+}
+function handleGreeting(context) {
+    const greeting = context.userName ? `Olá, ${context.userName}! Eu sou o Team Mago, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!` : "Olá! Eu sou o Team Mago, assistente virtual do Renan Martins Nutrição. Posso te ajudar a agendar uma consulta!";
+    return {
+        messages: [
+            greeting
+        ],
+        context: {
+            ...context,
+            state: "MENU"
+        },
+        quickReplies: MENU_REPLIES
+    };
+}
+function handleMenu(input, context) {
+    if (input === "agendar" || input.includes("agendar") || input.includes("consulta") || input.includes("marcar") || input === "sim") {
+        if (!context.isAuthenticated) {
+            return {
+                messages: [
+                    "Vamos agendar sua consulta! 📅",
+                    "Para agendar, você precisa estar logado. Deseja fazer login agora pelo chat?"
+                ],
+                context: {
+                    ...context,
+                    state: "LOGIN_EMAIL"
+                },
+                quickReplies: [
+                    {
+                        label: "Sim, fazer login",
+                        value: "sim_login"
+                    },
+                    {
+                        label: "Voltar ao menu",
+                        value: "Menu"
+                    }
+                ]
+            };
+        }
+        return {
+            messages: [
+                "Vamos agendar sua consulta! 📅",
+                "Qual tipo de consulta você deseja agendar?"
+            ],
+            context: {
+                ...context,
+                state: "SELECT_TYPE"
+            },
+            quickReplies: TYPE_REPLIES
+        };
+    }
+    return {
+        messages: [
+            "Eu posso te ajudar a agendar uma consulta com o nutricionista Renan Martins.",
+            "Deseja agendar agora?"
+        ],
+        context: {
+            ...context,
+            state: "MENU"
+        },
+        quickReplies: MENU_REPLIES
+    };
+}
+function handleLoginEmail(input, context) {
+    if (input.toLowerCase() === "sim_login" || input.toLowerCase() === "sim" || input.toLowerCase().includes("login")) {
+        return {
+            messages: [
+                "Por favor, digite seu e-mail:"
+            ],
+            context: {
+                ...context,
+                state: "LOGIN_EMAIL",
+                loginEmail: null
+            },
+            quickReplies: []
+        };
+    }
+    if (input.includes("@") && input.includes(".")) {
+        return {
+            messages: [
+                "Agora digite sua senha:"
+            ],
+            context: {
+                ...context,
+                state: "LOGIN_PASSWORD",
+                loginEmail: input
+            },
+            quickReplies: []
+        };
+    }
+    return {
+        messages: [
+            "Por favor, digite um e-mail válido:"
+        ],
+        context: {
+            ...context,
+            state: "LOGIN_EMAIL"
+        },
+        quickReplies: [
+            {
+                label: "Voltar ao menu",
+                value: "Menu"
+            }
+        ]
+    };
+}
+function handleLoginPassword(_context) {
+    return {
+        messages: [
+            "Verificando suas credenciais..."
+        ],
+        context: _context,
+        quickReplies: []
+    };
+}
+function getLoginSuccessResponse(context) {
+    return {
+        messages: [
+            `Login realizado com sucesso! Bem-vindo(a), ${context.userName || ""}! ✅`,
+            "Qual tipo de consulta você deseja agendar?"
+        ],
+        context: {
+            ...context,
+            state: "SELECT_TYPE",
+            loginEmail: null
+        },
+        quickReplies: TYPE_REPLIES
+    };
+}
+function getLoginFailureResponse(context, error) {
+    const errorMsg = error === "Invalid login credentials" ? "E-mail ou senha incorretos." : error || "E-mail ou senha incorretos.";
+    return {
+        messages: [
+            `❌ ${errorMsg}`,
+            "Tente novamente. Digite seu e-mail:"
+        ],
+        context: {
+            ...context,
+            state: "LOGIN_EMAIL",
+            loginEmail: null
+        },
+        quickReplies: [
+            {
+                label: "Voltar ao menu",
+                value: "Menu"
+            }
+        ]
+    };
+}
+function handleSelectType(input, context) {
+    if (input === "first_visit" || input.includes("consulta")) {
+        return {
+            messages: [
+                "Consulta selecionada! ✅",
+                "Para qual data você gostaria de agendar? Selecione a data no calendário"
+            ],
+            context: {
+                ...context,
+                state: "SELECT_DATE",
+                appointmentType: "FIRST_VISIT"
+            },
+            quickReplies: [
+                {
+                    label: "Amanhã",
+                    value: "amanha"
+                },
+                {
+                    label: "Próxima segunda",
+                    value: "proxima segunda"
+                },
+                {
+                    label: "Próxima quarta",
+                    value: "proxima quarta"
+                },
+                {
+                    label: "Próxima sexta",
+                    value: "proxima sexta"
+                }
+            ]
+        };
+    }
+    if (input === "return" || input.includes("retorno")) {
+        return {
+            messages: [
+                "Retorno selecionado! ✅",
+                "Para qual data você gostaria de agendar o retorno? Selecione a data no calendário"
+            ],
+            context: {
+                ...context,
+                state: "SELECT_DATE",
+                appointmentType: "RETURN"
+            },
+            quickReplies: [
+                {
+                    label: "Amanhã",
+                    value: "amanha"
+                },
+                {
+                    label: "Próxima segunda",
+                    value: "proxima segunda"
+                },
+                {
+                    label: "Próxima quarta",
+                    value: "proxima quarta"
+                },
+                {
+                    label: "Próxima sexta",
+                    value: "proxima sexta"
+                }
+            ]
+        };
+    }
+    return {
+        messages: [
+            "Por favor, selecione o tipo de consulta:"
+        ],
+        context: {
+            ...context,
+            state: "SELECT_TYPE"
+        },
+        quickReplies: TYPE_REPLIES
+    };
+}
+async function handleSelectDate(input, context) {
+    const parsed = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["parseDatePtBr"])(input);
+    if (!parsed) {
+        return {
+            messages: [
+                "Não consegui entender a data. Tente novamente usando formatos como:",
+                "'amanhã', 'próxima segunda', 'dia 15', '15/03', '15/03/2025', '15 de março'"
+            ],
+            context: {
+                ...context,
+                state: "SELECT_DATE"
+            },
+            quickReplies: [
+                {
+                    label: "Amanhã",
+                    value: "amanha"
+                },
+                {
+                    label: "Próxima segunda",
+                    value: "proxima segunda"
+                },
+                {
+                    label: "Voltar ao menu",
+                    value: "Menu"
+                }
+            ]
+        };
+    }
+    const today = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$startOfDay$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startOfDay"])(new Date());
+    const minDate = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["addDays"])(today, 1);
+    if (parsed < minDate) {
+        return {
+            messages: [
+                "A data precisa ser pelo menos amanhã. Agendamentos devem ser feitos com pelo menos 24 horas de antecedência."
+            ],
+            context: {
+                ...context,
+                state: "SELECT_DATE"
+            },
+            quickReplies: [
+                {
+                    label: "Amanhã",
+                    value: "amanha"
+                },
+                {
+                    label: "Próxima segunda",
+                    value: "proxima segunda"
+                }
+            ]
+        };
+    }
+    const dateISO = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDateISO"])(parsed);
+    let slots;
+    try {
+        slots = await fetchAvailableSlots(dateISO);
+    } catch  {
+        return {
+            messages: [
+                "Ocorreu um erro ao buscar os horários disponíveis. Por favor, tente novamente."
+            ],
+            context: {
+                ...context,
+                state: "SELECT_DATE"
+            },
+            quickReplies: [
+                {
+                    label: "Tentar novamente",
+                    value: input
+                },
+                {
+                    label: "Voltar ao menu",
+                    value: "Menu"
+                }
+            ]
+        };
+    }
+    if (slots.length === 0) {
+        let suggestions = [];
+        try {
+            suggestions = await findNextAvailableDays(dateISO, 3);
+        } catch  {}
+        const suggestionMessages = suggestions.length > 0 ? [
+            `Não há horários disponíveis para ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDatePtBr"])(parsed)}.`,
+            `Próximos dias disponíveis: ${suggestions.map((s)=>(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(s + "T12:00:00"))).join(", ")}`
+        ] : [
+            `Não há horários disponíveis para ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDatePtBr"])(parsed)}. Tente outra data.`
+        ];
+        const suggestionReplies = suggestions.map((s)=>({
+                label: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(s + "T12:00:00")),
+                value: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(s + "T12:00:00"))
+            }));
+        suggestionReplies.push({
+            label: "Outra data",
+            value: "outra"
+        });
+        return {
+            messages: suggestionMessages,
+            context: {
+                ...context,
+                state: "SELECT_DATE"
+            },
+            quickReplies: suggestionReplies
+        };
+    }
+    return {
+        messages: [
+            `Horários disponíveis para ${(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDatePtBr"])(parsed)}:`,
+            "Escolha um horário:"
+        ],
+        context: {
+            ...context,
+            state: "SHOW_SLOTS",
+            selectedDate: dateISO,
+            availableSlots: slots
+        },
+        quickReplies: slots.map((s)=>({
+                label: formatSlotTime(s.start_time),
+                value: s.start_time
+            }))
+    };
+}
+async function findNextAvailableDays(fromDate, count) {
+    const results = [];
+    let current = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["addDays"])(new Date(fromDate + "T12:00:00"), 1);
+    for(let i = 0; i < 30 && results.length < count; i++){
+        const dateStr = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDateISO"])(current);
+        try {
+            const slots = await fetchAvailableSlots(dateStr);
+            if (slots.length > 0) {
+                results.push(dateStr);
+            }
+        } catch  {}
+        current = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$date$2d$fns$2f$addDays$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["addDays"])(current, 1);
+    }
+    return results;
+}
+function handleShowSlots(input, context) {
+    if (!context.availableSlots || context.availableSlots.length === 0) {
+        return {
+            messages: [
+                "Os horários expiraram. Vamos selecionar a data novamente.",
+                "Para qual data você gostaria de agendar?"
+            ],
+            context: {
+                ...context,
+                state: "SELECT_DATE",
+                availableSlots: [],
+                selectedDate: null
+            },
+            quickReplies: [
+                {
+                    label: "Amanhã",
+                    value: "amanha"
+                },
+                {
+                    label: "Próxima segunda",
+                    value: "proxima segunda"
+                },
+                {
+                    label: "Voltar ao menu",
+                    value: "Menu"
+                }
+            ]
+        };
+    }
+    const matchedSlot = context.availableSlots.find((s)=>s.start_time === input || formatSlotTime(s.start_time) === input);
+    if (!matchedSlot) {
+        return {
+            messages: [
+                "Por favor, escolha um dos horários disponíveis:"
+            ],
+            context: {
+                ...context,
+                state: "SHOW_SLOTS"
+            },
+            quickReplies: context.availableSlots.map((s)=>({
+                    label: formatSlotTime(s.start_time),
+                    value: s.start_time
+                }))
+        };
+    }
+    const typeLabel = context.appointmentType === "FIRST_VISIT" ? "Consulta" : "Retorno";
+    const dateFormatted = context.selectedDate ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(context.selectedDate + "T12:00:00")) : "";
+    return {
+        messages: [
+            "📋 Confirme: " + typeLabel + ", em " + dateFormatted + ", às " + formatSlotTime(matchedSlot.start_time) + " até " + formatSlotTime(matchedSlot.end_time) + ". Deseja confirmar?"
+        ],
+        context: {
+            ...context,
+            state: "CONFIRM",
+            selectedSlot: matchedSlot
+        },
+        quickReplies: [
+            {
+                label: "✅ Confirmar",
+                value: "sim"
+            },
+            {
+                label: "Escolher outro horário",
+                value: "outro_horario"
+            },
+            {
+                label: "Cancelar",
+                value: "Cancelar"
+            }
+        ]
+    };
+}
+function handleConfirm(input, context) {
+    if (input === "sim" || input === "confirmar" || input.includes("confirm")) {
+        if (!context.selectedDate || !context.selectedSlot || !context.appointmentType) {
+            return {
+                messages: [
+                    "⚠️ Dados do agendamento incompletos. Vamos recomeçar.",
+                    "Qual tipo de consulta você deseja agendar?"
+                ],
+                context: {
+                    ...context,
+                    state: "SELECT_TYPE",
+                    selectedDate: null,
+                    selectedSlot: null,
+                    appointmentType: null,
+                    availableSlots: []
+                },
+                quickReplies: TYPE_REPLIES
+            };
+        }
+        if (!context.isAuthenticated) {
+            return {
+                messages: [
+                    "⚠️ Sua sessão expirou. Você precisa fazer login novamente para agendar.",
+                    "Digite seu e-mail:"
+                ],
+                context: {
+                    ...context,
+                    state: "LOGIN_EMAIL",
+                    loginEmail: null
+                },
+                quickReplies: [
+                    {
+                        label: "Voltar ao menu",
+                        value: "Menu"
+                    }
+                ]
+            };
+        }
+        return {
+            messages: [
+                "Agendando sua consulta..."
+            ],
+            context: {
+                ...context,
+                state: "BOOKING_READY"
+            },
+            quickReplies: [],
+            needsBooking: true
+        };
+    }
+    if (input === "outro_horario" || input.includes("outro")) {
+        if (!context.availableSlots || context.availableSlots.length === 0) {
+            return {
+                messages: [
+                    "Os horários não estão mais disponíveis. Vamos selecionar a data novamente."
+                ],
+                context: {
+                    ...context,
+                    state: "SELECT_DATE",
+                    availableSlots: [],
+                    selectedSlot: null
+                },
+                quickReplies: [
+                    {
+                        label: "Amanhã",
+                        value: "amanha"
+                    },
+                    {
+                        label: "Próxima segunda",
+                        value: "proxima segunda"
+                    }
+                ]
+            };
+        }
+        return {
+            messages: [
+                "Escolha outro horário:"
+            ],
+            context: {
+                ...context,
+                state: "SHOW_SLOTS",
+                selectedSlot: null
+            },
+            quickReplies: context.availableSlots.map((s)=>({
+                    label: formatSlotTime(s.start_time),
+                    value: s.start_time
+                }))
+        };
+    }
+    if (input === "cancelar" || input.includes("cancel")) {
+        return {
+            messages: [
+                "Agendamento cancelado. Posso ajudar com mais alguma coisa?"
+            ],
+            context: {
+                ...context,
+                state: "ANYTHING_ELSE",
+                selectedDate: null,
+                selectedSlot: null,
+                appointmentType: null,
+                availableSlots: []
+            },
+            quickReplies: ANYTHING_ELSE_REPLIES
+        };
+    }
+    return {
+        messages: [
+            "Por favor, confirme ou cancele o agendamento:"
+        ],
+        context,
+        quickReplies: [
+            {
+                label: "✅ Confirmar",
+                value: "sim"
+            },
+            {
+                label: "Cancelar",
+                value: "Cancelar"
+            }
+        ]
+    };
+}
+function getBookingSuccessResponse(context) {
+    const dateFormatted = context.selectedDate ? (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$dateParser$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDatePtBr"])(new Date(context.selectedDate + "T12:00:00")) : "";
+    const timeFormatted = context.selectedSlot ? formatSlotTime(context.selectedSlot.start_time) : "";
+    return {
+        messages: [
+            "✅ Consulta agendada com sucesso!",
+            `Data: ${dateFormatted} às ${timeFormatted}`,
+            "Você receberá uma confirmação em breve. Posso ajudar com mais alguma coisa?"
+        ],
+        context: {
+            ...context,
+            state: "ANYTHING_ELSE",
+            selectedDate: null,
+            selectedSlot: null,
+            appointmentType: null,
+            availableSlots: []
+        },
+        quickReplies: ANYTHING_ELSE_REPLIES
+    };
+}
+function getBookingErrorResponse(context, error) {
+    let userFriendlyError = error;
+    if (error.includes("already have") || error.includes("já possui")) {
+        userFriendlyError = "Você já possui uma consulta deste tipo agendada.";
+    } else if (error.includes("24") || error.includes("antecedência") || error.includes("antecedencia")) {
+        userFriendlyError = "Agendamentos devem ser feitos com pelo menos 24 horas de antecedência.";
+    } else if (error.includes("slot") || error.includes("horário") || error.includes("horario") || error.includes("ocupado")) {
+        userFriendlyError = "Este horário não está mais disponível. Por favor, escolha outro.";
+    } else if (error.includes("autenticado") || error.includes("Unauthorized")) {
+        userFriendlyError = "Sua sessão expirou. Faça login novamente.";
+    }
+    return {
+        messages: [
+            `❌ Não foi possível agendar: ${userFriendlyError}`,
+            "Deseja tentar novamente?"
+        ],
+        context: {
+            ...context,
+            state: "ANYTHING_ELSE"
+        },
+        quickReplies: [
+            {
+                label: "Tentar novamente",
+                value: "agendar"
+            },
+            {
+                label: "Voltar ao menu",
+                value: "Menu"
+            }
+        ]
+    };
+}
+function handleAnythingElse(input, context) {
+    if (input === "sim" || input.includes("sim") || input.includes("ajuda") || input.includes("agendar")) {
+        return handleMenu("agendar", context);
+    }
+    if (input === "login" || input.includes("fazer login")) {
+        return {
+            messages: [
+                "Vamos fazer seu login!",
+                "Por favor, digite seu e-mail:"
+            ],
+            context: {
+                ...context,
+                state: "LOGIN_EMAIL",
+                loginEmail: null
+            },
+            quickReplies: []
+        };
+    }
+    return handleFarewell(context);
+}
+function handleFarewell(context) {
+    return {
+        messages: [
+            "Obrigado por usar o Team Mago! Até a próxima! Se precisar de algo, é só me chamar. 👋"
+        ],
+        context: {
+            ...context,
+            state: "FAREWELL"
+        },
+        quickReplies: [
+            {
+                label: "Voltar ao menu",
+                value: "Menu"
+            }
+        ]
+    };
+}
+function getGreetingResponse(context) {
+    return handleGreeting(context);
+}
+}),
+"[project]/src/lib/auth-client.ts [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "authClient",
+    ()=>authClient,
+    "signIn",
+    ()=>signIn,
+    "signOut",
+    ()=>signOut,
+    "signUp",
+    ()=>signUp,
+    "signUpWithProfile",
+    ()=>signUpWithProfile,
+    "useSession",
+    ()=>useSession
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$better$2d$auth$2f$dist$2f$client$2f$react$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/better-auth/dist/client/react/index.mjs [app-ssr] (ecmascript) <locals>");
+;
+const authClient = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$better$2d$auth$2f$dist$2f$client$2f$react$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$locals$3e$__["createAuthClient"])({
+    baseURL: ("TURBOPACK compile-time falsy", 0) ? "TURBOPACK unreachable" : process.env.NEXT_PUBLIC_APP_URL || "http://localhost:5000"
+});
+const { useSession, signIn, signOut, signUp } = authClient;
+async function signUpWithProfile(input) {
+    return authClient.signUp.email(input);
+}
+}),
+"[project]/src/hooks/useMageBot.ts [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "useMageBot",
+    ()=>useMageBot
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$types$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/chatbot/types.ts [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/chatbot/engine.ts [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/auth-client.ts [app-ssr] (ecmascript)");
+"use client";
+;
+;
+;
+;
+function generateId() {
+    return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+}
+const TYPING_DELAY = 600;
+function useMageBot() {
+    const [messages, setMessages] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [context, setContext] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$types$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createInitialContext"])());
+    const [quickReplies, setQuickReplies] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [isTyping, setIsTyping] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [isOpen, setIsOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [unreadCount, setUnreadCount] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
+    const hasGreeted = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(false);
+    const authChecked = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(false);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        const checkAuth = async ()=>{
+            if (authChecked.current) return;
+            authChecked.current = true;
+            try {
+                const session = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["authClient"].getSession();
+                const user = session.data?.user;
+                if (user) {
+                    setContext((prev)=>({
+                            ...prev,
+                            isAuthenticated: true,
+                            userId: user.id || null,
+                            userName: user.name || user.email?.split("@")[0] || null,
+                            accessToken: null
+                        }));
+                }
+            } catch  {
+            // not authenticated
+            }
+        };
+        checkAuth();
+    }, []);
+    const addBotMessages = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])((texts, newContext, newReplies)=>{
+        setIsTyping(true);
+        const botMessages = texts.map((text)=>({
+                id: generateId(),
+                role: "bot",
+                text,
+                timestamp: new Date()
+            }));
+        setTimeout(()=>{
+            setIsTyping(false);
+            setMessages((prev)=>[
+                    ...prev,
+                    ...botMessages
+                ]);
+            setContext(newContext);
+            setQuickReplies(newReplies);
+            if (!isOpen) {
+                setUnreadCount((c)=>c + botMessages.length);
+            }
+        }, TYPING_DELAY);
+    }, [
+        isOpen
+    ]);
+    const performBooking = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async (ctx)=>{
+        if (!ctx.selectedDate || !ctx.selectedSlot || !ctx.appointmentType) {
+            const errorResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getBookingErrorResponse"])(ctx, "Dados incompletos.");
+            addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+            return;
+        }
+        try {
+            const res = await fetch("/api/patient/book", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    date: ctx.selectedDate,
+                    start_time: ctx.selectedSlot.start_time,
+                    end_time: ctx.selectedSlot.end_time,
+                    type: ctx.appointmentType
+                })
+            });
+            if (res.ok) {
+                const successResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getBookingSuccessResponse"])(ctx);
+                addBotMessages(successResponse.messages, successResponse.context, successResponse.quickReplies);
+            } else {
+                let errorMsg = "Erro ao agendar.";
+                try {
+                    const data = await res.json();
+                    errorMsg = data.error || errorMsg;
+                } catch  {}
+                const errorResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getBookingErrorResponse"])(ctx, errorMsg);
+                addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+            }
+        } catch  {
+            const errorResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getBookingErrorResponse"])(ctx, "Erro de conexão. Verifique sua internet e tente novamente.");
+            addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
+        }
+    }, [
+        addBotMessages
+    ]);
+    const greet = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(()=>{
+        if (hasGreeted.current) return;
+        hasGreeted.current = true;
+        const response = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getGreetingResponse"])(context);
+        addBotMessages(response.messages, response.context, response.quickReplies);
+    }, [
+        context,
+        addBotMessages
+    ]);
+    const toggleOpen = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(()=>{
+        setIsOpen((prev)=>{
+            const next = !prev;
+            if (next) {
+                setUnreadCount(0);
+                if (!hasGreeted.current) {
+                    setTimeout(()=>greet(), 100);
+                }
+            }
+            return next;
+        });
+    }, [
+        greet
+    ]);
+    const setOpenFn = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])((open)=>{
+        setIsOpen(open);
+        if (open) {
+            setUnreadCount(0);
+            if (!hasGreeted.current) {
+                setTimeout(()=>greet(), 100);
+            }
+        }
+    }, [
+        greet
+    ]);
+    const sendMessage = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])(async (text)=>{
+        const trimmed = text.trim();
+        if (!trimmed) return;
+        const isPasswordInput = context.state === "LOGIN_PASSWORD";
+        const userMsg = {
+            id: generateId(),
+            role: "user",
+            text: isPasswordInput ? "••••••••" : trimmed,
+            timestamp: new Date(),
+            isPassword: isPasswordInput
+        };
+        setMessages((prev)=>[
+                ...prev,
+                userMsg
+            ]);
+        setQuickReplies([]);
+        setIsTyping(true);
+        if (isPasswordInput && context.loginEmail) {
+            try {
+                const result = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2d$client$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["authClient"].signIn.email({
+                    email: context.loginEmail,
+                    password: trimmed
+                });
+                if (result.error || !result.data?.user) {
+                    const failResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getLoginFailureResponse"])(context, result.error?.message);
+                    addBotMessages(failResponse.messages, failResponse.context, failResponse.quickReplies);
+                    return;
+                }
+                const user = result.data.user;
+                const updatedContext = {
+                    ...context,
+                    isAuthenticated: true,
+                    userId: user.id || null,
+                    userName: user.name || user.email?.split("@")[0] || null,
+                    accessToken: null,
+                    loginEmail: null
+                };
+                const successResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getLoginSuccessResponse"])(updatedContext);
+                addBotMessages(successResponse.messages, successResponse.context, successResponse.quickReplies);
+                return;
+            } catch  {
+                const failResponse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["getLoginFailureResponse"])(context, "Erro de conexão. Tente novamente.");
+                addBotMessages(failResponse.messages, failResponse.context, failResponse.quickReplies);
+                return;
+            }
+        }
+        try {
+            const response = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$chatbot$2f$engine$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["processMessage"])(trimmed, context);
+            if (response.needsBooking) {
+                addBotMessages(response.messages, response.context, response.quickReplies);
+                setTimeout(()=>{
+                    performBooking(response.context);
+                }, TYPING_DELAY + 100);
+                return;
+            }
+            addBotMessages(response.messages, response.context, response.quickReplies);
+        } catch  {
+            addBotMessages([
+                "Desculpe, ocorreu um erro. Tente novamente."
+            ], {
+                ...context,
+                state: "MENU"
+            }, [
+                {
+                    label: "Voltar ao menu",
+                    value: "menu"
+                }
+            ]);
+        }
+    }, [
+        context,
+        addBotMessages,
+        performBooking
+    ]);
+    return {
+        messages,
+        quickReplies,
+        isTyping,
+        isOpen,
+        unreadCount,
+        isPasswordMode: context.state === "LOGIN_PASSWORD",
+        chatState: context.state,
+        sendMessage,
+        toggleOpen,
+        setOpen: setOpenFn
+    };
+}
+}),
+"[project]/src/components/ui/button.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "Button",
+    ()=>Button,
+    "buttonVariants",
+    ()=>buttonVariants
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$radix$2d$ui$2f$react$2d$slot$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@radix-ui/react-slot/dist/index.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$class$2d$variance$2d$authority$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/class-variance-authority/dist/index.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/utils.ts [app-ssr] (ecmascript)");
+"use client";
+;
+;
+;
+;
+;
+const buttonVariants = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$class$2d$variance$2d$authority$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cva"])("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0", {
+    variants: {
+        variant: {
+            default: "bg-primary text-primary-foreground hover:bg-primary/90",
+            destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+            outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+            secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+            ghost: "hover:bg-accent hover:text-accent-foreground",
+            link: "text-primary underline-offset-4 hover:underline"
+        },
+        size: {
+            default: "h-10 px-4 py-2",
+            sm: "h-9 rounded-md px-3",
+            lg: "h-11 rounded-md px-8",
+            icon: "h-10 w-10"
+        }
+    },
+    defaultVariants: {
+        variant: "default",
+        size: "default"
+    }
+});
+const Button = /*#__PURE__*/ __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["forwardRef"](({ className, variant, size, asChild = false, ...props }, ref)=>{
+    const Comp = asChild ? __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$radix$2d$ui$2f$react$2d$slot$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Slot"] : "button";
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Comp, {
+        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$utils$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["cn"])(buttonVariants({
+            variant,
+            size,
+            className
+        })),
+        ref: ref,
+        ...props
+    }, void 0, false, {
+        fileName: "[project]/src/components/ui/button.tsx",
+        lineNumber: 44,
+        columnNumber: 7
+    }, ("TURBOPACK compile-time value", void 0));
+});
+Button.displayName = "Button";
+;
+}),
+"[project]/src/components/chatbot/ChatWindow.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "default",
+    ()=>ChatWindow
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/x.js [app-ssr] (ecmascript) <export default as X>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$send$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Send$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/send.js [app-ssr] (ecmascript) <export default as Send>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/button.tsx [app-ssr] (ecmascript)");
+"use client";
+;
+;
+;
+;
+;
+function TypingIndicator() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "flex items-center gap-1 px-4 py-2",
+        "data-testid": "typing-indicator",
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "flex items-center gap-1 bg-muted rounded-md px-3 py-2",
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                    className: "w-2 h-2 rounded-full bg-muted-foreground/50 animate-bounce",
+                    style: {
+                        animationDelay: "0ms"
+                    }
+                }, void 0, false, {
+                    fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                    lineNumber: 23,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                    className: "w-2 h-2 rounded-full bg-muted-foreground/50 animate-bounce",
+                    style: {
+                        animationDelay: "150ms"
+                    }
+                }, void 0, false, {
+                    fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                    lineNumber: 24,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                    className: "w-2 h-2 rounded-full bg-muted-foreground/50 animate-bounce",
+                    style: {
+                        animationDelay: "300ms"
+                    }
+                }, void 0, false, {
+                    fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                    lineNumber: 25,
+                    columnNumber: 9
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+            lineNumber: 22,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+        lineNumber: 21,
+        columnNumber: 5
+    }, this);
+}
+function MessageBubble({ message }) {
+    const isBot = message.role === "bot";
+    const time = message.timestamp instanceof Date ? message.timestamp.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit"
+    }) : "";
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: `flex ${isBot ? "justify-start" : "justify-end"} px-3 py-0.5`,
+        "data-testid": `message-${message.role}-${message.id}`,
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: `max-w-[85%] rounded-md px-3 py-2 text-sm ${isBot ? "bg-muted text-foreground" : "bg-primary text-primary-foreground"}`,
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                    className: "whitespace-pre-wrap break-words",
+                    children: message.text
+                }, void 0, false, {
+                    fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                    lineNumber: 49,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                    className: `text-[10px] mt-1 block ${isBot ? "text-muted-foreground" : "text-primary-foreground/70"}`,
+                    children: time
+                }, void 0, false, {
+                    fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                    lineNumber: 50,
+                    columnNumber: 9
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+            lineNumber: 42,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+        lineNumber: 38,
+        columnNumber: 5
+    }, this);
+}
+function ChatWindow({ messages, quickReplies, isTyping, isPasswordMode, chatState, onSend, onClose }) {
+    const [input, setInput] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
+    const [dateValue, setDateValue] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
+    const messagesEndRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const inputRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
+    const showTextInput = chatState === "LOGIN_EMAIL" || chatState === "LOGIN_PASSWORD";
+    const showDatePicker = chatState === "SELECT_DATE";
+    const getTomorrowDate = ()=>{
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow.toISOString().split("T")[0];
+    };
+    const handleDateSearch = ()=>{
+        if (!dateValue) return;
+        const [year, month, day] = dateValue.split("-");
+        onSend(`${day}/${month}/${year}`);
+        setDateValue("");
+    };
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        messagesEndRef.current?.scrollIntoView({
+            behavior: "smooth"
+        });
+    }, [
+        messages,
+        isTyping
+    ]);
+    const handleSubmit = (e)=>{
+        e.preventDefault();
+        if (!input.trim()) return;
+        onSend(input);
+        setInput("");
+    };
+    const handleQuickReply = (reply)=>{
+        onSend(reply.value);
+    };
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "fixed bottom-28 right-4 z-50 flex flex-col bg-background border border-border rounded-md shadow-lg w-[calc(100vw-2rem)] sm:w-[380px] h-[520px] max-h-[70vh]",
+        "data-testid": "chat-window",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "flex items-center justify-between gap-2 px-4 py-3 bg-neutral-900 text-white rounded-t-md",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex items-center gap-2",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                                src: "/images/team-mago-circle.png",
+                                alt: "Team Mago",
+                                width: 32,
+                                height: 32,
+                                className: "rounded-full"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                                lineNumber: 114,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                        className: "text-sm font-semibold",
+                                        "data-testid": "text-chatbot-name",
+                                        children: "Team Mago"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                                        lineNumber: 116,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        className: "text-[11px] text-white/70",
+                                        children: "Assistente Virtual"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                                        lineNumber: 117,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                                lineNumber: 115,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 113,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                        size: "icon",
+                        variant: "ghost",
+                        className: "text-white hover:bg-white/10",
+                        onClick: onClose,
+                        "data-testid": "button-close-chat",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__["X"], {
+                            className: "w-4 h-4"
+                        }, void 0, false, {
+                            fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                            lineNumber: 127,
+                            columnNumber: 11
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 120,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                lineNumber: 112,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "flex-1 overflow-y-auto py-3 space-y-1",
+                children: [
+                    messages.map((msg)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(MessageBubble, {
+                            message: msg
+                        }, msg.id, false, {
+                            fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                            lineNumber: 133,
+                            columnNumber: 11
+                        }, this)),
+                    isTyping && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(TypingIndicator, {}, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 135,
+                        columnNumber: 22
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        ref: messagesEndRef
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 136,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                lineNumber: 131,
+                columnNumber: 7
+            }, this),
+            quickReplies.length > 0 && !isTyping && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "flex flex-wrap gap-1.5 px-3 py-2 border-t border-border",
+                "data-testid": "quick-replies",
+                children: quickReplies.map((reply)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                        variant: "outline",
+                        size: "sm",
+                        onClick: ()=>handleQuickReply(reply),
+                        "data-testid": `button-quick-reply-${reply.value}`,
+                        children: reply.label
+                    }, reply.value, false, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 142,
+                        columnNumber: 13
+                    }, this))
+            }, void 0, false, {
+                fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                lineNumber: 140,
+                columnNumber: 9
+            }, this),
+            showDatePicker && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "flex items-center gap-2 px-3 py-2 border-t border-border",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                        type: "date",
+                        value: dateValue,
+                        onChange: (e)=>setDateValue(e.target.value),
+                        min: getTomorrowDate(),
+                        className: "flex-1 bg-transparent text-sm text-foreground outline-none h-9 px-3 border border-input rounded-md",
+                        "data-testid": "input-date-picker"
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 157,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                        onClick: handleDateSearch,
+                        disabled: !dateValue,
+                        "data-testid": "button-search-slots",
+                        children: "Buscar horários"
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 165,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                lineNumber: 156,
+                columnNumber: 9
+            }, this),
+            showTextInput && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
+                onSubmit: handleSubmit,
+                className: "flex items-center gap-2 px-3 py-2 border-t border-border",
+                "data-testid": "chat-input-form",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                        ref: inputRef,
+                        type: isPasswordMode ? "password" : "text",
+                        value: input,
+                        onChange: (e)=>setInput(e.target.value),
+                        placeholder: isPasswordMode ? "Digite sua senha..." : "Digite sua mensagem...",
+                        className: "flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none h-9 px-3 border border-input rounded-md",
+                        "data-testid": "input-chat-message"
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 181,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                        type: "submit",
+                        size: "icon",
+                        disabled: !input.trim(),
+                        "data-testid": "button-send-message",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$send$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Send$3e$__["Send"], {
+                            className: "w-4 h-4"
+                        }, void 0, false, {
+                            fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                            lineNumber: 196,
+                            columnNumber: 13
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                        lineNumber: 190,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+                lineNumber: 176,
+                columnNumber: 9
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/src/components/chatbot/ChatWindow.tsx",
+        lineNumber: 108,
+        columnNumber: 5
+    }, this);
+}
+}),
+"[project]/src/components/chatbot/MageBotWidget.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "default",
+    ()=>MageBotWidget
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/image.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useMageBot$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/hooks/useMageBot.ts [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$chatbot$2f$ChatWindow$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/chatbot/ChatWindow.tsx [app-ssr] (ecmascript)");
+"use client";
+;
+;
+;
+;
+function MageBotWidget() {
+    const { messages, quickReplies, isTyping, isOpen, unreadCount, isPasswordMode, chatState, sendMessage, toggleOpen, setOpen } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$useMageBot$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMageBot"])();
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+        children: [
+            isOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$chatbot$2f$ChatWindow$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                messages: messages,
+                quickReplies: quickReplies,
+                isTyping: isTyping,
+                isPasswordMode: isPasswordMode,
+                chatState: chatState,
+                onSend: sendMessage,
+                onClose: ()=>setOpen(false)
+            }, void 0, false, {
+                fileName: "[project]/src/components/chatbot/MageBotWidget.tsx",
+                lineNumber: 24,
+                columnNumber: 9
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                onClick: toggleOpen,
+                className: "fixed bottom-12 right-4 z-50 w-14 h-14 rounded-full bg-neutral-900 text-white shadow-lg flex items-center justify-center transition-transform hover:scale-105 active:scale-95",
+                "data-testid": "button-magebot-widget",
+                "aria-label": "Abrir chat",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+                        src: "/images/team-mago-circle.png",
+                        alt: "Team Mago",
+                        width: 36,
+                        height: 36,
+                        className: "rounded-full"
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/MageBotWidget.tsx",
+                        lineNumber: 41,
+                        columnNumber: 9
+                    }, this),
+                    unreadCount > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                        className: "absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[11px] font-bold flex items-center justify-center",
+                        "data-testid": "badge-unread-count",
+                        children: unreadCount > 9 ? "9+" : unreadCount
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/chatbot/MageBotWidget.tsx",
+                        lineNumber: 43,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/components/chatbot/MageBotWidget.tsx",
+                lineNumber: 35,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true);
+}
+}),
+];
+
+//# sourceMappingURL=src_ed6b394a._.js.map

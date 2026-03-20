@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { useAnimateIn } from "@/hooks/useAnimateIn";
 
 interface Testimonial {
@@ -42,14 +41,12 @@ export function TestimonialsSection() {
   useEffect(() => {
     async function load() {
       try {
-        const supabase = createClient();
-        const { data } = await supabase
-          .from("testimonials")
-          .select("id, content, rating, created_at")
-          .eq("is_approved", true)
-          .order("created_at", { ascending: false });
-        if (data && data.length > 0) {
-          setTestimonials(data);
+        const res = await fetch("/api/testimonials");
+        if (res.ok) {
+          const data = await res.json() as { testimonials: Testimonial[] };
+          if (data.testimonials && data.testimonials.length > 0) {
+            setTestimonials(data.testimonials);
+          }
         }
       } catch {
         // use fallback

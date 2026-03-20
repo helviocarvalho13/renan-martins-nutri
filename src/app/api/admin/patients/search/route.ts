@@ -1,17 +1,13 @@
-import { NextResponse } from "next/server";
-import { createServerSupabaseClient, createServiceRoleClient } from "@/lib/supabase/server";
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { user } from "@/lib/schema";
+import { eq, and, or, ilike } from "drizzle-orm";
+import { getServerUser } from "@/lib/server-auth";
 
-export async function GET(request: Request) {
-  const serverSupabase = await createServerSupabaseClient();
-  const { data: { user } } = await serverSupabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
-  }
-
-  if (user.user_metadata?.role !== "ADMIN" && user.user_metadata?.role !== "admin") {
-    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
-  }
+export async function GET(request: NextRequest) {
+  const currentUser = await getServerUser();
+  if (!currentUser) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+  if (currentUser.role !== "ADMIN") return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
 
   const { searchParams } = new URL(request.url);
   const q = searchParams.get("q")?.trim();
@@ -20,29 +16,28 @@ export async function GET(request: Request) {
     return NextResponse.json({ patients: [] });
   }
 
-  const supabase = createServiceRoleClient();
-
   const cpfDigits = q.replace(/\D/g, "");
   const isCpfSearch = cpfDigits.length >= 3;
 
-  let query = supabase
-    .from("profiles")
-    .select("id, full_name, email, phone, cpf")
-    .eq("role", "PATIENT")
-    .eq("is_active", true)
+  const rows = await db
+    .select({
+      id: user.id,
+      full_name: user.name,
+      email: user.email,
+      phone: user.phone,
+      cpf: user.cpf,
+    })
+    .from(user)
+    .where(
+      and(
+        eq(user.role, "PATIENT"),
+        eq(user.isActive, true),
+        isCpfSearch
+          ? or(ilike(user.name, `%${q}%`), ilike(user.cpf, `%${cpfDigits}%`))
+          : ilike(user.name, `%${q}%`)
+      )
+    )
     .limit(10);
 
-  if (isCpfSearch) {
-    query = query.or(`full_name.ilike.%${q}%,cpf.ilike.%${cpfDigits}%`);
-  } else {
-    query = query.ilike("full_name", `%${q}%`);
-  }
-
-  const { data, error } = await query;
-
-  if (error) {
-    return NextResponse.json({ error: "Erro ao buscar pacientes" }, { status: 500 });
-  }
-
-  return NextResponse.json({ patients: data || [] });
+  return NextResponse.json({ patients: rows });
 }

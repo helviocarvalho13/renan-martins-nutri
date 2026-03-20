@@ -1,3 +1,7 @@
+import { db } from "@/lib/db";
+import { user } from "@/lib/schema";
+import { eq } from "drizzle-orm";
+
 const RESEND_API_URL = "https://api.resend.com/emails";
 const FROM_EMAIL = "Renan Martins Nutricionista <noreply@renanmartins.com.br>";
 
@@ -16,12 +20,7 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        from: FROM_EMAIL,
-        to: [to],
-        subject,
-        html,
-      }),
+      body: JSON.stringify({ from: FROM_EMAIL, to: [to], subject, html }),
     });
 
     if (!response.ok) {
@@ -30,8 +29,8 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
       return false;
     }
 
-    const data = await response.json();
-    console.log("[email/sender] Email sent successfully:", data.id);
+    const data = (await response.json()) as { id: string };
+    console.log("[email/sender] Email sent:", data.id);
     return true;
   } catch (error) {
     console.error("[email/sender] Failed to send email:", error);
@@ -40,25 +39,19 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
 }
 
 export async function getPatientEmail(patientId: string): Promise<string | null> {
-  const { createServiceRoleClient } = await import("@/lib/supabase/server");
-  const supabase = createServiceRoleClient();
-
-  const { data } = await supabase.auth.admin.getUserById(patientId);
-  return data?.user?.email || null;
+  const rows = await db
+    .select({ email: user.email })
+    .from(user)
+    .where(eq(user.id, patientId))
+    .limit(1);
+  return rows[0]?.email ?? null;
 }
 
 export async function getAdminEmail(): Promise<string | null> {
-  const { createServiceRoleClient } = await import("@/lib/supabase/server");
-  const supabase = createServiceRoleClient();
-
-  const { data: admins } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("role", "ADMIN")
+  const rows = await db
+    .select({ email: user.email })
+    .from(user)
+    .where(eq(user.role, "ADMIN"))
     .limit(1);
-
-  if (!admins || admins.length === 0) return null;
-
-  const { data } = await supabase.auth.admin.getUserById(admins[0].id);
-  return data?.user?.email || null;
+  return rows[0]?.email ?? null;
 }

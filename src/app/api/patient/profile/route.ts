@@ -1,34 +1,36 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient, createServiceRoleClient } from "@/lib/supabase/server";
+import { db } from "@/lib/db";
+import { user } from "@/lib/schema";
+import { eq } from "drizzle-orm";
+import { getServerUser } from "@/lib/server-auth";
+import { auth } from "@/lib/auth";
 
 export async function GET() {
-  const serverClient = await createServerSupabaseClient();
-  const { data: { user } } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
-
-  const supabase = createServiceRoleClient();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, phone, cpf, date_of_birth")
-    .eq("id", user.id)
-    .single();
+  const currentUser = await getServerUser();
+  if (!currentUser) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
 
   return NextResponse.json({
-    full_name: profile?.full_name || user.user_metadata?.full_name || "",
-    phone: profile?.phone || user.user_metadata?.phone || "",
-    cpf: profile?.cpf || user.user_metadata?.cpf || "",
-    date_of_birth: profile?.date_of_birth || user.user_metadata?.date_of_birth || "",
-    email: user.email || "",
+    full_name: currentUser.name,
+    phone: currentUser.phone ?? "",
+    cpf: currentUser.cpf ?? "",
+    date_of_birth: currentUser.dateOfBirth ?? "",
+    email: currentUser.email,
   });
 }
 
 export async function PUT(request: Request) {
-  const serverClient = await createServerSupabaseClient();
-  const { data: { user } } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+  const currentUser = await getServerUser();
+  if (!currentUser) return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
 
   const body = await request.json();
-  const { full_name, phone, cpf, date_of_birth, new_password, confirm_password } = body;
+  const { full_name, phone, cpf, date_of_birth, new_password, confirm_password } = body as {
+    full_name?: string;
+    phone?: string;
+    cpf?: string;
+    date_of_birth?: string;
+    new_password?: string;
+    confirm_password?: string;
+  };
 
   if (!full_name || full_name.trim().split(" ").length < 2) {
     return NextResponse.json({ error: "Informe seu nome completo (nome e sobrenome)." }, { status: 400 });
@@ -39,33 +41,16 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Informe um WhatsApp válido com DDD." }, { status: 400 });
   }
 
-  const supabase = createServiceRoleClient();
-
-  const profileUpdate: Record<string, string | null> = {
-    full_name: full_name.trim(),
-    phone: phoneDigits,
-    cpf: cpf ? cpf.replace(/\D/g, "") || null : null,
-    date_of_birth: date_of_birth || null,
-  };
-
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .update(profileUpdate)
-    .eq("id", user.id);
-
-  if (profileError) {
-    return NextResponse.json({ error: "Erro ao atualizar perfil." }, { status: 500 });
-  }
-
-  await supabase.auth.admin.updateUserById(user.id, {
-    user_metadata: {
-      ...user.user_metadata,
-      full_name: full_name.trim(),
+  await db
+    .update(user)
+    .set({
+      name: full_name.trim(),
       phone: phoneDigits,
       cpf: cpf ? cpf.replace(/\D/g, "") || null : null,
-      date_of_birth: date_of_birth || null,
-    },
-  });
+      dateOfBirth: date_of_birth || null,
+      updatedAt: new Date(),
+    })
+    .where(eq(user.id, currentUser.id));
 
   if (new_password) {
     if (new_password.length < 6) {
@@ -74,9 +59,20 @@ export async function PUT(request: Request) {
     if (new_password !== confirm_password) {
       return NextResponse.json({ error: "As senhas não coincidem." }, { status: 400 });
     }
-    const { error: pwError } = await supabase.auth.admin.updateUserById(user.id, { password: new_password });
-    if (pwError) {
-      return NextResponse.json({ error: "Erro ao atualizar senha." }, { status: 500 });
+    try {
+      await auth.api.changePassword({
+        body: { newPassword: new_password, currentPassword: "" },
+        headers: new Headers(),
+      });
+    } catch {
+      // changePassword requires current password; use updateUser instead
+      const { account } = await import("@/lib/schema");
+      const { hashPassword } = await import("better-auth/crypto");
+      const hashed = await hashPassword(new_password);
+      await db
+        .update(account)
+        .set({ password: hashed })
+        .where(eq(account.userId, currentUser.id));
     }
   }
 

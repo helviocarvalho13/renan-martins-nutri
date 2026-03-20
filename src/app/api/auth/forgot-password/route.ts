@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email é obrigatório." }, { status: 400 });
     }
 
-    await auth.api.forgetPassword({
+    await auth.api.requestPasswordReset({
       body: { email: email.trim().toLowerCase(), redirectTo: "/update-password" },
     });
 

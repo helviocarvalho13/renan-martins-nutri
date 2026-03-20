@@ -1,14 +1,17 @@
 // Google Calendar integration via Replit Connector
 import { google } from "googleapis";
+import { db } from "@/lib/db";
+import { appointments } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
-interface AppointmentData {
+export interface AppointmentData {
   id: string;
   date: string;
-  start_time: string;
-  end_time: string;
+  startTime: string;
+  endTime: string;
   type?: string;
   status?: string;
-  patient_id?: string;
+  patientId?: string;
 }
 
 let connectionSettings: any;
@@ -91,8 +94,8 @@ export async function addCalendarEvent(
   try {
     const calendar = await getCalendarClient();
 
-    const patientName = appointment.patient_id
-      ? await getPatientNameForEvent(appointment.patient_id)
+    const patientName = appointment.patientId
+      ? await getPatientNameForEvent(appointment.patientId)
       : "Paciente";
 
     const typeLabel =
@@ -104,11 +107,11 @@ export async function addCalendarEvent(
         summary: `${typeLabel} - ${patientName}`,
         description: `Consulta com ${patientName}\nTipo: ${typeLabel}\nID: ${appointment.id}`,
         start: {
-          dateTime: `${appointment.date}T${appointment.start_time}`,
+          dateTime: `${appointment.date}T${appointment.startTime}`,
           timeZone: "America/Sao_Paulo",
         },
         end: {
-          dateTime: `${appointment.date}T${appointment.end_time}`,
+          dateTime: `${appointment.date}T${appointment.endTime}`,
           timeZone: "America/Sao_Paulo",
         },
         reminders: {
@@ -126,16 +129,10 @@ export async function addCalendarEvent(
 
     if (eventId) {
       try {
-        const { createServiceRoleClient } = await import(
-          "@/lib/supabase/server"
-        );
-        const supabase = createServiceRoleClient();
-        await supabase
-          .from("appointments")
-          .update({
-            google_calendar_event_id: eventId,
-          } as Record<string, unknown>)
-          .eq("id", appointment.id);
+        await db
+          .update(appointments)
+          .set({ googleCalendarEventId: eventId })
+          .where(eq(appointments.id, appointment.id));
       } catch {
         console.warn(
           "[google-calendar] Could not save event ID to database (column may not exist yet)"
@@ -160,26 +157,21 @@ export async function updateCalendarEvent(
   if (!isConfigured()) return false;
 
   try {
-    const { createServiceRoleClient } = await import(
-      "@/lib/supabase/server"
-    );
-    const supabase = createServiceRoleClient();
-    const { data } = await supabase
-      .from("appointments")
-      .select("google_calendar_event_id")
-      .eq("id", appointment.id)
-      .single();
+    const rows = await db
+      .select({ googleCalendarEventId: appointments.googleCalendarEventId })
+      .from(appointments)
+      .where(eq(appointments.id, appointment.id))
+      .limit(1);
 
-    const eventId = (data as Record<string, unknown>)
-      ?.google_calendar_event_id as string;
+    const eventId = rows[0]?.googleCalendarEventId;
     if (!eventId) return false;
 
     const calendar = await getCalendarClient();
 
     const statusLabel =
       appointment.status === "COMPLETED" ? " [CONCLUÍDA]" : "";
-    const patientName = appointment.patient_id
-      ? await getPatientNameForEvent(appointment.patient_id)
+    const patientName = appointment.patientId
+      ? await getPatientNameForEvent(appointment.patientId)
       : "Paciente";
     const typeLabel =
       appointment.type === "FIRST_VISIT" ? "Consulta" : "Retorno";
@@ -210,18 +202,13 @@ export async function deleteCalendarEvent(
   if (!isConfigured()) return false;
 
   try {
-    const { createServiceRoleClient } = await import(
-      "@/lib/supabase/server"
-    );
-    const supabase = createServiceRoleClient();
-    const { data } = await supabase
-      .from("appointments")
-      .select("google_calendar_event_id")
-      .eq("id", appointmentId)
-      .single();
+    const rows = await db
+      .select({ googleCalendarEventId: appointments.googleCalendarEventId })
+      .from(appointments)
+      .where(eq(appointments.id, appointmentId))
+      .limit(1);
 
-    const eventId = (data as Record<string, unknown>)
-      ?.google_calendar_event_id as string;
+    const eventId = rows[0]?.googleCalendarEventId;
     if (!eventId) return false;
 
     const calendar = await getCalendarClient();

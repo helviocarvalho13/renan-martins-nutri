@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAvailableSlots } from "@/hooks/useAvailableSlots";
-import { createClient } from "@/lib/supabase/client";
 import { format, addDays, isBefore, startOfToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Card, CardContent } from "@/components/ui/card";
@@ -147,29 +146,14 @@ export default function PatientBookingPage() {
   useEffect(() => {
     async function fetchPatientInfo() {
       try {
-        const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
         const today = new Date().toISOString().split("T")[0];
 
         const [apptRes, eligibilityRes] = await Promise.all([
-          supabase
-            .from("appointments")
-            .select("*")
-            .eq("patient_id", user.id),
+          fetch("/api/patient/appointments").then(r => r.ok ? r.json() : { appointments: [] }),
           fetch("/api/patient/return-eligibility").then(r => r.json()).catch(() => null),
         ]);
 
-        if (apptRes.error) {
-          toast({
-            title: "Erro ao carregar dados",
-            description: "Não foi possível carregar suas informações. Tente novamente.",
-            variant: "destructive",
-          });
-        }
-
-        const allAppts = (apptRes.data || []) as Appointment[];
+        const allAppts = (apptRes.appointments || []) as Appointment[];
 
         const futureActive = allAppts.filter(
           (a) => a.date >= today && (a.status === "PENDING" || a.status === "CONFIRMED")

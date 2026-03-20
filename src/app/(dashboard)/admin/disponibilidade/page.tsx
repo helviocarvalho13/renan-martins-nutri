@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
 import type { ScheduleConfig, BlockedSlot } from "@/lib/types/database";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -52,7 +51,6 @@ const DEFAULT_CONFIG: Omit<DayConfig, "day_of_week"> = {
 };
 
 export default function DisponibilidadePage() {
-  const supabase = createClient();
   const { toast } = useToast();
 
   const [configs, setConfigs] = useState<DayConfig[]>([]);
@@ -83,17 +81,9 @@ export default function DisponibilidadePage() {
     setLoading(true);
     try {
       const [configRes, blockedRes, settingsRes] = await Promise.all([
-        supabase
-          .from("schedule_config")
-          .select("*")
-          .order("day_of_week", { ascending: true }),
-        supabase
-          .from("blocked_slots")
-          .select("*")
-          .order("date", { ascending: true }),
-        fetch("/api/settings")
-          .then((r) => r.json())
-          .catch(() => null),
+        fetch("/api/admin/schedule-config").then((r) => r.ok ? r.json() : { configs: [] }),
+        fetch("/api/admin/blocked-slots").then((r) => r.ok ? r.json() : { blocked_slots: [] }),
+        fetch("/api/settings").then((r) => r.ok ? r.json() : null).catch(() => null),
       ]);
 
       if (settingsRes?.return_window_days) {
@@ -103,7 +93,7 @@ export default function DisponibilidadePage() {
         setWhatsappTemplate(settingsRes.whatsapp_template);
       }
 
-      const existingConfigs = (configRes.data || []) as ScheduleConfig[];
+      const existingConfigs = (configRes.configs || []) as ScheduleConfig[];
       const dayConfigs: DayConfig[] = DAYS_OF_WEEK.map((_, index) => {
         const existing = existingConfigs.find((c) => c.day_of_week === index);
         if (existing) {
@@ -120,23 +110,8 @@ export default function DisponibilidadePage() {
         return { ...DEFAULT_CONFIG, day_of_week: index };
       });
 
-      if (configRes.error) {
-        toast({
-          title: "Erro ao carregar configurações",
-          description: configRes.error.message,
-          variant: "destructive",
-        });
-      }
-      if (blockedRes.error) {
-        toast({
-          title: "Erro ao carregar bloqueios",
-          description: blockedRes.error.message,
-          variant: "destructive",
-        });
-      }
-
       setConfigs(dayConfigs);
-      setBlockedSlots((blockedRes.data || []) as BlockedSlot[]);
+      setBlockedSlots((blockedRes.blocked_slots || []) as BlockedSlot[]);
     } finally {
       setLoading(false);
     }
@@ -155,35 +130,21 @@ export default function DisponibilidadePage() {
   const handleSaveConfigs = async () => {
     setSaving(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
       let hasError = false;
       for (const config of configs) {
-        const payload = {
-          admin_id: user.id,
-          day_of_week: config.day_of_week,
-          start_time: config.start_time,
-          end_time: config.end_time,
-          slot_duration_min: config.slot_duration_min,
-          break_duration_min: config.break_duration_min,
-          is_active: config.is_active,
-        };
-
-        if (config.id) {
-          const { error } = await supabase
-            .from("schedule_config")
-            .update(payload)
-            .eq("id", config.id);
-          if (error) hasError = true;
-        } else {
-          const { error } = await supabase
-            .from("schedule_config")
-            .insert(payload);
-          if (error) hasError = true;
-        }
+        const res = await fetch("/api/admin/schedule-config", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            day_of_week: config.day_of_week,
+            start_time: config.start_time,
+            end_time: config.end_time,
+            slot_duration_min: config.slot_duration_min,
+            break_duration_min: config.break_duration_min,
+            is_active: config.is_active,
+          }),
+        });
+        if (!res.ok) hasError = true;
       }
 
       await loadData();
@@ -197,8 +158,7 @@ export default function DisponibilidadePage() {
       } else {
         toast({
           title: "Horários salvos",
-          description:
-            "Configurações de disponibilidade atualizadas com sucesso.",
+          description: "Configurações de disponibilidade atualizadas com sucesso.",
         });
       }
     } finally {
@@ -210,38 +170,28 @@ export default function DisponibilidadePage() {
     if (!newBlock.date) return;
     setAddingBlock(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { error } = await supabase.from("blocked_slots").insert({
-        admin_id: user.id,
-        date: newBlock.date,
-        start_time: newBlock.all_day ? null : newBlock.start_time || null,
-        end_time: newBlock.all_day ? null : newBlock.end_time || null,
-        all_day: newBlock.all_day,
-        reason: newBlock.reason || null,
+      const res = await fetch("/api/admin/blocked-slots", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: newBlock.date,
+          start_time: newBlock.all_day ? null : newBlock.start_time || null,
+          end_time: newBlock.all_day ? null : newBlock.end_time || null,
+          all_day: newBlock.all_day,
+          reason: newBlock.reason || null,
+        }),
       });
 
-      if (error) {
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
         toast({
           title: "Erro ao adicionar bloqueio",
-          description: error.message,
+          description: data?.error || "Não foi possível adicionar.",
           variant: "destructive",
         });
       } else {
-        toast({
-          title: "Bloqueio adicionado",
-          description: "Data bloqueada com sucesso.",
-        });
-        setNewBlock({
-          date: "",
-          start_time: "",
-          end_time: "",
-          all_day: true,
-          reason: "",
-        });
+        toast({ title: "Bloqueio adicionado", description: "Data bloqueada com sucesso." });
+        setNewBlock({ date: "", start_time: "", end_time: "", all_day: true, reason: "" });
       }
       await loadData();
     } finally {
@@ -314,21 +264,20 @@ export default function DisponibilidadePage() {
   const handleDeleteBlock = async (id: string) => {
     setDeletingId(id);
     try {
-      const { error } = await supabase
-        .from("blocked_slots")
-        .delete()
-        .eq("id", id);
-      if (error) {
+      const res = await fetch("/api/admin/blocked-slots", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
         toast({
           title: "Erro ao remover bloqueio",
-          description: error.message,
+          description: data?.error || "Não foi possível remover.",
           variant: "destructive",
         });
       } else {
-        toast({
-          title: "Bloqueio removido",
-          description: "O bloqueio foi removido com sucesso.",
-        });
+        toast({ title: "Bloqueio removido", description: "O bloqueio foi removido com sucesso." });
       }
       await loadData();
     } finally {

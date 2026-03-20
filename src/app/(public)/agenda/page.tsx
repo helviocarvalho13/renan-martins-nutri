@@ -16,7 +16,6 @@ import {
   CheckCircle2,
   XCircle,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 interface ScheduleConfig {
   day_of_week: number;
@@ -88,43 +87,20 @@ export default function AgendaPage() {
   useEffect(() => {
     async function load() {
       try {
-        const supabase = createClient();
-
-        const { data: schedData } = await supabase
-          .from("schedule_config")
-          .select("day_of_week, start_time, end_time, slot_duration_min, break_duration_min, is_active")
-          .eq("is_active", true);
-
-        if (schedData && schedData.length > 0) {
-          setSchedule(schedData);
-        }
-
         const startDate = formatDate(new Date(currentYear, currentMonth, 1));
         const endDate = formatDate(new Date(currentYear, currentMonth + 1, 0));
 
-        const { data: blockedData } = await supabase
-          .from("blocked_slots")
-          .select("date, start_time, end_time, all_day")
-          .gte("date", startDate)
-          .lte("date", endDate);
+        const publicRes = await fetch(`/api/public/schedule?from=${startDate}&to=${endDate}`)
+          .then(r => r.ok ? r.json() : null).catch(() => null);
 
-        if (blockedData) {
-          setBlockedSlots(blockedData);
+        if (publicRes?.schedule && publicRes.schedule.length > 0) {
+          setSchedule(publicRes.schedule);
         }
-
-        const { data: apptData } = await supabase
-          .from("appointments")
-          .select("date")
-          .gte("date", startDate)
-          .lte("date", endDate)
-          .in("status", ["PENDING", "CONFIRMED"]);
-
-        if (apptData) {
-          const counts: Record<string, number> = {};
-          apptData.forEach((a) => {
-            counts[a.date] = (counts[a.date] || 0) + 1;
-          });
-          setBookedDates(counts);
+        if (publicRes?.blocked_slots) {
+          setBlockedSlots(publicRes.blocked_slots);
+        }
+        if (publicRes?.appointment_counts) {
+          setBookedDates(publicRes.appointment_counts);
         }
       } catch {
         // use fallbacks

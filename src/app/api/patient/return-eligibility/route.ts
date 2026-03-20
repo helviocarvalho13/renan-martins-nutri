@@ -1,43 +1,42 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient, createServiceRoleClient } from "@/lib/supabase/server";
+import { db } from "@/lib/db";
+import { appointments, siteContent } from "@/lib/schema";
+import { eq, and, gte, inArray } from "drizzle-orm";
+import { getServerUser } from "@/lib/server-auth";
 
 export async function GET() {
-  const serverSupabase = await createServerSupabaseClient();
-  const { data: { user } } = await serverSupabase.auth.getUser();
-
-  if (!user) {
+  const currentUser = await getServerUser();
+  if (!currentUser) {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
 
-  const supabase = createServiceRoleClient();
-
   let returnWindowDays = 30;
   try {
-    const { data: settings } = await supabase
-      .from("site_content")
-      .select("content")
-      .eq("section", "settings")
-      .eq("title", "return_window")
-      .single();
-    if (settings?.content?.return_window_days) {
-      returnWindowDays = settings.content.return_window_days;
+    const settingsRows = await db
+      .select({ content: siteContent.content })
+      .from(siteContent)
+      .where(and(eq(siteContent.section, "settings"), eq(siteContent.title, "return_window")))
+      .limit(1);
+    const content = settingsRows[0]?.content as Record<string, number> | undefined;
+    if (content?.return_window_days) {
+      returnWindowDays = content.return_window_days;
     }
   } catch {}
 
-  const { data: completed } = await supabase
-    .from("appointments")
-    .select("id, date, return_suggested_date")
-    .eq("patient_id", user.id)
-    .eq("status", "COMPLETED")
-    .order("date", { ascending: false })
+  const completed = await db
+    .select({ id: appointments.id, date: appointments.date, returnSuggestedDate: appointments.returnSuggestedDate })
+    .from(appointments)
+    .where(
+      and(
+        eq(appointments.patientId, currentUser.id),
+        eq(appointments.status, "COMPLETED")
+      )
+    )
+    .orderBy(appointments.date)
     .limit(1);
 
-  if (!completed || completed.length === 0) {
-    return NextResponse.json({
-      eligible: false,
-      reason: "no_completed",
-      return_window_days: returnWindowDays,
-    });
+  if (completed.length === 0) {
+    return NextResponse.json({ eligible: false, reason: "no_completed", return_window_days: returnWindowDays });
   }
 
   const lastCompleted = completed[0];
@@ -54,27 +53,27 @@ export async function GET() {
   }
 
   const today = new Date().toISOString().split("T")[0];
-  const { data: activeReturns } = await supabase
-    .from("appointments")
-    .select("id")
-    .eq("patient_id", user.id)
-    .eq("type", "RETURN")
-    .gte("date", today)
-    .in("status", ["PENDING", "CONFIRMED"])
+  const activeReturns = await db
+    .select({ id: appointments.id })
+    .from(appointments)
+    .where(
+      and(
+        eq(appointments.patientId, currentUser.id),
+        eq(appointments.type, "RETURN"),
+        gte(appointments.date, today),
+        inArray(appointments.status, ["PENDING", "CONFIRMED"])
+      )
+    )
     .limit(1);
 
-  if (activeReturns && activeReturns.length > 0) {
-    return NextResponse.json({
-      eligible: false,
-      reason: "active_return_exists",
-      return_window_days: returnWindowDays,
-    });
+  if (activeReturns.length > 0) {
+    return NextResponse.json({ eligible: false, reason: "active_return_exists", return_window_days: returnWindowDays });
   }
 
   return NextResponse.json({
     eligible: true,
     return_window_days: returnWindowDays,
     days_remaining: returnWindowDays - daysSinceCompleted,
-    return_suggested_date: lastCompleted.return_suggested_date,
+    return_suggested_date: lastCompleted.returnSuggestedDate,
   });
 }

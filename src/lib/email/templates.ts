@@ -127,6 +127,70 @@ export function reminder24h(patientName: string, date: string, time: string, typ
   };
 }
 
+export function newAppointment(patientName: string, date: string, time: string, type: string): { subject: string; html: string } {
+  return {
+    subject: "Consulta agendada - Aguardando confirmação",
+    html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta agendada! ✅</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Sua consulta foi agendada e está aguardando confirmação.
+      </p>
+      ${appointmentBlock(date, time, type)}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Em breve você receberá a confirmação do seu horário. Caso precise cancelar, faça com pelo menos 12 horas de antecedência.
+      </p>
+    `),
+  };
+}
+
+export function appointmentCompleted(patientName: string, date: string, time: string, type: string): { subject: string; html: string } {
+  return {
+    subject: "Consulta concluída - Obrigado!",
+    html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta concluída 🎉</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Sua consulta foi marcada como concluída.
+      </p>
+      ${appointmentBlock(date, time, type)}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Obrigado por confiar no trabalho do nutricionista Renan Martins. Acesse a área do paciente para acompanhar seu progresso.
+      </p>
+    `),
+  };
+}
+
+export function noShow(patientName: string, date: string, time: string): { subject: string; html: string } {
+  return {
+    subject: "Ausência registrada na sua consulta",
+    html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Ausência registrada</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>. Sua presença não foi registrada na consulta agendada.
+      </p>
+      ${appointmentBlock(date, time, "FIRST_VISIT")}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Se isso foi um engano, entre em contato. Você pode agendar uma nova consulta a qualquer momento.
+      </p>
+    `),
+  };
+}
+
+export function appointmentRescheduled(patientName: string, date: string, time: string): { subject: string; html: string } {
+  return {
+    subject: "Sua consulta foi reagendada",
+    html: baseTemplate(`
+      <h2 style="margin:0 0 8px;color:${BRAND_COLOR};font-size:18px;">Consulta reagendada 📅</h2>
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Olá, <strong>${patientName}</strong>! Sua consulta foi reagendada.
+      </p>
+      ${appointmentBlock(date, time, "FIRST_VISIT")}
+      <p style="color:#555;font-size:14px;line-height:1.6;">
+        Verifique o novo horário na área do paciente. Qualquer dúvida, entre em contato.
+      </p>
+    `),
+  };
+}
+
 export function returnSuggestion(patientName: string, suggestedDate: string): { subject: string; html: string } {
   return {
     subject: "Hora de agendar seu retorno!",

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { createServiceRoleClient } from "@/lib/supabase/server";
+import { db } from "@/lib/db";
+import { scheduleConfig, appointments, blockedSlots } from "@/lib/schema";
+import { eq, and, inArray } from "drizzle-orm";
 
 interface GeneratedSlot {
   start_time: string;
@@ -46,42 +48,42 @@ export async function GET(request: Request) {
   const dateObj = new Date(date + "T12:00:00");
   const dayOfWeek = dateObj.getDay();
 
-  const supabase = createServiceRoleClient();
+  const configs = await db
+    .select()
+    .from(scheduleConfig)
+    .where(and(eq(scheduleConfig.dayOfWeek, dayOfWeek), eq(scheduleConfig.isActive, true)));
 
-  const { data: configs } = await supabase
-    .from("schedule_config")
-    .select("*")
-    .eq("day_of_week", dayOfWeek)
-    .eq("is_active", true);
-
-  if (!configs || configs.length === 0) {
+  if (configs.length === 0) {
     return NextResponse.json({ slots: [] });
   }
 
   const config = configs[0];
-  const generated = generateSlots(config);
+  const generated = generateSlots({
+    start_time: config.startTime,
+    end_time: config.endTime,
+    slot_duration_min: config.slotDurationMin,
+    break_duration_min: config.breakDurationMin,
+  });
 
-  const [apptRes, blockedRes] = await Promise.all([
-    supabase
-      .from("appointments")
-      .select("start_time")
-      .eq("date", date)
-      .in("status", ["PENDING", "CONFIRMED"]),
-    supabase
-      .from("blocked_slots")
-      .select("*")
-      .eq("date", date),
+  const [appts, blocked] = await Promise.all([
+    db
+      .select({ startTime: appointments.startTime })
+      .from(appointments)
+      .where(and(eq(appointments.date, date), inArray(appointments.status, ["PENDING", "CONFIRMED"]))),
+    db
+      .select()
+      .from(blockedSlots)
+      .where(eq(blockedSlots.date, date)),
   ]);
 
-  const bookedTimes = (apptRes.data || []).map((d) => d.start_time);
-  const blockedSlots = blockedRes.data || [];
+  const bookedTimes = appts.map((a) => a.startTime);
 
   const available = generated.filter((slot) => {
     if (bookedTimes.includes(slot.start_time)) return false;
-    for (const blocked of blockedSlots) {
-      if (blocked.all_day) return false;
-      if (blocked.start_time && blocked.end_time) {
-        if (slot.start_time >= blocked.start_time && slot.start_time < blocked.end_time) return false;
+    for (const b of blocked) {
+      if (b.allDay) return false;
+      if (b.startTime && b.endTime) {
+        if (slot.start_time >= b.startTime && slot.start_time < b.endTime) return false;
       }
     }
     return true;

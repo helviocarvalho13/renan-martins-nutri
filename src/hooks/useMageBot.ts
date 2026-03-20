@@ -11,7 +11,7 @@ import {
   getBookingSuccessResponse,
   getBookingErrorResponse,
 } from "@/lib/chatbot/engine";
-import { createClient } from "@/lib/supabase/client";
+import { authClient } from "@/lib/auth-client";
 
 function generateId(): string {
   return Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
@@ -47,26 +47,21 @@ export function useMageBot(): UseMageBotReturn {
       if (authChecked.current) return;
       authChecked.current = true;
 
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+      try {
+        const session = await authClient.getSession();
+        const user = session.data?.user as { id?: string; name?: string; email?: string } | undefined;
 
-      if (user) {
-        const { data: { session } } = await supabase.auth.getSession();
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("full_name")
-          .eq("id", user.id)
-          .single();
-
-        const profileName = (profile as { full_name: string } | null)?.full_name;
-
-        setContext((prev) => ({
-          ...prev,
-          isAuthenticated: true,
-          userId: user.id,
-          userName: profileName || user.email?.split("@")[0] || null,
-          accessToken: session?.access_token || null,
-        }));
+        if (user) {
+          setContext((prev) => ({
+            ...prev,
+            isAuthenticated: true,
+            userId: user.id || null,
+            userName: user.name || user.email?.split("@")[0] || null,
+            accessToken: null,
+          }));
+        }
+      } catch {
+        // not authenticated
       }
     };
 
@@ -105,29 +100,10 @@ export function useMageBot(): UseMageBotReturn {
         return;
       }
 
-      let token = ctx.accessToken;
-
-      if (!token) {
-        try {
-          const supabase = createClient();
-          const { data: { session } } = await supabase.auth.getSession();
-          token = session?.access_token || null;
-        } catch {}
-      }
-
-      if (!token) {
-        const errorResponse = getBookingErrorResponse(ctx, "Sua sessão expirou. Faça login novamente.");
-        addBotMessages(errorResponse.messages, errorResponse.context, errorResponse.quickReplies);
-        return;
-      }
-
       try {
         const res = await fetch("/api/patient/book", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             date: ctx.selectedDate,
             start_time: ctx.selectedSlot.start_time,
@@ -211,32 +187,25 @@ export function useMageBot(): UseMageBotReturn {
 
       if (isPasswordInput && context.loginEmail) {
         try {
-          const supabase = createClient();
-          const { data, error } = await supabase.auth.signInWithPassword({
+          const result = await authClient.signIn.email({
             email: context.loginEmail,
             password: trimmed,
           });
 
-          if (error || !data.user || !data.session) {
-            const failResponse = getLoginFailureResponse(context, error?.message);
+          if (result.error || !result.data?.user) {
+            const failResponse = getLoginFailureResponse(context, result.error?.message);
             addBotMessages(failResponse.messages, failResponse.context, failResponse.quickReplies);
             return;
           }
 
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("full_name")
-            .eq("id", data.user.id)
-            .single();
-
-          const profileName = (profile as { full_name: string } | null)?.full_name;
+          const user = result.data.user as { id?: string; name?: string; email?: string };
 
           const updatedContext: ChatContext = {
             ...context,
             isAuthenticated: true,
-            userId: data.user.id,
-            userName: profileName || data.user.email?.split("@")[0] || null,
-            accessToken: data.session.access_token,
+            userId: user.id || null,
+            userName: user.name || user.email?.split("@")[0] || null,
+            accessToken: null,
             loginEmail: null,
           };
 

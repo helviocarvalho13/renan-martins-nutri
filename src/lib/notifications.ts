@@ -1,14 +1,23 @@
-import { createServiceRoleClient } from "@/lib/supabase/server";
-import type { NotificationType } from "@/lib/types/database";
+import { db } from "@/lib/db";
+import { notifications, user } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 import { sendEmail, getPatientEmail, getAdminEmail } from "@/lib/email/sender";
 import * as templates from "@/lib/email/templates";
 
-function formatDateBR(date: string): string {
-  if (!date) return date;
-  const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (match) return match[3] + "/" + match[2] + "/" + match[1];
-  return date;
+function formatDateBR(dateStr: string): string {
+  if (!dateStr) return dateStr;
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (match) return `${match[3]}/${match[2]}/${match[1]}`;
+  return dateStr;
 }
+
+type NotificationType =
+  | "APPOINTMENT_CREATED"
+  | "APPOINTMENT_CONFIRMED"
+  | "APPOINTMENT_CANCELLED"
+  | "APPOINTMENT_REMINDER"
+  | "APPOINTMENT_COMPLETED"
+  | "GENERAL";
 
 interface CreateNotificationParams {
   userId: string;
@@ -25,41 +34,35 @@ export async function createNotification({
   message,
   appointmentId,
 }: CreateNotificationParams) {
-  const supabase = createServiceRoleClient();
-
-  const { error } = await supabase.from("notifications").insert({
-    user_id: userId,
-    type,
-    title,
-    message,
-    appointment_id: appointmentId ?? null,
-  });
-
-  if (error) {
-    console.error("[createNotification] Error:", error.message);
+  try {
+    await db.insert(notifications).values({
+      userId,
+      type,
+      title,
+      message,
+      appointmentId: appointmentId ?? null,
+    });
+  } catch (e) {
+    console.error("[createNotification] Error:", e);
   }
 }
 
 export async function getAdminUserId(): Promise<string | null> {
-  const supabase = createServiceRoleClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("role", "ADMIN")
+  const rows = await db
+    .select({ id: user.id })
+    .from(user)
+    .where(eq(user.role, "ADMIN"))
     .limit(1);
-
-  return data && data.length > 0 ? data[0].id : null;
+  return rows[0]?.id ?? null;
 }
 
 export async function getPatientName(patientId: string): Promise<string> {
-  const supabase = createServiceRoleClient();
-  const { data } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("id", patientId)
-    .single();
-
-  return data?.full_name || "Paciente";
+  const rows = await db
+    .select({ name: user.name })
+    .from(user)
+    .where(eq(user.id, patientId))
+    .limit(1);
+  return rows[0]?.name || "Paciente";
 }
 
 export async function notifyNewAppointment(
@@ -70,41 +73,34 @@ export async function notifyNewAppointment(
   appointmentId: string,
   adminId: string,
   patientId?: string,
-  modality: string = "PRESENCIAL"
+  modality = "PRESENCIAL"
 ) {
   const modalidadeLabel = modality === "ONLINE" ? "Online" : "Presencial";
-
   await createNotification({
     userId: adminId,
     type: "APPOINTMENT_CREATED",
     title: "Nova consulta agendada",
-    message: `${patientName} agendou ${type === "FIRST_VISIT" ? "Consulta" : "Retorno"} (${modalidadeLabel}) para ${formatDateBR(date)} às ${time}`,
+    message: `${patientName} agendou uma consulta para ${formatDateBR(date)} às ${time} (${modalidadeLabel}).`,
     appointmentId,
   });
-
-  try {
-    const adminEmail = await getAdminEmail();
-    if (adminEmail) {
-      const { subject, html } = templates.newAppointmentAdmin(patientName, formatDateBR(date), time, type);
-      await sendEmail(adminEmail, subject, html);
-    }
-  } catch (e) {
-    console.error("[notifyNewAppointment] Email error:", e);
-  }
-
   if (patientId) {
-    try {
-      const { sendWhatsApp, getPatientPhone, buildWhatsAppMessage } = await import("@/lib/whatsapp/sender");
-      const phone = await getPatientPhone(patientId);
-      if (!phone) {
-        console.warn("[notifyNewAppointment] Patient has no phone saved, skipping WhatsApp:", patientId);
-      } else {
-        const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time, modality);
-        await sendWhatsApp(phone, msg);
-      }
-    } catch (e) {
-      console.error("[notifyNewAppointment] WhatsApp error:", e);
+    await createNotification({
+      userId: patientId,
+      type: "APPOINTMENT_CREATED",
+      title: "Consulta agendada",
+      message: `Sua consulta foi agendada para ${formatDateBR(date)} às ${time}. Aguardando confirmação.`,
+      appointmentId,
+    });
+    const email = await getPatientEmail(patientId);
+    if (email) {
+      const { subject, html } = templates.newAppointment(patientName, date, time, type);
+      await sendEmail(email, subject, html);
     }
+  }
+  const adminEmail = await getAdminEmail();
+  if (adminEmail) {
+    const { subject, html } = templates.newAppointmentAdmin(patientName, date, time, type);
+    await sendEmail(adminEmail, subject, html);
   }
 }
 
@@ -116,23 +112,28 @@ export async function notifyAppointmentConfirmed(
   appointmentId: string
 ) {
   const patientName = await getPatientName(patientId);
-
   await createNotification({
     userId: patientId,
     type: "APPOINTMENT_CONFIRMED",
     title: "Consulta confirmada",
-    message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi confirmada!`,
+    message: `Sua consulta para ${formatDateBR(date)} às ${time} foi confirmada.`,
     appointmentId,
   });
-
+  const email = await getPatientEmail(patientId);
+  if (email) {
+    const { subject, html } = templates.appointmentConfirmedPatient(patientName, date, time, type);
+    await sendEmail(email, subject, html);
+  }
   try {
-    const email = await getPatientEmail(patientId);
-    if (email) {
-      const { subject, html } = templates.appointmentConfirmedPatient(patientName, formatDateBR(date), time, type);
-      await sendEmail(email, subject, html);
+    const { sendWhatsApp, buildWhatsAppMessage } = await import("@/lib/whatsapp/sender");
+    const patientRows = await db.select({ phone: user.phone }).from(user).where(eq(user.id, patientId)).limit(1);
+    const phone = patientRows[0]?.phone;
+    if (phone) {
+      const msg = await buildWhatsAppMessage(patientName, type, formatDateBR(date), time);
+      await sendWhatsApp(phone, msg);
     }
   } catch (e) {
-    console.error("[notifyAppointmentConfirmed] Email error:", e);
+    console.error("[notifyAppointmentConfirmed] WhatsApp error:", e);
   }
 }
 
@@ -143,23 +144,17 @@ export async function notifyAppointmentCancelledByAdmin(
   appointmentId: string
 ) {
   const patientName = await getPatientName(patientId);
-
   await createNotification({
     userId: patientId,
     type: "APPOINTMENT_CANCELLED",
     title: "Consulta cancelada",
-    message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi cancelada.`,
+    message: `Sua consulta para ${formatDateBR(date)} às ${time} foi cancelada pela clínica.`,
     appointmentId,
   });
-
-  try {
-    const email = await getPatientEmail(patientId);
-    if (email) {
-      const { subject, html } = templates.appointmentCancelledPatient(patientName, formatDateBR(date), time);
-      await sendEmail(email, subject, html);
-    }
-  } catch (e) {
-    console.error("[notifyAppointmentCancelledByAdmin] Email error:", e);
+  const email = await getPatientEmail(patientId);
+  if (email) {
+    const { subject, html } = templates.appointmentCancelledPatient(patientName, date, time);
+    await sendEmail(email, subject, html);
   }
 }
 
@@ -171,31 +166,26 @@ export async function notifyAppointmentCancelledByPatient(
 ) {
   const patientName = await getPatientName(patientId);
   const adminId = await getAdminUserId();
-
   if (adminId) {
     await createNotification({
       userId: adminId,
       type: "APPOINTMENT_CANCELLED",
       title: "Consulta cancelada pelo paciente",
-      message: `${patientName} cancelou a consulta do dia ${formatDateBR(date)} às ${time}.`,
+      message: `${patientName} cancelou a consulta de ${formatDateBR(date)} às ${time}.`,
       appointmentId,
     });
   }
-
-  try {
-    const adminEmail = await getAdminEmail();
-    if (adminEmail) {
-      const { subject, html } = templates.appointmentCancelledAdmin(patientName, formatDateBR(date), time);
-      await sendEmail(adminEmail, subject, html);
-    }
-
-    const patientEmail = await getPatientEmail(patientId);
-    if (patientEmail) {
-      const { subject, html } = templates.appointmentCancelledPatient(patientName, formatDateBR(date), time);
-      await sendEmail(patientEmail, subject, html);
-    }
-  } catch (e) {
-    console.error("[notifyAppointmentCancelledByPatient] Email error:", e);
+  await createNotification({
+    userId: patientId,
+    type: "APPOINTMENT_CANCELLED",
+    title: "Consulta cancelada",
+    message: `Sua consulta para ${formatDateBR(date)} às ${time} foi cancelada.`,
+    appointmentId,
+  });
+  const adminEmail = await getAdminEmail();
+  if (adminEmail) {
+    const { subject, html } = templates.appointmentCancelledAdmin(patientName, date, time);
+    await sendEmail(adminEmail, subject, html);
   }
 }
 
@@ -206,13 +196,34 @@ export async function notifyAppointmentCompleted(
   type: string,
   appointmentId: string
 ) {
+  const patientName = await getPatientName(patientId);
   await createNotification({
     userId: patientId,
     type: "APPOINTMENT_COMPLETED",
     title: "Consulta concluída",
-    message: `Sua consulta do dia ${formatDateBR(date)} às ${time} foi concluída. Obrigado!`,
+    message: `Sua consulta de ${formatDateBR(date)} foi marcada como concluída. Obrigado!`,
     appointmentId,
   });
+  const email = await getPatientEmail(patientId);
+  if (email) {
+    const { subject, html } = templates.appointmentCompleted(patientName, date, time, type);
+    await sendEmail(email, subject, html);
+  }
+}
+
+export async function notifyReturnSuggestion(patientId: string, returnDate: string) {
+  const patientName = await getPatientName(patientId);
+  await createNotification({
+    userId: patientId,
+    type: "GENERAL",
+    title: "Sugestão de retorno",
+    message: `O Renan sugeriu seu retorno para ${formatDateBR(returnDate)}.`,
+  });
+  const email = await getPatientEmail(patientId);
+  if (email) {
+    const { subject, html } = templates.returnSuggestion(patientName, returnDate);
+    await sendEmail(email, subject, html);
+  }
 }
 
 export async function notifyNoShow(
@@ -221,50 +232,38 @@ export async function notifyNoShow(
   time: string,
   appointmentId: string
 ) {
+  const patientName = await getPatientName(patientId);
   await createNotification({
     userId: patientId,
     type: "GENERAL",
-    title: "Falta registrada",
-    message: `Você não compareceu à consulta do dia ${formatDateBR(date)} às ${time}.`,
+    title: "Ausência registrada",
+    message: `Sua consulta de ${formatDateBR(date)} às ${time} foi marcada como ausência.`,
     appointmentId,
   });
-}
-
-export async function notifyReturnSuggestion(
-  patientId: string,
-  suggestedDate: string
-) {
-  const patientName = await getPatientName(patientId);
-
-  await createNotification({
-    userId: patientId,
-    type: "APPOINTMENT_REMINDER",
-    title: "Sugestão de retorno",
-    message: `O nutricionista sugeriu um retorno para ${formatDateBR(suggestedDate)}. Agende pelo painel do paciente.`,
-  });
-
-  try {
-    const email = await getPatientEmail(patientId);
-    if (email) {
-      const { subject, html } = templates.returnSuggestion(patientName, formatDateBR(suggestedDate));
-      await sendEmail(email, subject, html);
-    }
-  } catch (e) {
-    console.error("[notifyReturnSuggestion] Email error:", e);
+  const email = await getPatientEmail(patientId);
+  if (email) {
+    const { subject, html } = templates.noShow(patientName, date, time);
+    await sendEmail(email, subject, html);
   }
 }
 
 export async function notifyAppointmentRescheduled(
   patientId: string,
-  newDate: string,
-  newTime: string,
+  date: string,
+  time: string,
   appointmentId: string
 ) {
+  const patientName = await getPatientName(patientId);
   await createNotification({
     userId: patientId,
     type: "APPOINTMENT_CONFIRMED",
-    title: "Consulta remarcada",
-    message: `Sua consulta foi remarcada para ${formatDateBR(newDate)} às ${newTime}.`,
+    title: "Consulta reagendada",
+    message: `Sua consulta foi reagendada para ${formatDateBR(date)} às ${time}.`,
     appointmentId,
   });
+  const email = await getPatientEmail(patientId);
+  if (email) {
+    const { subject, html } = templates.appointmentRescheduled(patientName, date, time);
+    await sendEmail(email, subject, html);
+  }
 }

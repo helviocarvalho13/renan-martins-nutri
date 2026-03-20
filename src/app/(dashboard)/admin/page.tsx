@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,52 +47,35 @@ export default function AdminDashboardPage() {
   const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    const supabase = createClient();
-
     async function loadDashboard() {
-      const [appointmentsRes, pendingRes, confirmedRes, patientsRes] = await Promise.all([
-        supabase
-          .from("appointments")
-          .select("*, profiles!appointments_patient_id_fkey(full_name, phone)")
-          .eq("date", today)
-          .neq("status", "CANCELLED")
-          .order("start_time", { ascending: true }),
-        supabase
-          .from("appointments")
-          .select("id", { count: "exact" })
-          .eq("status", "PENDING")
-          .gte("date", today),
-        supabase
-          .from("appointments")
-          .select("id", { count: "exact" })
-          .eq("status", "CONFIRMED")
-          .eq("date", today),
-        supabase
-          .from("profiles")
-          .select("id", { count: "exact" })
-          .eq("role", "PATIENT")
-          .eq("is_active", true),
-      ]);
-
-      if (appointmentsRes.data) setTodayAppointments(appointmentsRes.data as AppointmentWithProfile[]);
-      setPendingCount(pendingRes.count || 0);
-      setConfirmedCount(confirmedRes.count || 0);
-      setTotalPatients(patientsRes.count || 0);
-      setLoading(false);
+      try {
+        const res = await fetch("/api/admin/dashboard");
+        if (!res.ok) return;
+        const data = await res.json() as {
+          today_appointments: Array<{
+            id: string; patient_id: string; date: string; start_time: string; end_time: string;
+            type: string; status: string; patient_name: string | null; patient_phone: string | null;
+          }>;
+          pending_count: number;
+          confirmed_count: number;
+          total_patients: number;
+        };
+        const mapped = data.today_appointments.map((a) => ({
+          ...a,
+          profiles: { full_name: a.patient_name || "Paciente", phone: a.patient_phone },
+        }));
+        setTodayAppointments(mapped as unknown as AppointmentWithProfile[]);
+        setPendingCount(data.pending_count);
+        setConfirmedCount(data.confirmed_count);
+        setTotalPatients(data.total_patients);
+      } finally {
+        setLoading(false);
+      }
     }
 
     loadDashboard();
-
-    const channel = supabase
-      .channel("dashboard-realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "appointments" },
-        () => { loadDashboard(); }
-      )
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
+    const interval = setInterval(loadDashboard, 30000);
+    return () => clearInterval(interval);
   }, [today]);
 
   const freeSlots = Math.max(0, 8 - todayAppointments.filter((a) => a.status !== "CANCELLED" && a.status !== "NO_SHOW").length);

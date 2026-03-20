@@ -3,8 +3,8 @@ module.exports = [
 
 __turbopack_context__.v((parentImport) => {
     return Promise.all([
-  "server/chunks/ssr/node_modules_b27d2892._.js",
-  "server/chunks/ssr/src_5c3575ac._.js"
+  "server/chunks/ssr/node_modules_58f46c75._.js",
+  "server/chunks/ssr/src_ed6b394a._.js"
 ].map((chunk) => __turbopack_context__.l(chunk))).then(() => {
         return parentImport("[project]/src/components/chatbot/MageBotWidget.tsx [app-ssr] (ecmascript)");
     });

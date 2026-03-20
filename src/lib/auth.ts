@@ -35,7 +35,7 @@ export const auth = betterAuth({
     requireEmailVerification: false,
     autoSignIn: true,
     minPasswordLength: 6,
-    sendResetPasswordToken: async ({ user }) => {
+    sendResetPasswordToken: async ({ user }: { user: { email: string; id: string; name: string } }) => {
       console.log(`[forgot-password] Password reset requested for ${user.email}`);
     },
   },

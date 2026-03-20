@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { useRealtimeAgenda } from "@/hooks/useRealtimeAgenda";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -120,7 +118,6 @@ export default function AgendaPage() {
   const [newApptSearching, setNewApptSearching] = useState(false);
   const [newApptCreating, setNewApptCreating] = useState(false);
 
-  const supabase = createClient();
   const { toast } = useToast();
 
   const fetchAppointments = useCallback(async () => {
@@ -143,27 +140,38 @@ export default function AgendaPage() {
       endDate = format(monthEnd, "yyyy-MM-dd");
     }
 
-    const { data, error } = await supabase
-      .from("appointments")
-      .select("*, profiles(*)")
-      .gte("date", startDate)
-      .lte("date", endDate)
-      .order("date", { ascending: true })
-      .order("start_time", { ascending: true });
-
-    if (error) {
-      toast({ title: "Erro ao carregar agenda", description: error.message, variant: "destructive" });
-    } else if (data) {
-      setAppointments(data as unknown as AppointmentWithProfile[]);
+    try {
+      const res = await fetch(`/api/admin/agenda?from=${startDate}&to=${endDate}`);
+      if (!res.ok) throw new Error("Falha ao carregar agenda");
+      const data = await res.json() as { appointments: Array<{
+        id: string; patient_id: string; date: string; start_time: string; end_time: string;
+        type: string; status: string; notes: string | null; modality: string | null;
+        return_suggested_date: string | null; patient_name: string | null;
+        patient_phone: string | null; patient_email: string | null;
+      }> };
+      const mapped = (data.appointments || []).map((a) => ({
+        ...a,
+        profiles: {
+          id: a.patient_id,
+          full_name: a.patient_name || "Paciente",
+          phone: a.patient_phone,
+          email: a.patient_email,
+        },
+      }));
+      setAppointments(mapped as unknown as AppointmentWithProfile[]);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro desconhecido";
+      toast({ title: "Erro ao carregar agenda", description: msg, variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, [view, currentDate]);
+  }, [view, currentDate, toast]);
 
   useEffect(() => {
     fetchAppointments();
+    const interval = setInterval(fetchAppointments, 30000);
+    return () => clearInterval(interval);
   }, [fetchAppointments]);
-
-  useRealtimeAgenda(fetchAppointments);
 
   const navigatePrev = () => {
     if (view === "daily") setCurrentDate((d) => addDays(d, -1));

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
 import type { Profile } from "@/lib/types/database";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -35,30 +34,24 @@ export default function PacientesPage() {
 
   const fetchPatients = useCallback(async () => {
     setLoading(true);
-    const supabase = createClient();
-
-    let query = supabase
-      .from("profiles")
-      .select("*", { count: "exact" })
-      .eq("role", "PATIENT")
-      .order("full_name", { ascending: true })
-      .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
-
-    if (debouncedSearch.trim()) {
-      const term = `%${debouncedSearch.trim()}%`;
-      query = query.or(`full_name.ilike.${term},cpf.ilike.${term}`);
+    try {
+      const url = debouncedSearch.trim().length >= 2
+        ? `/api/admin/patients/search?q=${encodeURIComponent(debouncedSearch.trim())}`
+        : "/api/admin/patients";
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Falha ao carregar pacientes");
+      const data = await res.json() as { patients: Profile[] };
+      const allPatients = data.patients || [];
+      const paginated = allPatients.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+      setPatients(paginated);
+      setTotalCount(allPatients.length);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro desconhecido";
+      toast({ title: "Erro ao carregar pacientes", description: msg, variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
-
-    const { data, count, error } = await query;
-
-    if (error) {
-      toast({ title: "Erro ao carregar pacientes", description: error.message, variant: "destructive" });
-    } else if (data) {
-      setPatients(data as Profile[]);
-      setTotalCount(count ?? 0);
-    }
-    setLoading(false);
-  }, [debouncedSearch, page]);
+  }, [debouncedSearch, page, toast]);
 
   useEffect(() => {
     fetchPatients();

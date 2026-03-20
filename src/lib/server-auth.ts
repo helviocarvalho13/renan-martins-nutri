@@ -1,0 +1,35 @@
+import { auth, type AppUser } from "@/lib/auth";
+import { headers } from "next/headers";
+import { NextResponse } from "next/server";
+
+export async function getServerUser(): Promise<AppUser | null> {
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) return null;
+    const u = session.user as unknown as AppUser;
+    return {
+      id: u.id,
+      email: u.email,
+      name: u.name,
+      emailVerified: u.emailVerified ?? false,
+      image: u.image ?? null,
+      createdAt: u.createdAt,
+      updatedAt: u.updatedAt,
+      role: u.role ?? "PATIENT",
+      phone: u.phone ?? null,
+      cpf: u.cpf ?? null,
+      dateOfBirth: u.dateOfBirth ?? null,
+      isActive: u.isActive ?? true,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function unauthorizedResponse() {
+  return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+}
+
+export function forbiddenResponse() {
+  return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
+}

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import type { Profile, Appointment, AppointmentStatus } from "@/lib/types/database";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -48,33 +47,21 @@ export default function PacienteDetailPage() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const supabase = createClient();
-
-      const [profileRes, appointmentsRes] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", id).single(),
-        supabase
-          .from("appointments")
-          .select("*")
-          .eq("patient_id", id)
-          .order("date", { ascending: false })
-          .order("start_time", { ascending: false }),
-      ]);
-
-      if (profileRes.error) {
-        toast({ title: "Erro ao carregar paciente", description: profileRes.error.message, variant: "destructive" });
-      } else if (profileRes.data) {
-        setProfile(profileRes.data as Profile);
+      try {
+        const res = await fetch(`/api/admin/patients/${id}`);
+        if (!res.ok) throw new Error("Falha ao carregar paciente");
+        const data = await res.json() as { profile: Profile; appointments: Appointment[] };
+        setProfile(data.profile);
+        setAppointments(data.appointments);
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Erro desconhecido";
+        toast({ title: "Erro ao carregar paciente", description: msg, variant: "destructive" });
+      } finally {
+        setLoading(false);
       }
-      if (appointmentsRes.error) {
-        toast({ title: "Erro ao carregar consultas", description: appointmentsRes.error.message, variant: "destructive" });
-      } else if (appointmentsRes.data) {
-        setAppointments(appointmentsRes.data as Appointment[]);
-      }
-      setLoading(false);
     }
-
     if (id) fetchData();
-  }, [id]);
+  }, [id, toast]);
 
   if (loading) {
     return (

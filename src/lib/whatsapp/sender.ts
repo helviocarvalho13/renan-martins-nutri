@@ -1,3 +1,7 @@
+import { db } from "@/lib/db";
+import { siteContent } from "@/lib/schema";
+import { eq, and } from "drizzle-orm";
+
 const DEFAULT_TEMPLATE = `Olá, {nome}! Tudo bem?
 
 Equipe do nutricionista Renan Martins passando para confirmar seu horário:
@@ -19,16 +23,14 @@ export async function buildWhatsAppMessage(
   let template = DEFAULT_TEMPLATE;
 
   try {
-    const { createServiceRoleClient } = await import("@/lib/supabase/server");
-    const supabase = createServiceRoleClient();
-    const { data } = await supabase
-      .from("site_content")
-      .select("content")
-      .eq("section", "settings")
-      .eq("title", "whatsapp_template")
-      .maybeSingle();
-    if (data?.content?.template) {
-      template = data.content.template;
+    const rows = await db
+      .select({ content: siteContent.content })
+      .from(siteContent)
+      .where(and(eq(siteContent.section, "settings"), eq(siteContent.title, "whatsapp_template")))
+      .limit(1);
+    const tmpl = rows[0]?.content as Record<string, string> | undefined;
+    if (tmpl?.template) {
+      template = tmpl.template;
     }
   } catch {
     // Fall back to default template
@@ -108,14 +110,12 @@ export async function sendWhatsApp(phone: string, message: string): Promise<bool
 }
 
 export async function getPatientPhone(patientId: string): Promise<string | null> {
-  const { createServiceRoleClient } = await import("@/lib/supabase/server");
-  const supabase = createServiceRoleClient();
-
-  const { data } = await supabase
-    .from("profiles")
-    .select("phone")
-    .eq("id", patientId)
-    .single();
-
-  return data?.phone || null;
+  const { user: userTable } = await import("@/lib/schema");
+  const { eq: drizzleEq } = await import("drizzle-orm");
+  const rows = await db
+    .select({ phone: userTable.phone })
+    .from(userTable)
+    .where(drizzleEq(userTable.id, patientId))
+    .limit(1);
+  return rows[0]?.phone ?? null;
 }

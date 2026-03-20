@@ -16,7 +16,7 @@ import {
   XCircle,
   RotateCcw,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import type { Appointment } from "@/lib/types";
 import { format } from "date-fns";
@@ -37,37 +37,22 @@ function formatTypeLabel(type: string) {
 export default function PatientDashboard() {
   const router = useRouter();
   const { toast } = useToast();
+  const { user, loading: authLoading } = useAuth();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(true);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
 
-  const supabase = createClient();
+  const userName = user?.name || user?.email || "Paciente";
 
   const fetchData = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push("/login");
-        return;
+      const res = await fetch("/api/patient/appointments");
+      if (!res.ok) {
+        if (res.status === 401) { router.push("/login"); return; }
+        throw new Error("Falha ao carregar consultas");
       }
-      setUserName(user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Paciente");
-
-      const { data: appts, error } = await supabase
-        .from("appointments")
-        .select("*")
-        .eq("patient_id", user.id)
-        .order("date", { ascending: true });
-
-      if (error) {
-        toast({
-          title: "Erro ao carregar consultas",
-          description: "Não foi possível carregar suas consultas. Tente novamente.",
-          variant: "destructive",
-        });
-      }
-
-      setAppointments((appts || []) as Appointment[]);
+      const data = await res.json() as { appointments: Appointment[] };
+      setAppointments(data.appointments || []);
     } catch {
       toast({
         title: "Erro ao carregar consultas",
@@ -80,8 +65,8 @@ export default function PatientDashboard() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!authLoading) fetchData();
+  }, [authLoading]);
 
   const today = new Date().toISOString().split("T")[0];
 

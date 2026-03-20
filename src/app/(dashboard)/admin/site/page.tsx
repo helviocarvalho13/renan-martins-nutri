@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
 import type { SiteContent, Testimonial, Profile } from "@/lib/types/database";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,8 +24,6 @@ const sectionLabels: Record<string, string> = {
 };
 
 export default function SiteManagementPage() {
-  const supabase = createClient();
-
   const [siteContent, setSiteContent] = useState<SiteContent[]>([]);
   const [testimonials, setTestimonials] = useState<TestimonialWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,33 +34,36 @@ export default function SiteManagementPage() {
 
   const fetchSiteContent = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("site_content")
-      .select("*")
-      .order("sort_order", { ascending: true });
-
-    if (data) {
-      setSiteContent(data);
+    try {
+      const res = await fetch("/api/admin/site-content");
+      if (!res.ok) throw new Error("Falha ao carregar conteudo");
+      const data = await res.json() as { content: SiteContent[] };
+      const items = data.content || [];
+      setSiteContent(items);
       const contentMap: Record<string, string> = {};
-      data.forEach((item) => {
+      items.forEach((item) => {
         contentMap[item.section] = JSON.stringify(item.content, null, 2);
       });
       setEditedContent(contentMap);
+    } catch {
+      // silent
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const fetchTestimonials = useCallback(async () => {
     setTestimonialsLoading(true);
-    const { data } = await supabase
-      .from("testimonials")
-      .select("*, profiles(*)")
-      .order("created_at", { ascending: false });
-
-    if (data) {
-      setTestimonials(data as TestimonialWithProfile[]);
+    try {
+      const res = await fetch("/api/admin/testimonials");
+      if (!res.ok) throw new Error("Falha ao carregar depoimentos");
+      const data = await res.json() as { testimonials: TestimonialWithProfile[] };
+      setTestimonials(data.testimonials || []);
+    } catch {
+      // silent
+    } finally {
+      setTestimonialsLoading(false);
     }
-    setTestimonialsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -77,10 +77,11 @@ export default function SiteManagementPage() {
       const parsed = JSON.parse(editedContent[section]);
       const item = siteContent.find((s) => s.section === section);
       if (item) {
-        await supabase
-          .from("site_content")
-          .update({ content: parsed })
-          .eq("id", item.id);
+        await fetch(`/api/admin/site-content/${item.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: parsed }),
+        });
       }
       await fetchSiteContent();
     } catch {
@@ -91,27 +92,29 @@ export default function SiteManagementPage() {
 
   const handleApprove = async (id: string) => {
     setActionLoading(id);
-    await supabase
-      .from("testimonials")
-      .update({ is_approved: true })
-      .eq("id", id);
+    await fetch(`/api/admin/testimonials/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ is_approved: true }),
+    });
     await fetchTestimonials();
     setActionLoading(null);
   };
 
   const handleReject = async (id: string) => {
     setActionLoading(id);
-    await supabase
-      .from("testimonials")
-      .update({ is_approved: false })
-      .eq("id", id);
+    await fetch(`/api/admin/testimonials/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ is_approved: false }),
+    });
     await fetchTestimonials();
     setActionLoading(null);
   };
 
   const handleDelete = async (id: string) => {
     setActionLoading(id);
-    await supabase.from("testimonials").delete().eq("id", id);
+    await fetch(`/api/admin/testimonials/${id}`, { method: "DELETE" });
     await fetchTestimonials();
     setActionLoading(null);
   };
