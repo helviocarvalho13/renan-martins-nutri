@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
+import { signUpWithProfile } from "@/lib/auth-client";
 
 function formatCPF(value: string): string {
   const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -67,18 +67,20 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const { data, error: signUpError } = await authClient.signUp.email({
+      const { data, error: signUpError } = await signUpWithProfile({
         name: fullName.trim(),
         email: email.trim(),
         password,
         phone: phoneDigits,
         cpf: cpf.replace(/\D/g, "") || undefined,
         dateOfBirth: dateOfBirth || undefined,
-      } as any);
+      });
 
       if (signUpError) {
-        const msg = (signUpError as any)?.message || "";
-        if (msg.toLowerCase().includes("already exists") || msg.toLowerCase().includes("duplicate")) {
+        const errMsg = typeof signUpError === "object" && signUpError !== null && "message" in signUpError
+          ? String((signUpError as { message: string }).message)
+          : "";
+        if (errMsg.toLowerCase().includes("already exists") || errMsg.toLowerCase().includes("duplicate")) {
           setError("Este email já está cadastrado. Tente fazer login.");
         } else {
           setError("Erro ao criar conta. Tente novamente.");

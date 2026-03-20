@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { auth, type AppUser } from "@/lib/auth";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -19,13 +19,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const userRole = (session.user as any).role as string;
+  const sessionUser = session.user as unknown as AppUser;
 
-  if (isAdminRoute && userRole !== "ADMIN") {
+  if (isAdminRoute && sessionUser.role !== "ADMIN") {
     return NextResponse.redirect(new URL("/paciente", request.url));
   }
 
-  if (isPatientRoute && userRole === "ADMIN") {
+  if (isPatientRoute && sessionUser.role === "ADMIN") {
     return NextResponse.redirect(new URL("/admin", request.url));
   }
 

@@ -1,26 +1,21 @@
-import { auth } from "@/lib/auth";
+import { auth, type AppUser } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export interface SessionUser {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  phone?: string | null;
-  cpf?: string | null;
-  dateOfBirth?: string | null;
-  isActive?: boolean;
-}
+export type { AppUser };
 
-export async function getCurrentUser(): Promise<SessionUser | null> {
+export async function getCurrentUser(): Promise<AppUser | null> {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session?.user) return null;
-    const u = session.user as any;
+    const u = session.user as unknown as AppUser;
     return {
       id: u.id,
       email: u.email,
       name: u.name,
+      emailVerified: u.emailVerified ?? false,
+      image: u.image ?? null,
+      createdAt: u.createdAt,
+      updatedAt: u.updatedAt,
       role: u.role ?? "PATIENT",
       phone: u.phone ?? null,
       cpf: u.cpf ?? null,

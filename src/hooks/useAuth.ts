@@ -3,19 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { authClient } from "@/lib/auth-client";
+import type { AppUser } from "@/lib/auth";
 
 export type UserRole = "ADMIN" | "PATIENT";
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  role?: string;
-  phone?: string | null;
-  cpf?: string | null;
-  dateOfBirth?: string | null;
-  isActive?: boolean;
-}
 
 export interface Profile {
   id: string;
@@ -28,7 +18,7 @@ export interface Profile {
 }
 
 interface UseAuthReturn {
-  user: AuthUser | null;
+  user: AppUser | null;
   profile: Profile | null;
   role: UserRole | null;
   loading: boolean;
@@ -39,13 +29,17 @@ export function useAuth(): UseAuthReturn {
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
-  const sessionUser = session?.user as any;
+  const sessionUser = session?.user as unknown as AppUser | undefined;
 
-  const user: AuthUser | null = sessionUser
+  const user: AppUser | null = sessionUser
     ? {
         id: sessionUser.id,
         email: sessionUser.email,
         name: sessionUser.name,
+        emailVerified: sessionUser.emailVerified ?? false,
+        image: sessionUser.image ?? null,
+        createdAt: sessionUser.createdAt,
+        updatedAt: sessionUser.updatedAt,
         role: sessionUser.role ?? "PATIENT",
         phone: sessionUser.phone ?? null,
         cpf: sessionUser.cpf ?? null,
@@ -66,7 +60,7 @@ export function useAuth(): UseAuthReturn {
       }
     : null;
 
-  const role = (user?.role as UserRole) ?? null;
+  const role = user ? ((user.role as UserRole) ?? null) : null;
 
   const signOut = async () => {
     try {

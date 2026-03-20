@@ -9,19 +9,22 @@ import {
   jsonb,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
+
+const genId = sql`gen_random_uuid()`;
 
 // ─── better-auth tables ──────────────────────────────────────────────────────
+// Note: better-auth generates its own IDs (random strings, not UUIDs).
+// The DB default is a safety fallback only; better-auth always provides the id.
 
 export const user = pgTable("user", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().default(genId),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   image: text("image"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-  // Custom app fields
   role: text("role").notNull().default("PATIENT"),
   phone: text("phone"),
   cpf: text("cpf"),
@@ -30,7 +33,7 @@ export const user = pgTable("user", {
 });
 
 export const session = pgTable("session", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().default(genId),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -43,7 +46,7 @@ export const session = pgTable("session", {
 });
 
 export const account = pgTable("account", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().default(genId),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
   userId: text("user_id")
@@ -61,7 +64,7 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().default(genId),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
@@ -74,7 +77,7 @@ export const verification = pgTable("verification", {
 export const appointments = pgTable(
   "appointments",
   {
-    id: text("id").primaryKey(),
+    id: text("id").primaryKey().default(genId),
     patientId: text("patient_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -96,7 +99,7 @@ export const appointments = pgTable(
 export const scheduleConfig = pgTable(
   "schedule_config",
   {
-    id: text("id").primaryKey(),
+    id: text("id").primaryKey().default(genId),
     adminId: text("admin_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -113,7 +116,7 @@ export const scheduleConfig = pgTable(
 );
 
 export const blockedSlots = pgTable("blocked_slots", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().default(genId),
   adminId: text("admin_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -126,7 +129,7 @@ export const blockedSlots = pgTable("blocked_slots", {
 });
 
 export const testimonials = pgTable("testimonials", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().default(genId),
   patientId: text("patient_id").references(() => user.id, { onDelete: "set null" }),
   content: text("content").notNull(),
   rating: integer("rating").notNull().default(5),
@@ -135,7 +138,7 @@ export const testimonials = pgTable("testimonials", {
 });
 
 export const siteContent = pgTable("site_content", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().default(genId),
   section: text("section").notNull(),
   title: text("title").notNull().default(""),
   content: jsonb("content").notNull().default({}),
@@ -146,7 +149,7 @@ export const siteContent = pgTable("site_content", {
 });
 
 export const notifications = pgTable("notifications", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().default(genId),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -161,7 +164,7 @@ export const notifications = pgTable("notifications", {
 });
 
 export const chatbotSessions = pgTable("chatbot_sessions", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().default(genId),
   userId: text("user_id").references(() => user.id, { onDelete: "set null" }),
   sessionToken: text("session_token").notNull().unique(),
   currentState: text("current_state").notNull().default("WELCOME"),

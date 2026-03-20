@@ -610,6 +610,8 @@ __turbopack_context__.s([
     ()=>signOut,
     "signUp",
     ()=>signUp,
+    "signUpWithProfile",
+    ()=>signUpWithProfile,
     "useSession",
     ()=>useSession
 ]);
@@ -619,6 +621,9 @@ const authClient = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modu
     baseURL: ("TURBOPACK compile-time truthy", 1) ? window.location.origin : "TURBOPACK unreachable"
 });
 const { useSession, signIn, signOut, signUp } = authClient;
+async function signUpWithProfile(input) {
+    return authClient.signUp.email(input);
+}
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }

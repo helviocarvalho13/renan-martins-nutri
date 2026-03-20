@@ -35,8 +35,8 @@ export const auth = betterAuth({
     requireEmailVerification: false,
     autoSignIn: true,
     minPasswordLength: 6,
-    sendResetPasswordToken: async ({ user, url }) => {
-      console.log(`[forgot-password] Reset link for ${user.email}: ${url}`);
+    sendResetPasswordToken: async ({ user }) => {
+      console.log(`[forgot-password] Password reset requested for ${user.email}`);
     },
   },
   user: {
@@ -74,3 +74,19 @@ export const auth = betterAuth({
 });
 
 export type Session = typeof auth.$Infer.Session;
+
+/** Extended user type including app-specific additional fields */
+export interface AppUser {
+  id: string;
+  email: string;
+  name: string;
+  emailVerified: boolean;
+  image?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  role: string;
+  phone?: string | null;
+  cpf?: string | null;
+  dateOfBirth?: string | null;
+  isActive: boolean;
+}

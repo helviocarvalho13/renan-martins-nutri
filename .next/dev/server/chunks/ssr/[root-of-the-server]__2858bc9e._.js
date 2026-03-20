@@ -149,6 +149,8 @@ __turbopack_context__.s([
     ()=>signOut,
     "signUp",
     ()=>signUp,
+    "signUpWithProfile",
+    ()=>signUpWithProfile,
     "useSession",
     ()=>useSession
 ]);
@@ -158,6 +160,9 @@ const authClient = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modu
     baseURL: ("TURBOPACK compile-time falsy", 0) ? "TURBOPACK unreachable" : process.env.NEXT_PUBLIC_APP_URL || "http://localhost:5000"
 });
 const { useSession, signIn, signOut, signUp } = authClient;
+async function signUpWithProfile(input) {
+    return authClient.signUp.email(input);
+}
 }),
 "[project]/src/app/(auth)/login/page.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
