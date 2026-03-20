@@ -1,5 +1,5 @@
 var R=require("../../../../chunks/[turbopack]_runtime.js")("server/app/api/admin/testimonials/route.js")
-R.c("server/chunks/node_modules_better-auth_b57ea8f5._.js")
+R.c("server/chunks/_d17fa616._.js")
 R.c("server/chunks/node_modules_next_45c00f8e._.js")
 R.c("server/chunks/node_modules_drizzle-orm_47babb1f._.js")
 R.c("server/chunks/node_modules_better-auth_dist_f39740ad._.js")

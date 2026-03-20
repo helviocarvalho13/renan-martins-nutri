@@ -341,7 +341,6 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/supabase/client.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/card.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/button.tsx [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/components/ui/input.tsx [app-client] (ecmascript)");
@@ -374,7 +373,6 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-;
 const DAYS_OF_WEEK = [
     "Domingo",
     "Segunda",
@@ -393,7 +391,6 @@ const DEFAULT_CONFIG = {
 };
 function DisponibilidadePage() {
     _s();
-    const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$client$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createClient"])();
     const { toast } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useToast"])();
     const [configs, setConfigs] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [blockedSlots, setBlockedSlots] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
@@ -403,7 +400,7 @@ function DisponibilidadePage() {
     const [deletingId, setDeletingId] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [returnWindowDays, setReturnWindowDays] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(30);
     const [savingReturnWindow, setSavingReturnWindow] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const DEFAULT_WHATSAPP_TEMPLATE = "Olá, {nome}! Sua {tipo} com o nutricionista Renan Martins foi agendada para {data} às {horário}. Aguardamos você!";
+    const DEFAULT_WHATSAPP_TEMPLATE = `Olá, {nome}! Tudo bem?\n\nEquipe do nutricionista Renan Martins passando para confirmar seu horário:\n\n📅 {data} às {horário}\n📍 {modalidade}\n\nSeu horário está reservado. Em caso de imprevisto, informe com antecedência.\n\nSerá um prazer recebê-lo(a).`;
     const [whatsappTemplate, setWhatsappTemplate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(DEFAULT_WHATSAPP_TEMPLATE);
     const [savingWhatsappTemplate, setSavingWhatsappTemplate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [newBlock, setNewBlock] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
@@ -418,14 +415,18 @@ function DisponibilidadePage() {
             setLoading(true);
             try {
                 const [configRes, blockedRes, settingsRes] = await Promise.all([
-                    supabase.from("schedule_config").select("*").order("day_of_week", {
-                        ascending: true
-                    }),
-                    supabase.from("blocked_slots").select("*").order("date", {
-                        ascending: true
-                    }),
+                    fetch("/api/admin/schedule-config").then({
+                        "DisponibilidadePage.useCallback[loadData]": (r)=>r.ok ? r.json() : {
+                                configs: []
+                            }
+                    }["DisponibilidadePage.useCallback[loadData]"]),
+                    fetch("/api/admin/blocked-slots").then({
+                        "DisponibilidadePage.useCallback[loadData]": (r)=>r.ok ? r.json() : {
+                                blocked_slots: []
+                            }
+                    }["DisponibilidadePage.useCallback[loadData]"]),
                     fetch("/api/settings").then({
-                        "DisponibilidadePage.useCallback[loadData]": (r)=>r.json()
+                        "DisponibilidadePage.useCallback[loadData]": (r)=>r.ok ? r.json() : null
                     }["DisponibilidadePage.useCallback[loadData]"]).catch({
                         "DisponibilidadePage.useCallback[loadData]": ()=>null
                     }["DisponibilidadePage.useCallback[loadData]"])
@@ -436,7 +437,7 @@ function DisponibilidadePage() {
                 if (settingsRes?.whatsapp_template) {
                     setWhatsappTemplate(settingsRes.whatsapp_template);
                 }
-                const existingConfigs = configRes.data || [];
+                const existingConfigs = configRes.configs || [];
                 const dayConfigs = DAYS_OF_WEEK.map({
                     "DisponibilidadePage.useCallback[loadData].dayConfigs": (_, index)=>{
                         const existing = existingConfigs.find({
@@ -459,22 +460,8 @@ function DisponibilidadePage() {
                         };
                     }
                 }["DisponibilidadePage.useCallback[loadData].dayConfigs"]);
-                if (configRes.error) {
-                    toast({
-                        title: "Erro ao carregar configurações",
-                        description: configRes.error.message,
-                        variant: "destructive"
-                    });
-                }
-                if (blockedRes.error) {
-                    toast({
-                        title: "Erro ao carregar bloqueios",
-                        description: blockedRes.error.message,
-                        variant: "destructive"
-                    });
-                }
                 setConfigs(dayConfigs);
-                setBlockedSlots(blockedRes.data || []);
+                setBlockedSlots(blockedRes.blocked_slots || []);
             } finally{
                 setLoading(false);
             }
@@ -496,26 +483,23 @@ function DisponibilidadePage() {
     const handleSaveConfigs = async ()=>{
         setSaving(true);
         try {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
             let hasError = false;
             for (const config of configs){
-                const payload = {
-                    admin_id: user.id,
-                    day_of_week: config.day_of_week,
-                    start_time: config.start_time,
-                    end_time: config.end_time,
-                    slot_duration_min: config.slot_duration_min,
-                    break_duration_min: config.break_duration_min,
-                    is_active: config.is_active
-                };
-                if (config.id) {
-                    const { error } = await supabase.from("schedule_config").update(payload).eq("id", config.id);
-                    if (error) hasError = true;
-                } else {
-                    const { error } = await supabase.from("schedule_config").insert(payload);
-                    if (error) hasError = true;
-                }
+                const res = await fetch("/api/admin/schedule-config", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        day_of_week: config.day_of_week,
+                        start_time: config.start_time,
+                        end_time: config.end_time,
+                        slot_duration_min: config.slot_duration_min,
+                        break_duration_min: config.break_duration_min,
+                        is_active: config.is_active
+                    })
+                });
+                if (!res.ok) hasError = true;
             }
             await loadData();
             if (hasError) {
@@ -538,20 +522,24 @@ function DisponibilidadePage() {
         if (!newBlock.date) return;
         setAddingBlock(true);
         try {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
-            const { error } = await supabase.from("blocked_slots").insert({
-                admin_id: user.id,
-                date: newBlock.date,
-                start_time: newBlock.all_day ? null : newBlock.start_time || null,
-                end_time: newBlock.all_day ? null : newBlock.end_time || null,
-                all_day: newBlock.all_day,
-                reason: newBlock.reason || null
+            const res = await fetch("/api/admin/blocked-slots", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    date: newBlock.date,
+                    start_time: newBlock.all_day ? null : newBlock.start_time || null,
+                    end_time: newBlock.all_day ? null : newBlock.end_time || null,
+                    all_day: newBlock.all_day,
+                    reason: newBlock.reason || null
+                })
             });
-            if (error) {
+            if (!res.ok) {
+                const data = await res.json().catch(()=>null);
                 toast({
                     title: "Erro ao adicionar bloqueio",
-                    description: error.message,
+                    description: data?.error || "Não foi possível adicionar.",
                     variant: "destructive"
                 });
             } else {
@@ -643,11 +631,20 @@ function DisponibilidadePage() {
     const handleDeleteBlock = async (id)=>{
         setDeletingId(id);
         try {
-            const { error } = await supabase.from("blocked_slots").delete().eq("id", id);
-            if (error) {
+            const res = await fetch("/api/admin/blocked-slots", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id
+                })
+            });
+            if (!res.ok) {
+                const data = await res.json().catch(()=>null);
                 toast({
                     title: "Erro ao remover bloqueio",
-                    description: error.message,
+                    description: data?.error || "Não foi possível remover.",
                     variant: "destructive"
                 });
             } else {
@@ -669,27 +666,27 @@ function DisponibilidadePage() {
                     className: "h-8 w-64"
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                    lineNumber: 274,
+                    lineNumber: 291,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
                     className: "h-96 w-full"
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                    lineNumber: 275,
+                    lineNumber: 292,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$skeleton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Skeleton"], {
                     className: "h-64 w-full"
                 }, void 0, false, {
                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                    lineNumber: 276,
+                    lineNumber: 293,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-            lineNumber: 273,
+            lineNumber: 290,
             columnNumber: 7
         }, this);
     }
@@ -704,7 +701,7 @@ function DisponibilidadePage() {
                         children: "Disponibilidade"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                        lineNumber: 284,
+                        lineNumber: 301,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -712,13 +709,13 @@ function DisponibilidadePage() {
                         children: "Configure seus horarios de atendimento e bloqueie datas"
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                        lineNumber: 287,
+                        lineNumber: 304,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                lineNumber: 283,
+                lineNumber: 300,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -731,19 +728,19 @@ function DisponibilidadePage() {
                                     className: "w-5 h-5"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                    lineNumber: 295,
+                                    lineNumber: 312,
                                     columnNumber: 13
                                 }, this),
                                 "Horarios por Dia da Semana"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                            lineNumber: 294,
+                            lineNumber: 311,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                        lineNumber: 293,
+                        lineNumber: 310,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -765,12 +762,12 @@ function DisponibilidadePage() {
                                                                 children: DAYS_OF_WEEK[config.day_of_week]
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                lineNumber: 305,
+                                                                lineNumber: 322,
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 304,
+                                                            lineNumber: 321,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -784,7 +781,7 @@ function DisponibilidadePage() {
                                                                     "data-testid": `switch-active-${config.day_of_week}`
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                    lineNumber: 314,
+                                                                    lineNumber: 331,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
@@ -792,19 +789,19 @@ function DisponibilidadePage() {
                                                                     children: config.is_active ? "Ativo" : "Inativo"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                    lineNumber: 321,
+                                                                    lineNumber: 338,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 313,
+                                                            lineNumber: 330,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                    lineNumber: 303,
+                                                    lineNumber: 320,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -818,7 +815,7 @@ function DisponibilidadePage() {
                                                                     children: "Inicio"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                    lineNumber: 329,
+                                                                    lineNumber: 346,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -832,13 +829,13 @@ function DisponibilidadePage() {
                                                                     "data-testid": `input-start-time-${config.day_of_week}`
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                    lineNumber: 332,
+                                                                    lineNumber: 349,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 328,
+                                                            lineNumber: 345,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -849,7 +846,7 @@ function DisponibilidadePage() {
                                                                     children: "Fim"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                    lineNumber: 345,
+                                                                    lineNumber: 362,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -863,13 +860,13 @@ function DisponibilidadePage() {
                                                                     "data-testid": `input-end-time-${config.day_of_week}`
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                    lineNumber: 348,
+                                                                    lineNumber: 365,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 344,
+                                                            lineNumber: 361,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -880,7 +877,7 @@ function DisponibilidadePage() {
                                                                     children: "Duracao (min)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                    lineNumber: 361,
+                                                                    lineNumber: 378,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -896,13 +893,13 @@ function DisponibilidadePage() {
                                                                     "data-testid": `input-slot-duration-${config.day_of_week}`
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                    lineNumber: 364,
+                                                                    lineNumber: 381,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 360,
+                                                            lineNumber: 377,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -913,7 +910,7 @@ function DisponibilidadePage() {
                                                                     children: "Intervalo (min)"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                    lineNumber: 381,
+                                                                    lineNumber: 398,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -929,38 +926,38 @@ function DisponibilidadePage() {
                                                                     "data-testid": `input-break-duration-${config.day_of_week}`
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                    lineNumber: 384,
+                                                                    lineNumber: 401,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 380,
+                                                            lineNumber: 397,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                    lineNumber: 327,
+                                                    lineNumber: 344,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                            lineNumber: 302,
+                                            lineNumber: 319,
                                             columnNumber: 15
                                         }, this),
                                         index < configs.length - 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$separator$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Separator"], {
                                             className: "mt-4"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                            lineNumber: 401,
+                                            lineNumber: 418,
                                             columnNumber: 46
                                         }, this)
                                     ]
                                 }, config.day_of_week, true, {
                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                    lineNumber: 301,
+                                    lineNumber: 318,
                                     columnNumber: 13
                                 }, this)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -974,31 +971,31 @@ function DisponibilidadePage() {
                                             className: "w-4 h-4"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                            lineNumber: 411,
+                                            lineNumber: 428,
                                             columnNumber: 15
                                         }, this),
                                         saving ? "Salvando..." : "Salvar Horarios"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                    lineNumber: 406,
+                                    lineNumber: 423,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 405,
+                                lineNumber: 422,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                        lineNumber: 299,
+                        lineNumber: 316,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                lineNumber: 292,
+                lineNumber: 309,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1011,19 +1008,19 @@ function DisponibilidadePage() {
                                     className: "w-5 h-5"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                    lineNumber: 421,
+                                    lineNumber: 438,
                                     columnNumber: 13
                                 }, this),
                                 "Bloquear Datas/Horarios"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                            lineNumber: 420,
+                            lineNumber: 437,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                        lineNumber: 419,
+                        lineNumber: 436,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1042,7 +1039,7 @@ function DisponibilidadePage() {
                                                     children: "Data"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                    lineNumber: 429,
+                                                    lineNumber: 446,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1056,13 +1053,13 @@ function DisponibilidadePage() {
                                                     "data-testid": "input-block-date"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                    lineNumber: 430,
+                                                    lineNumber: 447,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                            lineNumber: 428,
+                                            lineNumber: 445,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1077,7 +1074,7 @@ function DisponibilidadePage() {
                                                     "data-testid": "switch-block-all-day"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                    lineNumber: 442,
+                                                    lineNumber: 459,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$label$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Label"], {
@@ -1085,13 +1082,13 @@ function DisponibilidadePage() {
                                                     children: "Dia inteiro"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                    lineNumber: 449,
+                                                    lineNumber: 466,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                            lineNumber: 441,
+                                            lineNumber: 458,
                                             columnNumber: 15
                                         }, this),
                                         !newBlock.all_day && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -1104,7 +1101,7 @@ function DisponibilidadePage() {
                                                             children: "Inicio"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 455,
+                                                            lineNumber: 472,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1118,13 +1115,13 @@ function DisponibilidadePage() {
                                                             "data-testid": "input-block-start-time"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 458,
+                                                            lineNumber: 475,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                    lineNumber: 454,
+                                                    lineNumber: 471,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1135,7 +1132,7 @@ function DisponibilidadePage() {
                                                             children: "Fim"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 472,
+                                                            lineNumber: 489,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1149,13 +1146,13 @@ function DisponibilidadePage() {
                                                             "data-testid": "input-block-end-time"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 475,
+                                                            lineNumber: 492,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                    lineNumber: 471,
+                                                    lineNumber: 488,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
@@ -1168,7 +1165,7 @@ function DisponibilidadePage() {
                                                     children: "Motivo"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                    lineNumber: 489,
+                                                    lineNumber: 506,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1182,13 +1179,13 @@ function DisponibilidadePage() {
                                                     "data-testid": "input-block-reason"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                    lineNumber: 490,
+                                                    lineNumber: 507,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                            lineNumber: 488,
+                                            lineNumber: 505,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1203,35 +1200,35 @@ function DisponibilidadePage() {
                                                         className: "w-4 h-4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                        lineNumber: 509,
+                                                        lineNumber: 526,
                                                         columnNumber: 19
                                                     }, this),
                                                     addingBlock ? "Adicionando..." : "Adicionar"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                lineNumber: 502,
+                                                lineNumber: 519,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                            lineNumber: 501,
+                                            lineNumber: 518,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                    lineNumber: 427,
+                                    lineNumber: 444,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 426,
+                                lineNumber: 443,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$separator$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Separator"], {}, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 516,
+                                lineNumber: 533,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1242,7 +1239,7 @@ function DisponibilidadePage() {
                                         children: "Bloqueios cadastrados"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 519,
+                                        lineNumber: 536,
                                         columnNumber: 13
                                     }, this),
                                     blockedSlots.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1251,7 +1248,7 @@ function DisponibilidadePage() {
                                         children: "Nenhum bloqueio cadastrado"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 523,
+                                        lineNumber: 540,
                                         columnNumber: 15
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "space-y-2",
@@ -1268,7 +1265,7 @@ function DisponibilidadePage() {
                                                                 children: slot.date
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                lineNumber: 538,
+                                                                lineNumber: 555,
                                                                 columnNumber: 23
                                                             }, this),
                                                             slot.all_day ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1276,7 +1273,7 @@ function DisponibilidadePage() {
                                                                 children: "Dia inteiro"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                lineNumber: 542,
+                                                                lineNumber: 562,
                                                                 columnNumber: 25
                                                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "text-sm text-muted-foreground",
@@ -1287,7 +1284,7 @@ function DisponibilidadePage() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                lineNumber: 544,
+                                                                lineNumber: 564,
                                                                 columnNumber: 25
                                                             }, this),
                                                             slot.reason && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1295,13 +1292,13 @@ function DisponibilidadePage() {
                                                                 children: slot.reason
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                                lineNumber: 549,
+                                                                lineNumber: 569,
                                                                 columnNumber: 25
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                        lineNumber: 537,
+                                                        lineNumber: 554,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1314,41 +1311,41 @@ function DisponibilidadePage() {
                                                             className: "w-4 h-4 text-destructive"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                            lineNumber: 559,
+                                                            lineNumber: 579,
                                                             columnNumber: 23
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                        lineNumber: 552,
+                                                        lineNumber: 572,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, slot.id, true, {
                                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                lineNumber: 532,
+                                                lineNumber: 549,
                                                 columnNumber: 19
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 530,
+                                        lineNumber: 547,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 518,
+                                lineNumber: 535,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                        lineNumber: 425,
+                        lineNumber: 442,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                lineNumber: 418,
+                lineNumber: 435,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1361,19 +1358,19 @@ function DisponibilidadePage() {
                                     className: "w-5 h-5"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                    lineNumber: 572,
+                                    lineNumber: 592,
                                     columnNumber: 13
                                 }, this),
                                 "Janela de Retorno"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                            lineNumber: 571,
+                            lineNumber: 591,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                        lineNumber: 570,
+                        lineNumber: 590,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1384,7 +1381,7 @@ function DisponibilidadePage() {
                                 children: "Após uma consulta concluída, o paciente pode agendar um retorno dentro desta janela de dias. Após esse período, será necessário agendar uma consulta regular."
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 577,
+                                lineNumber: 597,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1395,7 +1392,7 @@ function DisponibilidadePage() {
                                         children: "Dias para retorno"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 581,
+                                        lineNumber: 603,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1408,7 +1405,7 @@ function DisponibilidadePage() {
                                         "data-testid": "input-return-window-days"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 582,
+                                        lineNumber: 606,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1416,13 +1413,13 @@ function DisponibilidadePage() {
                                         children: "dias"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 591,
+                                        lineNumber: 617,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 580,
+                                lineNumber: 602,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1434,26 +1431,26 @@ function DisponibilidadePage() {
                                         className: "w-4 h-4"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 598,
+                                        lineNumber: 624,
                                         columnNumber: 13
                                     }, this),
                                     savingReturnWindow ? "Salvando..." : "Salvar"
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 593,
+                                lineNumber: 619,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                        lineNumber: 576,
+                        lineNumber: 596,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                lineNumber: 569,
+                lineNumber: 589,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -1466,19 +1463,19 @@ function DisponibilidadePage() {
                                     className: "w-5 h-5"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                    lineNumber: 607,
+                                    lineNumber: 633,
                                     columnNumber: 13
                                 }, this),
                                 "Mensagem WhatsApp"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                            lineNumber: 606,
+                            lineNumber: 632,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                        lineNumber: 605,
+                        lineNumber: 631,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -1489,7 +1486,7 @@ function DisponibilidadePage() {
                                 children: "Personalize a mensagem enviada ao paciente quando uma consulta é agendada. Use as variáveis abaixo para inserir dados dinâmicos."
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 612,
+                                lineNumber: 638,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1498,18 +1495,19 @@ function DisponibilidadePage() {
                                     "{nome}",
                                     "{tipo}",
                                     "{data}",
-                                    "{horário}"
+                                    "{horário}",
+                                    "{modalidade}"
                                 ].map((v)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "bg-muted px-2 py-1 rounded font-mono border",
                                         children: v
                                     }, v, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 617,
-                                        columnNumber: 15
+                                        lineNumber: 645,
+                                        columnNumber: 17
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 615,
+                                lineNumber: 642,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1520,7 +1518,7 @@ function DisponibilidadePage() {
                                         children: "Mensagem"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 621,
+                                        lineNumber: 655,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$textarea$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Textarea"], {
@@ -1532,13 +1530,13 @@ function DisponibilidadePage() {
                                         "data-testid": "textarea-whatsapp-template"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 622,
+                                        lineNumber: 656,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 620,
+                                lineNumber: 654,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1553,14 +1551,14 @@ function DisponibilidadePage() {
                                                 className: "w-4 h-4"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                                lineNumber: 637,
+                                                lineNumber: 671,
                                                 columnNumber: 15
                                             }, this),
                                             savingWhatsappTemplate ? "Salvando..." : "Salvar"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 632,
+                                        lineNumber: 666,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1571,31 +1569,31 @@ function DisponibilidadePage() {
                                         children: "Restaurar padrão"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                        lineNumber: 640,
+                                        lineNumber: 674,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                                lineNumber: 631,
+                                lineNumber: 665,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                        lineNumber: 611,
+                        lineNumber: 637,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-                lineNumber: 604,
+                lineNumber: 630,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/(dashboard)/admin/disponibilidade/page.tsx",
-        lineNumber: 282,
+        lineNumber: 299,
         columnNumber: 5
     }, this);
 }
