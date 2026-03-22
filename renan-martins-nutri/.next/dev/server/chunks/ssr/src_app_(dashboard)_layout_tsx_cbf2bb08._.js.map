@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///home/runner/workspace/src/app/%28dashboard%29/layout.tsx"],"sourcesContent":["import type { Metadata } from \"next\";\n\nexport const metadata: Metadata = {\n  robots: { index: false, follow: false },\n};\n\nexport default function DashboardLayout({ children }: { children: React.ReactNode }) {\n  return children;\n}\n"],"names":[],"mappings":";;;;;;AAEO,MAAM,WAAqB;IAChC,QAAQ;QAAE,OAAO;QAAO,QAAQ;IAAM;AACxC;AAEe,SAAS,gBAAgB,EAAE,QAAQ,EAAiC;IACjF,OAAO;AACT"}}]
-}

@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///home/runner/workspace/src/components/site/PoweredByBanner.tsx"],"sourcesContent":["\"use client\";\n\nexport default function PoweredByBanner() {\n  return (\n    <div className=\"fixed bottom-3 left-3 z-[9999] pointer-events-none\">\n      <div className=\"backdrop-blur-md bg-black/60 rounded-lg px-3 py-1.5 pointer-events-auto flex items-center gap-2 border border-white/10\" data-testid=\"banner-powered-by\">\n        <span className=\"text-[10px] text-neutral-400\">Powered by</span>\n        <img src=\"/assets/luna-powered-by.png\" alt=\"Luna Tecnologia\" className=\"h-5 w-auto object-contain\" data-testid=\"img-powered-by-logo\" />\n      </div>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;AAAA;;AAEe,SAAS;IACtB,qBACE,6LAAC;QAAI,WAAU;kBACb,cAAA,6LAAC;YAAI,WAAU;YAAyH,eAAY;;8BAClJ,6LAAC;oBAAK,WAAU;8BAA+B;;;;;;8BAC/C,6LAAC;oBAAI,KAAI;oBAA8B,KAAI;oBAAkB,WAAU;oBAA4B,eAAY;;;;;;;;;;;;;;;;;AAIvH;KATwB"}}]
-}

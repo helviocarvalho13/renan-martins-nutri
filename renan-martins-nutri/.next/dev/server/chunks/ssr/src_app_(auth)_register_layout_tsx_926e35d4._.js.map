@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///home/runner/workspace/src/app/%28auth%29/register/layout.tsx"],"sourcesContent":["import type { Metadata } from \"next\";\n\nexport const metadata: Metadata = {\n  title: \"Cadastro | Renan Martins Nutricionista\",\n  description: \"Crie sua conta para agendar consultas com o nutricionista Renan Martins.\",\n  robots: { index: false, follow: false },\n};\n\nexport default function RegisterLayout({ children }: { children: React.ReactNode }) {\n  return children;\n}\n"],"names":[],"mappings":";;;;;;AAEO,MAAM,WAAqB;IAChC,OAAO;IACP,aAAa;IACb,QAAQ;QAAE,OAAO;QAAO,QAAQ;IAAM;AACxC;AAEe,SAAS,eAAe,EAAE,QAAQ,EAAiC;IAChF,OAAO;AACT"}}]
-}
