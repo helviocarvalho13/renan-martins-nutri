@@ -14,7 +14,7 @@ import { useAnimateIn } from "@/hooks/useAnimateIn";
 
 const services = [
   {
-    name: "Acompanhamento Indivual",
+    name: "Acompanhamento individual",
     description: "Seu corpo precisa operar no mesmo nível da sua ambição.",
     icon: Stethoscope,
     actionLabel: "Agendar",

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///home/runner/workspace/src/app/%28public%29/agendar/page.tsx"],"sourcesContent":["\"use client\";\n\nimport { useEffect } from \"react\";\nimport { useRouter } from \"next/navigation\";\n\nexport default function PublicAgendarRedirect() {\n  const router = useRouter();\n\n  useEffect(() => {\n    router.replace(\"/paciente/agendar\");\n  }, [router]);\n\n  return (\n    <div className=\"min-h-screen flex items-center justify-center\">\n      <p className=\"text-neutral-500 text-sm\">Redirecionando para o agendamento...</p>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;AAEA;AACA;;;AAHA;;;AAKe,SAAS;;IACtB,MAAM,SAAS,IAAA,kJAAS;IAExB,IAAA,0KAAS;2CAAC;YACR,OAAO,OAAO,CAAC;QACjB;0CAAG;QAAC;KAAO;IAEX,qBACE,6LAAC;QAAI,WAAU;kBACb,cAAA,6LAAC;YAAE,WAAU;sBAA2B;;;;;;;;;;;AAG9C;GAZwB;;QACP,kJAAS;;;KADF"}},
+    {"offset": {"line": 56, "column": 0}, "map": {"version":3,"sources":["file:///home/runner/workspace/node_modules/next/navigation.js"],"sourcesContent":["module.exports = require('./dist/client/components/navigation')\n"],"names":[],"mappings":"AAAA,OAAO,OAAO","ignoreList":[0]}}]
+}

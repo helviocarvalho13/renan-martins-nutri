@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(dashboard)/layout,_N_T_/(dashboard)/paciente/layout,_N_T_/(dashboard)/paciente/agendar/layout,_N_T_/(dashboard)/paciente/agendar/page,_N_T_/paciente/agendar"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KGRhc2hib2FyZCk/paciente/agendar/__PAGE__",
+    "/!KGRhc2hib2FyZCk/paciente/agendar",
+    "/!KGRhc2hib2FyZCk/paciente",
+    "/!KGRhc2hib2FyZCk",
+    "/_index",
+    "/_head"
+  ]
+}
