@@ -24,15 +24,16 @@ export function HeroSection() {
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-neutral-900 mb-6"
           data-testid="text-hero-title"
         >
-          Nutrição consciente para transformar sua vida
+          Performance não é só para atletas. É para quem carrega
+          responsabilidade.
         </h1>
 
         <p
           className="text-base sm:text-lg text-neutral-600 max-w-xl mx-auto mb-10 leading-relaxed animate-fade-in-up [animation-delay:200ms]"
           data-testid="text-hero-subtitle"
         >
-          Consultas personalizadas para ajudar você a alcançar seus objetivos de
-          saúde e bem-estar com um plano alimentar sob medida.
+          Eu ajudo atletas, empresários e pessoas comuns a atingirem o máximo
+          desempenho físico e mental através da nutrição estratégica.
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4 animate-fade-in-up [animation-delay:400ms]">
@@ -51,7 +52,7 @@ export function HeroSection() {
             data-testid="button-hero-schedule"
             asChild
           >
-            <Link href="/paciente/agendar">Agendar Consulta</Link>
+            <Link href="/paciente/agendar">Quero performar no máximo</Link>
           </Button>
         </div>
       </div>

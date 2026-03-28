@@ -28,7 +28,10 @@ export function AboutSection() {
           </div>
 
           <div className="space-y-6">
-            <p className="text-sm font-medium text-neutral-400 uppercase tracking-widest" data-testid="text-about-label">
+            <p
+              className="text-sm font-medium text-neutral-400 uppercase tracking-widest"
+              data-testid="text-about-label"
+            >
               Sobre Mim
             </p>
             <h2
@@ -37,11 +40,34 @@ export function AboutSection() {
             >
               DESTRAVE O PRÓXIMO NÍVEL
             </h2>
-            <p className="text-neutral-500 leading-relaxed" data-testid="text-about-desc">
-              Sou o Renan Martins, nutricionista clínico com mais de 8 anos de experiência. Acredito que a nutrição vai além de uma dieta — é sobre construir uma relação saudável com a comida e alcançar qualidade de vida.
+            <p
+              className="text-neutral-500 leading-relaxed"
+              data-testid="text-about-desc"
+            >
+              Sou Renan Martins, nutricionista clínico e esportivo, com mais de
+              10 anos de experiência ajudando pessoas a alcançarem alto nível de
+              desempenho físico e mental.
             </p>
-            <p className="text-neutral-500 leading-relaxed">
-              Minha abordagem é baseada em evidências científicas e personalizada para cada paciente, considerando objetivos, rotina e preferências alimentares.
+            <p
+              className="text-neutral-500 leading-relaxed"
+              data-testid="text-about-desc"
+            >
+              Ao longo da minha trajetória, tive a oportunidade de atender
+              empresários, líderes e profissionais que lidam diariamente com
+              alta demanda, tomada de decisão e responsabilidade. Nos últimos 6
+              anos, direcionei ainda mais meu trabalho para atletas
+              profissionais de alto rendimento, onde cada detalhe da nutrição
+              impacta diretamente no resultado. Essa vivência me mostrou que,
+              independentemente do cenário — seja no esporte ou nos negócios — o
+              princípio é o mesmo: performance exige estratégia.
+            </p>
+            <p
+              className="text-neutral-500 leading-relaxed"
+              data-testid="text-about-desc"
+            >
+              Meu objetivo é estruturar sua nutrição de forma precisa, para que
+              seu corpo acompanhe o nível da sua rotina, com energia,
+              consistência e resultado.{" "}
             </p>
           </div>
         </div>
